@@ -1,0 +1,37 @@
+$footer-height: 60px
+
+html
+  position: relative
+  min-height: 100%
+
+  
+body
+  margin-bottom: $footer-height
+  
+  > .container
+    padding: 60px 15px 0
+
+    
+.footer
+  position: absolute
+  bottom: 0
+  width: 100%
+  height: $footer-height
+  line-height: $footer-height
+  background-color: #f5f5f5
+
+  
+
+//.navbar {
+//  @include media-breakpoint-down(md) {
+//    .navbar-brand {
+//      float: none;
+//    }
+//  }
+//}
+
+
+
+@media (max-width: 991px)
+  .navbar .navbar-brand
+    float: none
