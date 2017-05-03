@@ -1,0 +1,11 @@
+#Postgres
+#spring.datasource.url=jdbc:postgresql://localhost:5432/growthlectures
+#spring.datasource.username=postgres
+#spring.datasource.password=postgres
+#spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.show-sql=true
+
+spring.jpa.hibernate.ddl-auto=create
+
+liquibase.enabled=false
