@@ -27,3 +27,4 @@ nbdist/
 
 
 src/main/resources/application.properties
+.checkstyle
