@@ -13,7 +13,7 @@ abstract class Media extends BaseEntity {
 	@Column(nullable = false)
   def String url;
   
-  def Integer offset;
+  def Integer start;
   
   @Column(nullable = false)
   def Integer duration;
