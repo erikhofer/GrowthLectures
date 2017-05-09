@@ -39,6 +39,7 @@ dependencies {
 	compile('org.springframework.session:spring-session')
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('com.google.guava:guava:21.0')
 	runtime('mysql:mysql-connector-java')
 	runtime('org.postgresql:postgresql')
 	
