@@ -7,6 +7,9 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		//asset pipeline
+		classpath("com.bertramlabs.plugins:asset-pipeline-gradle:2.14.2")
+		classpath('com.bertramlabs.plugins:sass-asset-pipeline:2.14.2')
 	}
 }
 
@@ -17,6 +20,7 @@ plugins {
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'asset-pipeline'
 
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
@@ -43,6 +47,10 @@ dependencies {
 	compileOnly('com.xinra.nucleus:interface-generator:0.1.1')
 	apt('com.xinra.nucleus:interface-generator:0.1.1')
 	
+	compile('com.bertramlabs.plugins:asset-pipeline-spring-boot:2.14.2')
+	compile('com.bertramlabs.plugins:sass-asset-pipeline:2.14.2')
+	compile('org.webjars:bootstrap-sass:3.3.7')
+	
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
@@ -50,7 +58,7 @@ sourceSets {
 	// put everything into /src/*/groovy
 	main.java.srcDirs = []
 	test.java.srcDirs = []
-  }
+}
 
 tasks.withType(GroovyCompile) {
 	groovyOptions.javaAnnotationProcessing = true
