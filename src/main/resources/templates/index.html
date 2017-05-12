@@ -4,6 +4,60 @@
 	<title>This is title</title>
 </header>
 <body>
-<div layout:fragment="content">Hello world</div>
+<div layout:fragment="content">
+  <div class="container">
+    <form class="form-inline search">
+      <div class="input-group input-group-lg">
+        <input type="text" class="form-control" placeholder="Search for..." />
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+        </span>
+      </div>
+    </form>
+  </div>
+  <div class="container">   
+    <h2>Recently Added</h2>
+    <div th:each="recentLecture : ${recentLectures}">
+      <div th:replace="fragments/lecture-summary :: lecture-summary (lecture = ${recentLecture})"></div>
+    </div>
+  </div>
+  
+  <div class="secondary-background">     
+    <div class="container">
+      <h2>Popular</h2>
+      <div th:each="popularLecture : ${popularLectures}">
+        <div th:replace="fragments/lecture-summary :: lecture-summary (lecture = ${popularLecture})"></div>
+      </div>
+    </div>  
+  </div>
+  <div class="container"> 
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">Popular Categories</div>
+          <ul class="list-group">
+            <a th:each="popularCategory : ${popularCategories}" th:href="#" class="list-group-item">
+              <span th:text="${popularCategory.name}"></span> 
+              <span th:text="${popularCategory.amount}" class="badge"></span>
+            </a>
+          </ul>
+          <div class="panel-footer"><a href="#">Show all <span class="glyphicon glyphicon-chevron-right"></span></a></div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">Popular Lecturers</div>
+          <ul class="list-group">
+            <a th:each="popularLecturer : ${popularLecturers}" href="#" class="list-group-item">
+              <span th:text="${popularLecturer.name}"></span> 
+              <span th:text="${popularLecturer.amount}" class="badge"></span>
+            </a>
+          </ul>
+          <div class="panel-footer"><a href="#">Show all <span class="glyphicon glyphicon-chevron-right"></span></a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
