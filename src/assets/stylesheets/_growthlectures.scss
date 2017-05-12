@@ -15,6 +15,7 @@ body {
 .secondary-background {
   background-color: $secondary-background;
   box-shadow: 0 0 8px #c5c5c5 inset;
+  margin-bottom: $line-height-computed;
 }
   
 .footer {
