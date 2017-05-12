@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <header>
 	<title>This is title</title>
-	<link rel="stylesheet" href="/assets/style.css" />	
 </header>
 <body>
-Hello world
+<div layout:fragment="content">Hello world</div>
 </body>
 </html>
