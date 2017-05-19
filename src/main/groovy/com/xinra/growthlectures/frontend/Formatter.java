@@ -1,5 +1,7 @@
 package com.xinra.growthlectures.frontend;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,12 @@ public class Formatter {
     int second = duration % 60;
         
     return String.format("%02d:%02d:%02d", hour, minute, second);
+  }
+  
+  public String date(LocalDate date) {
+    
+    return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    
   }
   
 }

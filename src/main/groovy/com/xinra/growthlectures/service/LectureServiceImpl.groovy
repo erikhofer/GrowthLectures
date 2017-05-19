@@ -2,6 +2,7 @@ package com.xinra.growthlectures.service
 
 import com.xinra.nucleus.service.DtoFactory
 import groovy.transform.CompileStatic
+import java.time.LocalDate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -24,6 +25,12 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl {
 		dto.rating = 3.5D;
 		dto.name = "Hallo i bims"
 		dto.slug = "hallo-i-bims"
+    NamedDto lecturer = dtoFactory.createDto(NamedDto.class);
+    lecturer.setName("Lorenz Kock");
+    lecturer.setSlug("lorenzkock");
+    dto.setLecturer(lecturer);
+    dto.setAdded(LocalDate.of(2017, 12, 01));
+    
 		return dto as LectureSummaryDto;
 	}
 

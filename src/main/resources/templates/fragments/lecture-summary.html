@@ -16,10 +16,10 @@
               <h3><a href="#"><span th:text="${lecture.category.name}" class="label label-default"></span></a> <a th:text="${lecture.name}" href="#"></a> <span class="glyphicon glyphicon-ok listened"></span></h3>
               <div class="row">
                 <div class="col-sm-4">
-                  <p><a href="#"><b>Lecturer Name Klaus</b></a></p>
+                  <p><a href="#" class="lecturer" th:text="${lecture.lecturer.name}"></a></p>
                 </div>
                 <div class="col-sm-4">
-                  <p><span class="glyphicon glyphicon-calendar"></span> 01.01.2001</p>
+                  <p><span class="glyphicon glyphicon-calendar"></span> <span th:text="${@formatter.date(lecture.added)}"></span></p>
                 </div>
               </div>
               <p th:text="${lecture.description}"></p>

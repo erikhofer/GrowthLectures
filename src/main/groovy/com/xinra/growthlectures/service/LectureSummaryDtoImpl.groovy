@@ -3,6 +3,7 @@ package com.xinra.growthlectures.service
 import com.xinra.nucleus.interfacegenerator.GenerateInterface
 import com.xinra.nucleus.interfacegenerator.InterfaceNamingStrategy
 import groovy.transform.CompileStatic
+import java.time.LocalDate
 
 @CompileStatic
 @GenerateInterface(
@@ -17,9 +18,20 @@ class LectureSummaryDtoImpl extends NamedDtoImpl {
   def Double rating;
   def Integer userRating;
   def Integer duration;
+  def LocalDate added;
+  
+  private NamedDto lecturer;
   
   private NamedDto category;
   
+  public NamedDto getLecturer() {
+    return lecturer;
+  }
+
+  public void setLecturer(NamedDto lecturer) {
+    this.lecturer = lecturer;
+  }
+
   public NamedDto getCategory() {
     return category;
   }
