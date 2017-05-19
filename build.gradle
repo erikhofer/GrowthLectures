@@ -45,8 +45,8 @@ dependencies {
 	
 	compile('com.xinra.nucleus:nucleus-entity:0.1.0')
 	compile('com.xinra.nucleus:nucleus-service:0.1.1')
-	compileOnly('com.xinra.nucleus:interface-generator:0.1.1')
-	apt('com.xinra.nucleus:interface-generator:0.1.1')
+	compileOnly('com.xinra.nucleus:nucleus-interface-generator:0.1.2')
+	apt('com.xinra.nucleus:nucleus-interface-generator:0.1.2')
 	
 	compile('com.bertramlabs.plugins:asset-pipeline-spring-boot:2.14.2')
 	compile('com.bertramlabs.plugins:sass-asset-pipeline:2.14.2')
