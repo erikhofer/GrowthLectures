@@ -8,18 +8,21 @@
         <div class="panel-body">
           <div class="row">
             <div class="col-sm-3">
-              <a href="#" class="thumbnail">
+              <a th:href="@{${@formatter.lectureUrl(lecture)}}" class="thumbnail">
                 <img src="http://lorempixel.com/400/200" alt="TODO" />
               </a>
             </div>
             <div class="col-sm-9">
-              <h3><a href="#"><span th:text="${lecture.category.name}" class="label label-default"></span></a> <a th:text="${lecture.name}" href="#"></a> <span class="glyphicon glyphicon-ok listened"></span></h3>
+              <h3>
+                <a th:href="@{${@formatter.categoryUrl(lecture.category)}}"><span th:text="${lecture.category.name}" class="label label-default"></span></a> 
+                <a th:href="${@formatter.lectureUrl(lecture)}" th:text="${lecture.name}"></a> <span class="glyphicon glyphicon-ok listened"></span>
+              </h3>
               <div class="row">
                 <div class="col-sm-4">
-                  <p><a href="#" class="lecturer" th:text="${lecture.lecturer.name}"></a></p>
+                  <p><a th:href="@{${@formatter.lecturerUrl(lecture.lecturer)}}" class="lecturer" th:text="${lecture.lecturer.name}"></a></p>
                 </div>
                 <div class="col-sm-4">
-                  <p><span class="glyphicon glyphicon-calendar"></span> <span th:text="${@formatter.date(lecture.added)}"></span></p>
+                  <p><span class="glyphicon glyphicon-calendar"></span> <span th:text="@{${@formatter.date(lecture.added)}}"></span></p>
                 </div>
               </div>
               <p th:text="${lecture.description}"></p>
