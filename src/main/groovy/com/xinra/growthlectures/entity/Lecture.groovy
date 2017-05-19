@@ -1,6 +1,7 @@
 package com.xinra.growthlectures.entity
 
 import groovy.transform.CompileStatic
+import java.time.LocalDate
 import javax.persistence.Entity
 import javax.persistence.ManyToOne
 
@@ -15,6 +16,8 @@ class Lecture extends NamedEntity {
   
   @ManyToOne(optional = false)
   def Category category;
+  
+  def LocalDate added;
   
   //cache
   def Double ratingAverage;

@@ -30,4 +30,4 @@ src/main/resources/application.properties
 .checkstyle
 .asscache
 *.class
-com/
+/com/
