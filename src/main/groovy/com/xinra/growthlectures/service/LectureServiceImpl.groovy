@@ -14,11 +14,11 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl {
 	
 	//TODO: remove
 	private LectureSummaryDto getSampleLecture() {
-		LectureSummaryDtoImpl dto = new LectureSummaryDtoImpl();
+		LectureSummaryDto dto = dtoFactory.createDto(LectureSummaryDto.class);
 		NamedDto cat = new NamedDtoImpl() as NamedDto;
 		cat.setName("Peter");
 		cat.setSlug("peter");
-		dto.category = cat;
+		dto.setCategory(cat);
 		dto.description = "Das ist die Beschreibung";
 		dto.duration = 817;
 		dto.rating = 3.5D;
