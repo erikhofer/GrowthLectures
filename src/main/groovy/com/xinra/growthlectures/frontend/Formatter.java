@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 @Scope("singleton")
 public class Formatter {
 
+  public static final String URL_CATEGORIES = "/lectures";
+  public static final String URL_LECTURERS = "/lecturers";
+  
   public String duration(Integer duration) {
     int hour = duration / 60 / 60;
     int minute = (duration / 60) % 60;
@@ -24,15 +27,15 @@ public class Formatter {
   }
   
   public String lectureUrl(LectureSummaryDto dto) {
-    return String.format("/lectures/%s/%s", dto.getCategory().getSlug(), dto.getSlug());
+    return String.format("%s/%s/%s", URL_CATEGORIES, dto.getCategory().getSlug(), dto.getSlug());
   }
   
   public String categoryUrl(NamedDto dto) {
-    return "/lectures/" + dto.getSlug();
+    return URL_CATEGORIES + "/" + dto.getSlug();
   }
   
   public String lecturerUrl(NamedDto dto) {
-    return "/lecturers/" + dto.getSlug();
+    return URL_LECTURERS + "/" + dto.getSlug();
   }
   
 }

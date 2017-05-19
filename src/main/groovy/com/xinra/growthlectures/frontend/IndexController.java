@@ -1,9 +1,10 @@
 package com.xinra.growthlectures.frontend;
 
-import com.xinra.growthlectures.entity.Lecture;
+import com.xinra.growthlectures.service.ContainerDto;
 import com.xinra.growthlectures.service.ContainerDtoImpl;
 import com.xinra.growthlectures.service.LectureServiceImpl;
 import com.xinra.growthlectures.service.LectureSummaryDto;
+import com.xinra.nucleus.service.DtoFactory;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class IndexController {
   @Autowired
   LectureServiceImpl lectureServiceImpl;
   
+  @Autowired
+  private DtoFactory dtoFactory;
+  
   @RequestMapping("/")
   public String index(Model model) {
     
@@ -31,11 +35,19 @@ public class IndexController {
     model.addAttribute("recentLectures", recentLectures );
     
     // Popular Categories
-    ArrayList<ContainerDtoImpl> popularCategories = new ArrayList<ContainerDtoImpl>();
+    ArrayList<ContainerDto> popularCategories = new ArrayList<ContainerDto>();
+    ContainerDto cat = dtoFactory.createDto(ContainerDto.class);
+    cat.setName("Category One");
+    cat.setSlug("catone");
+    popularCategories.add(cat);
     model.addAttribute("popularCategories", popularCategories);
     
     // Pupular Lecuturers 
-    ArrayList<ContainerDtoImpl> popularLecturers = new ArrayList<ContainerDtoImpl>();        
+    ArrayList<ContainerDto> popularLecturers = new ArrayList<ContainerDto>();
+    ContainerDto lec = dtoFactory.createDto(ContainerDto.class);
+    lec.setName("Lorenz Kock");
+    lec.setSlug("lorenzkock");
+    popularLecturers.add(lec);
     model.addAttribute("popularLecturers", popularLecturers);
     
     return "index";

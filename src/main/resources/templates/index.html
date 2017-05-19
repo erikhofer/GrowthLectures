@@ -6,7 +6,7 @@
 <body>
 <div layout:fragment="content">
   <div class="container">
-    <form class="form-inline search">
+    <form class="form-inline search" th:action="#">
       <div class="input-group input-group-lg">
         <input type="text" class="form-control" placeholder="Search for..." />
         <span class="input-group-btn">
@@ -19,7 +19,6 @@
     <h2>Recently Added</h2>
     <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${recentLectures})"></div>
   </div>
-  
   <div class="secondary-background">     
     <div class="container">
       <h2>Popular</h2>
@@ -32,24 +31,24 @@
         <div class="panel panel-default">
           <div class="panel-heading">Popular Categories</div>
           <ul class="list-group">
-            <a th:each="popularCategory : ${popularCategories}" th:href="#" class="list-group-item">
+            <a th:each="popularCategory : ${popularCategories}" th:href="@{${@formatter.categoryUrl(popularCategory)}}" class="list-group-item">
               <span th:text="${popularCategory.name}"></span> 
               <span th:text="${popularCategory.amount}" class="badge"></span>
             </a>
           </ul>
-          <div class="panel-footer"><a href="#">Show all <span class="glyphicon glyphicon-chevron-right"></span></a></div>
+          <div class="panel-footer"><a th:href="@{${@formatter.URL_CATEGORIES}}">Show all <span class="glyphicon glyphicon-chevron-right"></span></a></div>
         </div>
       </div>
       <div class="col-sm-6">
         <div class="panel panel-default">
           <div class="panel-heading">Popular Lecturers</div>
           <ul class="list-group">
-            <a th:each="popularLecturer : ${popularLecturers}" href="#" class="list-group-item">
+            <a th:each="popularLecturer : ${popularLecturers}" th:href="@{${@formatter.lecturerUrl(popularLecturer)}}" class="list-group-item">
               <span th:text="${popularLecturer.name}"></span> 
               <span th:text="${popularLecturer.amount}" class="badge"></span>
             </a>
           </ul>
-          <div class="panel-footer"><a href="#">Show all <span class="glyphicon glyphicon-chevron-right"></span></a></div>
+          <div class="panel-footer"><a th:href="@{${@formatter.URL_LECTURERS}}">Show all <span class="glyphicon glyphicon-chevron-right"></span></a></div>
         </div>
       </div>
     </div>
