@@ -3,31 +3,35 @@
   <head>
   </head>
   <body>
-    <div class="panel panel-default lecture" th:fragment="lecture-summary (lecture)">
-      <div class="panel-body">
-        <div class="row">
-          <div class="col-sm-3">
-            <a href="#" class="thumbnail">
-              <img src="http://lorempixel.com/400/200" alt="TODO" />
-            </a>
-          </div>
-          <div class="col-sm-9">
-            <h3><a href="#"><span th:text="${lecture.category.name}" class="label label-default"></span></a> <a th:text="${lecture.name}" href="#"></a> <span class="glyphicon glyphicon-ok listened"></span></h3>
-            <p th:text="${lecture.description}"></p>
-            <div class="row">
-              <div class="col-sm-4">
-                <input id="input-id" name="input-name" type="number" class="rating" min="1" max="5" step="1" data-size="xs" data-show-caption="false" /> 
-              </div>
-              <div class="col-sm-4">
-                Clicks
-              </div>
-              <div class="col-sm-4">
-                <span class="glyphicon glyphicon-time"></span> <span th:text="${@formatter.duration(lecture.duration)}"></span>
+    <div th:fragment="lecture-summary">
+      <div class="panel panel-default lecture">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-sm-3">
+              <a href="#" class="thumbnail">
+                <img src="http://lorempixel.com/400/200" alt="TODO" />
+              </a>
+            </div>
+            <div class="col-sm-9">
+              <h3><a href="#"><span th:text="${lecture.category.name}" class="label label-default"></span></a> <a th:text="${lecture.name}" href="#"></a> <span class="glyphicon glyphicon-ok listened"></span></h3>
+              <p th:text="${lecture.description}"></p>
+              <div class="row">
+                <div class="col-sm-4">
+                  <input id="input-id" name="input-name" type="number" class="rating" min="1" max="5" step="1" data-size="xs" data-show-caption="false" /> 
+                </div>
+                <div class="col-sm-4">
+                  Clicks
+                </div>
+                <div class="col-sm-4">
+                  <span class="glyphicon glyphicon-time"></span> <span th:text="${@formatter.duration(lecture.duration)}"></span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+   
+    <div th:fragment="lecture-list (lectures)" th:each="lecture : ${lectures}" th:include="fragments/lecture-summary :: lecture-summary" th:with="lecture=${lecture}" th:remove="tag"></div>
   </body>
 </html>

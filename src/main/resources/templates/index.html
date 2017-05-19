@@ -17,17 +17,13 @@
   </div>
   <div class="container">   
     <h2>Recently Added</h2>
-    <div th:each="recentLecture : ${recentLectures}">
-      <div th:replace="fragments/lecture-summary :: lecture-summary (lecture = ${recentLecture})"></div>
-    </div>
+    <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${recentLectures})"></div>
   </div>
   
   <div class="secondary-background">     
     <div class="container">
       <h2>Popular</h2>
-      <div th:each="popularLecture : ${popularLectures}">
-        <div th:replace="fragments/lecture-summary :: lecture-summary (lecture = ${popularLecture})"></div>
-      </div>
+      <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${popularLectures})"></div>
     </div>  
   </div>
   <div class="container"> 
