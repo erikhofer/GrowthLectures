@@ -20,7 +20,7 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl {
 		cat.setSlug("peter");
 		dto.setCategory(cat);
 		dto.description = "Das ist die Beschreibung";
-		dto.duration = 817;
+		dto.duration = 783;
 		dto.rating = 3.5D;
 		dto.name = "Hallo i bims"
 		dto.slug = "hallo-i-bims"
