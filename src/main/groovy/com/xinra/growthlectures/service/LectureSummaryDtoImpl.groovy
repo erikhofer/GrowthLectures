@@ -1,8 +1,14 @@
 package com.xinra.growthlectures.service
 
+import com.xinra.nucleus.interfacegenerator.GenerateInterface
+import com.xinra.nucleus.interfacegenerator.InterfaceNamingStrategy
 import groovy.transform.CompileStatic
 
 @CompileStatic
+@GenerateInterface(
+      namingStrategy = InterfaceNamingStrategy.EXCEPT_LAST_FOUR_CHARS,
+      propertyConstants = true
+    )
 class LectureSummaryDtoImpl extends NamedDtoImpl {
 
   //def NamedDto category;
