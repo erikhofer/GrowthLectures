@@ -22,7 +22,7 @@
                 Clicks
               </div>
               <div class="col-sm-4">
-                <span class="glyphicon glyphicon-time"></span> 13:37
+                <span class="glyphicon glyphicon-time"></span> <span th:text="${@formatter.duration(lecture.duration)}"></span>
               </div>
             </div>
           </div>

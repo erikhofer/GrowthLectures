@@ -1,26 +1,33 @@
 package com.xinra.growthlectures.frontend;
 
-import com.xinra.growthlectures.entity.Category;
 import com.xinra.growthlectures.entity.Lecture;
-import com.xinra.growthlectures.service.ContainerDto;
 import com.xinra.growthlectures.service.ContainerDtoImpl;
+import com.xinra.growthlectures.service.LectureServiceImpl;
+import com.xinra.growthlectures.service.LectureSummaryDto;
 import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+
 @Controller
 public class IndexController {
   
+  @Autowired
+  LectureServiceImpl lectureServiceImpl;
+  
   @RequestMapping("/")
   public String index(Model model) {
-   
+    
     // PopularLecures
-    ArrayList<Lecture> popularLectures = new ArrayList<Lecture>();
+    
+    List<LectureSummaryDto> popularLectures = lectureServiceImpl.getPopularLectures();
     model.addAttribute("popularLectures", popularLectures );
     
     // Recent Lecturers
-    ArrayList<Lecture> recentLectures = new ArrayList<Lecture>();
+    List<LectureSummaryDto> recentLectures = lectureServiceImpl.getRecentLectures();
     model.addAttribute("recentLectures", recentLectures );
     
     // Popular Categories
