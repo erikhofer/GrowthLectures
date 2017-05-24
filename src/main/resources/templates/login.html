@@ -13,7 +13,7 @@
         </div>
         <div class="panel-body">
           <div class="alert alert-danger" th:if="!${errorMessage eq null}" th:text="${errorMessage}">Username oder Password falsch!</div>
-          <form class="form-horizontal" th:object="${loginUser}" th:action="@{/login}" method="post">
+          <form class="form-horizontal" th:object="${loginUser}" th:action="@{${@ui.URL_LOGIN}}" method="post">
             <div class="form-group">
               <label for="inputEmail" class="col-sm-3 control-label">E-Mail</label>
               <div class="col-sm-9">
