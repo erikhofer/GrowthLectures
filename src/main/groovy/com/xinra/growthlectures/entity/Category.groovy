@@ -9,6 +9,6 @@ import javax.persistence.OneToMany
 class Category extends NamedEntity {
   
   @OneToMany(mappedBy = "category")
-  def Collection<Lecture> lectures;
+  def Set<Lecture> lectures;
 
 }
