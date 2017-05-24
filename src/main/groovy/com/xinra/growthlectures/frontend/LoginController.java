@@ -13,7 +13,7 @@ public class LoginController {
   @Autowired
   private DtoFactory dtoFactory;
   
-  @RequestMapping("/login")
+  @RequestMapping(Ui.URL_LOGIN)
   public String index(Model model) {
        
     return "login";

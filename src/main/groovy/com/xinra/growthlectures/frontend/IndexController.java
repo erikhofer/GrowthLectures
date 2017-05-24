@@ -22,7 +22,7 @@ public class IndexController {
   @Autowired
   private DtoFactory dtoFactory;
   
-  @RequestMapping("/")
+  @RequestMapping(Ui.URL_INDEX)
   public String index(Model model) {
     
     // PopularLecures
