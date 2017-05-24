@@ -52,7 +52,9 @@ body {
   }
 }
 
-.login-content {
-  margin-top: 170px;
+.content-panel {
+	@media (min-width: $screen-md-min) {
+	  margin-top: 170px;
+	}
 }
 
