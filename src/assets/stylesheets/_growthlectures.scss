@@ -52,3 +52,9 @@ body {
   }
 }
 
+.content-panel {
+	@media (min-width: $screen-md-min) {
+	  margin-top: 170px;
+	}
+}
+
