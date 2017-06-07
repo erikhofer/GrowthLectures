@@ -33,22 +33,40 @@ body {
   
 .search {
   .input-group {
-    //width: 400px;
   } 
 }   
 
 .lecture {
+  .listened {
+    color: green;
+  }
+  .lecturer {
+    font-weight: bold;
+  }
+}
+
+.lecture-summary {
   .thumbnail {
     margin-bottom: 0;
   }  
   h3 {
     margin-top: 0;
   }
-  .listened {
-    color: green;
-   }
-  .lecturer {
-    font-weight: bold;
+
+}
+
+.lecture-full {
+  h1 {
+    line-height: 125%; 
+  }
+  .embed-responsive {
+    margin-top: 15px;
+  }
+  .additional-information {
+    margin-top: 5px;
+  }
+  .added-date {
+    text-align: right;
   }
 }
 
