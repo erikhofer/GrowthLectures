@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 
 @CompileStatic
 @Service
-class LectureServiceImpl extends GrowthlecturesServiceImpl {
+class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureService {
 	
 	@Autowired
 	private DtoFactory dtoFactory;
@@ -26,8 +26,8 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl {
 		dto.name = "Hallo i bims"
 		dto.slug = "hallo-i-bims"
     NamedDto lecturer = dtoFactory.createDto(NamedDto.class);
-    lecturer.setName("Lorenz Kock");
-    lecturer.setSlug("lorenzkock");
+    lecturer.setName("Peter Lustig");
+    lecturer.setSlug("peter-lustig");
     dto.setLecturer(lecturer);
     dto.setAdded(LocalDate.of(2017, 12, 01));
     

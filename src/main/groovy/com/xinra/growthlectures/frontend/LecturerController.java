@@ -1,5 +1,6 @@
 package com.xinra.growthlectures.frontend;
 
+import com.xinra.growthlectures.service.LectureService;
 import com.xinra.growthlectures.service.LecturerService;
 import com.xinra.growthlectures.service.SlugNotFoundException;
 import com.xinra.nucleus.service.DtoFactory;
@@ -16,13 +17,17 @@ public class LecturerController {
   LecturerService lecturerService;
   
   @Autowired
+  LectureService lectureService;
+  
+  @Autowired
   private DtoFactory dtoFactory;
   
   @RequestMapping(Ui.URL_LECTURERS + "/{SLUG}")
   public String lecturer(Model model, @PathVariable("SLUG") String slug) {
-    
+    System.out.println(slug);
     try {
       model.addAttribute("lecturer", lecturerService.getLecturer(slug));
+      model.addAttribute("lectures", lectureService.getPopularLectures());
     } catch (SlugNotFoundException snfe) {
       throw new ResourceNotFoundException();
     }

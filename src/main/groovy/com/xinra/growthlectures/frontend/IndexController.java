@@ -45,8 +45,8 @@ public class IndexController {
     // Pupular Lecuturers 
     ArrayList<ContainerDto> popularLecturers = new ArrayList<ContainerDto>();
     ContainerDto lec = dtoFactory.createDto(ContainerDto.class);
-    lec.setName("Lorenz Kock");
-    lec.setSlug("lorenzkock");
+    lec.setName("Peter Lustig");
+    lec.setSlug("peter-lustig");
     popularLecturers.add(lec);
     model.addAttribute("popularLecturers", popularLecturers);
     
