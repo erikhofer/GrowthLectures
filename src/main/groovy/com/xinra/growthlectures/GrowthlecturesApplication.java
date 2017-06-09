@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan({"com.xinra.growthlectures", "asset.pipeline.springboot"})
+@ComponentScan({"com.xinra.growthlectures", "asset.pipeline.springboot", "com.xinra.nucleus"})
 public class GrowthlecturesApplication {
 
   public static void main(String[] args) {
