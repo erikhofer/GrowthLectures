@@ -8,9 +8,28 @@
         <div class="input-group input-group-lg">
           <input type="text" class="form-control" placeholder="Search for..." />
           <span class="input-group-btn">
-          <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+            <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
           </span>
         </div>
+        <div th:if="!${searchFieldOnly}"  class="input-group input-group-lg">
+          <span class="input-group-addon">Sort by</span>
+          <div class="input-group-btn">
+		        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+		        <ul class="dropdown-menu">
+		          <li><a href="#">Action</a></li>
+		          <li><a href="#">Another action</a></li>
+		          <li><a href="#">Something else here</a></li>
+		        </ul>
+		      </div>
+        </div>
+        <div th:if="!${searchFieldOnly}" class="btn-group" data-toggle="buttons">
+				  <label class="btn btn-default btn-lg">
+				    <input type="radio" name="order" id="decending" autocomplete="off" checked="checked"/><span class="glyphicon glyphicon-chevron-up"/>
+				  </label>
+				  <label class="btn btn-default btn-lg">
+				    <input type="radio" name="order" id="ascending" autocomplete="off"/><span class="glyphicon glyphicon-chevron-down"/>
+				  </label>
+				</div>
       </form>
     </div>
   </body>
