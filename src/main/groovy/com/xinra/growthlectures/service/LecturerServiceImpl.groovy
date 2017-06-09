@@ -1,5 +1,6 @@
 package com.xinra.growthlectures.service
 
+import com.xinra.growthlectures.entity.Lecturer
 import com.xinra.growthlectures.entity.LecturerRepository
 import com.xinra.nucleus.service.DtoFactory
 import groovy.transform.CompileStatic
@@ -30,5 +31,8 @@ class LecturerServiceImpl extends GrowthlecturesServiceImpl implements LecturerS
 	  return dto;
 	}
 	
+  public Collection<Lecturer> getAllLecturers() {
+    return (Collection<Lecturer>)lecturerRepo.findAll();
+  }
 
 }
