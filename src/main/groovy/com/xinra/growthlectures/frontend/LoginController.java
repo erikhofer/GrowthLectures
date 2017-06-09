@@ -16,7 +16,7 @@ public class LoginController {
   private DtoFactory dtoFactory;
   
   @RequestMapping(Ui.URL_LOGIN)
-  public String loginPage(Model model) {
+  public String login(Model model) {
     
     model.addAttribute("loginUser", dtoFactory.createDto(EmailLoginDto.class));
     
@@ -24,7 +24,7 @@ public class LoginController {
   }
   
   @RequestMapping(value = Ui.URL_LOGIN, method = RequestMethod.POST)
-  public String loginPagePost(Model model, EmailLoginDto user) {
+  public String loginPost(Model model, EmailLoginDto user) {
        
     System.out.println(user.getEmail());
     System.out.println(user.getPassword());

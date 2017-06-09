@@ -27,17 +27,17 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Growth Lectures</a>
+          <a class="navbar-brand" th:href="@{${@ui.URL_INDEX}}">Growth Lectures</a>
         </div>
     
         <div class="collapse navbar-collapse" id="topnav">
           <ul class="nav navbar-nav">
-            <li><a href="#">Categories</a></li>
-            <li><a href="#">Lecturers</a></li>
+            <li><a th:href="@{${@ui.URL_CATEGORIES}}">Categories</a></li>
+            <li><a th:href="@{${@ui.URL_LECTURERS}}">Lecturers</a></li>
           </ul>  
           <ul class="nav navbar-nav navbar-right"> 
-            <li><a href="#">Login</a></li>
-            <li><a href="#">Register</a></li>
+            <li><a th:href="@{${@ui.URL_LOGIN}}">Login</a></li>
+            <li><a th:href="@{${@ui.URL_REGISTER}}">Register</a></li>
           </ul>
         </div>
       </div>
