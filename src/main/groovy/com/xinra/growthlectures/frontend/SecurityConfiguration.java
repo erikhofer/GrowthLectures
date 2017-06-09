@@ -1,6 +1,7 @@
 package com.xinra.growthlectures.frontend;
 
 import com.xinra.growthlectures.entity.EmailLoginRepository;
+import com.xinra.growthlectures.service.AuthenticationProviderImpl;
 import com.xinra.growthlectures.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsServiceBean());
+    auth.authenticationProvider(new AuthenticationProviderImpl(emailLoginRepo));
   }
   
   @Override
