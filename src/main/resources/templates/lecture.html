@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<header>
+  <title>Login</title>
+</header>
+<body>
+  <div layout:fragment="content">
+    <div class="container">
+      <div class="lecture lecture-full">
+        <h1>
+          <span th:text="${lecture.category.name}" class="label label-default"></span>
+          <span th:text="${lecture.name}"></span>
+        </h1>
+        <div class="embed-responsive embed-responsive-16by9 lecture-video-frame">
+          <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/_S9xgqXHHwM?rel=0&amp;showinfo=0" allowfullscreen="yes"></iframe>
+        </div>
+        <div class="row">
+          <div class="col-md-7">
+            <h3>Description</h3>
+            <h3></h3>
+            <div class="description" th:text="${lecture.description}"></div>
+            <h3>Note</h3> 
+            <div class="comment-list">       
+              <div class="panel panel-default comment">
+                <div class="panel-body">Hier kommt die Notiz</div>
+              </div>  
+            </div>
+          </div>
+          <div class="col-md-5">
+            <h3>Video Information</h3>
+            <div class="panel panel-default">
+              <div class="panel-body">Ein paar Infos zum Video</div>
+            </div>
+            <h3>Watch more from <span th:text="${lecture.lecturer.name}"></span></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

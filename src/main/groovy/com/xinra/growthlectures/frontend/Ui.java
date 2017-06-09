@@ -14,6 +14,7 @@ public class Ui {
   public static final String URL_LECTURERS = "/lecturers";
   public static final String URL_LOGIN = "/login";
   public static final String URL_SEARCH = "/search";
+  public static final String URL_REGISTER = "/register";
   
   public String lectureUrl(LectureSummaryDto dto) {
     return String.format("%s/%s/%s", URL_CATEGORIES, dto.getCategory().getSlug(), dto.getSlug());

@@ -5,11 +5,11 @@
 </head>
 <body>
   <div layout:fragment="content">
-	  <div class="container">
-      <h1 th:text="${lecturer.name}"></h1>
-		  <!-- add search fragment here -->
+    <div class="container">
+      <h1 th:text="${category.name}"></h1>
+      <!-- add search fragment here -->
       <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${lectures})"></div>
     </div>
-	</div>
+  </div>
 </body>
 </html>
