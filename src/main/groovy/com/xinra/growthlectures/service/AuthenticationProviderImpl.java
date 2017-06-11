@@ -41,7 +41,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
       throw new BadCredentialsException(ERROR_MESSAGE);
     }
     
-    return new UsernamePasswordAuthenticationToken(email, password,
+    return new UsernamePasswordAuthenticationToken(login.getEmail(), password,
         UserDetailsServiceImpl.getAuthorities(login.getUser()));
   }
 
