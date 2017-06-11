@@ -1,9 +1,10 @@
 package com.xinra.growthlectures.service;
 
+import com.google.common.collect.ImmutableSet;
 import com.xinra.growthlectures.Util;
 import com.xinra.growthlectures.entity.EmailLogin;
 import com.xinra.growthlectures.entity.EmailLoginRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.xinra.nucleus.service.DtoFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,10 +19,11 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
   
   private static final String ERROR_MESSAGE = "Username or password is invalid!";
   
-  @Autowired
+  private DtoFactory dtoFactory;
   private EmailLoginRepository emailLoginRepo;
 
-  public AuthenticationProviderImpl(EmailLoginRepository emailLoginRepo) {
+  public AuthenticationProviderImpl(DtoFactory dtoFactory, EmailLoginRepository emailLoginRepo) {
+    this.dtoFactory = dtoFactory;
     this.emailLoginRepo = emailLoginRepo;
   }
 
@@ -41,7 +43,14 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
       throw new BadCredentialsException(ERROR_MESSAGE);
     }
     
-    return new UsernamePasswordAuthenticationToken(login.getEmail(), password,
+    //UserDto user = dtoFactory.createDto(UserDto.class);
+    //Workaround for https://github.com/xinra-nucleus/nucleus-service/issues/1
+    UserDto user = new UserDtoImpl();
+    user.setPk(login.getUser().getPk());
+    user.setName(login.getEmail());
+    user.setRoles(ImmutableSet.copyOf(login.getUser().getRoles()));
+    
+    return new UsernamePasswordAuthenticationToken(user, password,
         UserDetailsServiceImpl.getAuthorities(login.getUser()));
   }
 

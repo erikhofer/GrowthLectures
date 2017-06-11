@@ -4,6 +4,7 @@ import com.xinra.growthlectures.entity.EmailLoginRepository;
 import com.xinra.growthlectures.service.AuthenticationProviderImpl;
 import com.xinra.growthlectures.service.EmailLoginDto;
 import com.xinra.growthlectures.service.UserDetailsServiceImpl;
+import com.xinra.nucleus.service.DtoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -16,6 +17,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   
   @Autowired
+  private DtoFactory dtoFactory;
+  
+  @Autowired
   private EmailLoginRepository emailLoginRepo;
   
   @Override
@@ -26,7 +30,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsServiceBean());
-    auth.authenticationProvider(new AuthenticationProviderImpl(emailLoginRepo));
+    auth.authenticationProvider(new AuthenticationProviderImpl(dtoFactory, emailLoginRepo));
   }
   
   @Override
