@@ -15,6 +15,7 @@
 	        </div>
 	        <div class="panel-body">
 	          <div class="alert alert-danger" th:if="${error}">Incorrect e-mail or password!</div>
+	          <div class="alert alert-success" th:if="${logout}">You have been logged out.</div>
 	          <form class="form-horizontal" th:object="${emailLoginDto}" th:action="@{${@ui.URL_LOGIN}}" method="post">
 	            <div class="form-group">
 	              <label for="inputEmail" class="col-sm-3 control-label">E-Mail</label>
