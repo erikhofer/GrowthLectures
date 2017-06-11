@@ -2,6 +2,7 @@ package com.xinra.growthlectures.frontend;
 
 import com.xinra.growthlectures.entity.EmailLoginRepository;
 import com.xinra.growthlectures.service.AuthenticationProviderImpl;
+import com.xinra.growthlectures.service.EmailLoginDto;
 import com.xinra.growthlectures.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +30,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.authorizeRequests().antMatchers("/").permitAll();
+    http
+        .authorizeRequests().antMatchers("/").permitAll()
+        .and()
+            .formLogin()
+            .loginPage(Ui.URL_LOGIN)
+            .usernameParameter(EmailLoginDto.Email)
+        .and()
+            .logout()
+            .logoutSuccessUrl(Ui.URL_INDEX);
   }
-
+  
 }
