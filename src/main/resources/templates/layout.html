@@ -35,9 +35,17 @@
             <li><a th:href="@{${@ui.URL_CATEGORIES}}">Categories</a></li>
             <li><a th:href="@{${@ui.URL_LECTURERS}}">Lecturers</a></li>
           </ul>  
-          <ul class="nav navbar-nav navbar-right"> 
+          <ul sec:authorize="!isAuthenticated()" class="nav navbar-nav navbar-right"> 
             <li><a th:href="@{${@ui.URL_LOGIN}}">Login</a></li>
             <li><a th:href="@{${@ui.URL_REGISTER}}">Register</a></li>
+          </ul>
+          <ul sec:authorize="isAuthenticated()" class="nav navbar-nav navbar-right"> 
+            <li class="dropdown">
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> <span sec:authentication="name"></span> <span class="caret"></span></a>
+		          <ul class="dropdown-menu">
+		            <li><a th:href="@{${@ui.URL_LOGOUT}}">Logout</a></li>
+		          </ul>
+		        </li>
           </ul>
         </div>
       </div>

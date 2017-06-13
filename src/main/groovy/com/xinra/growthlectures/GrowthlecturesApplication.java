@@ -6,6 +6,7 @@ import com.xinra.growthlectures.entity.Lecture;
 import com.xinra.growthlectures.entity.LectureRepository;
 import com.xinra.growthlectures.entity.Lecturer;
 import com.xinra.growthlectures.entity.LecturerRepository;
+import com.xinra.growthlectures.service.UserService;
 import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -22,6 +23,9 @@ public class GrowthlecturesApplication implements CommandLineRunner {
   }
   
   @Autowired
+  private UserService userService;
+  
+  @Autowired
   private LecturerRepository lecturerRepo;
   
   @Autowired
@@ -32,6 +36,8 @@ public class GrowthlecturesApplication implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
+    
+    userService.register("herbert@yahoo.de", "123");
     
     Lecturer l = new Lecturer();
     l.setSlug("peter-lustig");
