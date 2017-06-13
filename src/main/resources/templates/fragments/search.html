@@ -4,21 +4,19 @@
   </head>
   <body>
     <div th:fragment="search-input" class="container">
-      <form class="form-inline search">
+      <form th:attr="action=@{${@ui.URL_SEARCH}}" class="form-inline search">
         <div class="input-group input-group-lg">
-          <input type="text" class="form-control" placeholder="Search for..." />
+          <input type="text" class="form-control" name="q" placeholder="Search for..." />
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
           </span>
         </div>
         <div th:if="!${searchFieldOnly}"  class="input-group input-group-lg">
           <span class="input-group-addon">Sort by</span>
           <div class="input-group-btn">
-		        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+		        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span th:text="${searchCurrentOrder}"></span> <span class="caret"></span></button>
 		        <ul class="dropdown-menu">
-		          <li><a href="#">Action</a></li>
-		          <li><a href="#">Another action</a></li>
-		          <li><a href="#">Something else here</a></li>
+					    <li th:each="order : ${searchOrders}"><a th:href="@{${searchPath}(q=${searchQuery},orderby=${order.value})}"  th:attr="data-value=${order.value}" th:text="${order.name}"></a></li>
 		        </ul>
 		      </div>
         </div>
