@@ -19,11 +19,17 @@
             <h3>Description</h3>
             <h3></h3>
             <div class="description" th:text="${lecture.description}"></div>
-            <h3>Note</h3> 
-            <div class="comment-list">       
-              <div class="panel panel-default comment">
-                <div class="panel-body">Hier kommt die Notiz</div>
-              </div>  
+            <h3>Note</h3>        
+            <div class="panel panel-default comment">
+              <div sec:authorize="!isAuthenticated()" class="panel-body"><a th:href="@{${@ui.URL_LOGIN}}">Log in</a> to add notes to lectures!</div>
+              <div sec:authorize="isAuthenticated()" class="panel-body">
+                <button th:if="${note eq null}" class="btn btn-primary" id="note-add">Add a note</button>
+                <div id="note-content" th:text="${note}"></div>
+                <div id="note-form">
+                  <div class="form-group"><textarea class="form-control" rows="15"></textarea></div>
+                  <div class="form-group text-right"><button id="note-cancel" class="btn btn-default">Cancel</button> <button id="note-save" class="btn btn-primary">Save</button></div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="col-md-5">
@@ -36,6 +42,10 @@
         </div>
       </div>
     </div>
+  </div>
+  
+  <div layout:fragment="scripts">
+    <script sec:authorize="isAuthenticated()" src="/assets/lecture.js"></script>
   </div>
 </body>
 </html>
