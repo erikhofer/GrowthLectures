@@ -1,5 +1,6 @@
 package com.xinra.growthlectures.service;
 
+import com.google.javascript.jscomp.ConformanceRules.BanUnknownDirectThisPropsReferences
 import com.xinra.growthlectures.entity.Category
 import com.xinra.growthlectures.entity.CategoryRepository
 import com.xinra.nucleus.service.DtoFactory
@@ -34,4 +35,30 @@ class CategoryServiceImpl extends GrowthlecturesServiceImpl implements CategoryS
   public Collection<Category> getAllCategories() {
     return (Collection<Category>)categoryRepo.findAll();
   }
+  
+  public Category findCategory(String slug) throws SlugNotFoundException {
+    Category cat = categoryRepo.findBySlug(slug);
+    if(cat == null) {
+      throw new SlugNotFoundException();
+    }
+    return cat;
+  }
+  
+  public boolean doesExists(String slug) {
+    Category cat = categoryRepo.findBySlug(slug);
+    if(cat == null) return false;
+    return true;
+  }
+  
+  public Collection<NamedDto> getAllCategoriesAsNamedDto() {
+    Collection<NamedDto> dtos = new ArrayList<NamedDto>();
+    for (category in this.getAllCategories()) {
+      NamedDto newCategory = dtoFactory.createDto(NamedDto.class);
+      newCategory.setName(category.getName());
+      newCategory.setSlug(category.getSlug());
+      dtos.add(newCategory);
+    }
+    return dtos;    
+  }
+ 
 }
