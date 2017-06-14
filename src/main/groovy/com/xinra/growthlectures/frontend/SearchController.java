@@ -65,6 +65,11 @@ public class SearchController {
           OrderBy.RATING, "Rating"
         );
     
+    Map<OrderBy, String> icons = ImmutableMap.of(
+        OrderBy.ADDED, "glyphicon glyphicon-calendar",
+        OrderBy.RATING, "glyphicon glyphicon-star-empty"
+      );
+    
     for (OrderBy order : names.keySet()) {
       
       if (order == currentOrder) {
@@ -74,13 +79,15 @@ public class SearchController {
       OrderByDto orderDto = dtoFactory.createDto(OrderByDto.class);
       orderDto.setValue(order.name().toLowerCase());
       orderDto.setName(names.get(order));
+      orderDto.setIcon(icons.get(order));
       orders.add(orderDto);
     }
     
     model.addAttribute("searchQuery", queryParam);
     model.addAttribute("searchPath", path);
     model.addAttribute("searchOrders", orders);
-    model.addAttribute("searchCurrentOrder", names.get(currentOrder));
+    model.addAttribute("searchCurrentOrderName", names.get(currentOrder));
+    model.addAttribute("searchCurrentOrderIcon", icons.get(currentOrder));
   }
   
 }

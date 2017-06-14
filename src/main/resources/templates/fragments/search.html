@@ -14,9 +14,9 @@
         <div th:if="!${searchFieldOnly}"  class="input-group input-group-lg">
           <span class="input-group-addon">Sort by</span>
           <div class="input-group-btn">
-		        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span th:text="${searchCurrentOrder}"></span> <span class="caret"></span></button>
+		        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span th:attr="class=${searchCurrentOrderIcon}"></span> <span th:text="${searchCurrentOrderName}"></span> <span class="caret"></span></button>
 		        <ul class="dropdown-menu">
-					    <li th:each="order : ${searchOrders}"><a th:href="@{${searchPath}(q=${searchQuery},orderby=${order.value})}"  th:attr="data-value=${order.value}" th:text="${order.name}"></a></li>
+					    <li th:each="order : ${searchOrders}"><a th:href="@{${searchPath}(q=${searchQuery},orderby=${order.value})}"  th:attr="data-value=${order.value}"  ><span th:attr="class=${order.icon}"></span> <span th:text="${order.name}"></span></a></li>
 		        </ul>
 		      </div>
         </div>

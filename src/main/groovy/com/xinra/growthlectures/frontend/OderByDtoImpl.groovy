@@ -8,5 +8,6 @@ class OrderByDtoImpl extends GrowthlecturesDtoImpl {
   
   def String value;
   def String name;
+  def String icon;
 
 }
