@@ -1,7 +1,14 @@
 package com.xinra.growthlectures.service
 
+import com.google.javascript.jscomp.Denormalize
+import com.xinra.growthlectures.Util
 import com.xinra.growthlectures.entity.Lecture
 import com.xinra.growthlectures.entity.LectureRepository
+import com.xinra.growthlectures.entity.LectureUserData
+import com.xinra.growthlectures.entity.LectureUserDataRepository
+import com.xinra.growthlectures.entity.User
+import com.xinra.growthlectures.entity.UserRepository
+import com.xinra.nucleus.entity.EntityFactory
 import com.xinra.nucleus.service.DtoFactory
 import groovy.transform.CompileStatic
 import java.time.LocalDate
@@ -16,7 +23,16 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
 	private DtoFactory dtoFactory;
 	
   @Autowired
-  private LectureRepository lecureRepo;
+  private LectureRepository lectureRepo;
+  
+  @Autowired
+  private LectureUserDataRepository lectureUserDataRepo;
+  
+  @Autowired
+  private UserRepository userRepo;
+  
+  @Autowired
+  private EntityFactory entityFactory;
   
 	//TODO: remove
 	private LectureSummaryDto getSampleLecture() {
@@ -75,6 +91,43 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
 		return dtos;
   }
   
+  public String getLectureId(String lectureSlug, String categorySlug) 
+      throws SlugNotFoundException {
+    Objects.requireNonNull(lectureSlug);
+    Objects.requireNonNull(categorySlug);
+    
+    String[][] result = lectureRepo.getIdAndCatgorySlug(lectureSlug);
+    
+    if (result.length == 0 || !result[0][1].equals(categorySlug)) {
+      throw new SlugNotFoundException();
+    }
+    
+    return result[0][0];
+  }
   
-	
+  public String getNote(String lectureId, String userId) {
+    String[][] result = lectureUserDataRepo.getNote(lectureId, userId);
+	  return result.length == 0 ? null : result[0][0];
+  }
+  
+  public String saveNote(String lectureId, String userId, String note) {
+	  Objects.requireNonNull(lectureId);
+	  Objects.requireNonNull(userId);
+	  
+	  LectureUserData lectureUserData = lectureUserDataRepo
+	      .findByLectureIdAndUserId(lectureId, userId);
+	  
+	  if (lectureUserData == null) {
+		  lectureUserData = entityFactory.createEntity(LectureUserData.class);
+		  lectureUserData.setUser(userRepo.findOne(userId));
+		  lectureUserData.setLecture(lectureRepo.findOne(lectureId));
+	  }
+	  
+	  note = Util.normalize(note);
+	  lectureUserData.setNote(note);
+	  lectureUserDataRepo.save(lectureUserData);
+	  
+	  return note;
+  }
+  
 }

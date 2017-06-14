@@ -43,9 +43,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
       throw new BadCredentialsException(ERROR_MESSAGE);
     }
     
-    //UserDto user = dtoFactory.createDto(UserDto.class);
-    //Workaround for https://github.com/xinra-nucleus/nucleus-service/issues/1
-    UserDto user = new UserDtoImpl();
+    UserDto user = dtoFactory.createDto(UserDto.class);
     user.setPk(login.getUser().getPk());
     user.setName(login.getEmail());
     user.setRoles(ImmutableSet.copyOf(login.getUser().getRoles()));
