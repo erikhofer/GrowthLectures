@@ -141,14 +141,14 @@ public class CategoryController {
         responseList.add("Description must be shorter than 4000 chars!");
       }
       if(category == null) {
-        responseList.add("The category is not valid!");
+        responseList.add("The selected category is not valid!");
       } else {
         if(!categoryService.doesExists(newLectureDto.getNewcategory())) {
           responseList.add("The selected category does not exist!");
         }
       }
       if(lecturer == null) {
-        responseList.add("Invalid Lecturer");
+        responseList.add("The selected lecturer is not valid!");
       } else {
         if(!lecturerService.doesExists(newLectureDto.getNewlecturer())) {
           responseList.add("The selected lecturer does not exist!");
