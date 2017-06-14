@@ -21,12 +21,16 @@ public class IndexController {
   
   @Autowired
   private DtoFactory dtoFactory;
-  
+
+  @Autowired
+  SearchController searchController;
+
   @RequestMapping(Ui.URL_INDEX)
   public String index(Model model) {
     
-    // PopularLecures
+    searchController.addSearchModel(model, Ui.URL_CATEGORIES, true);
     
+    // PopularLecures
     List<LectureSummaryDto> popularLectures = lectureServiceImpl.getPopularLectures();
     model.addAttribute("popularLectures", popularLectures );
     

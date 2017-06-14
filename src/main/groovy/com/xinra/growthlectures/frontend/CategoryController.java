@@ -35,7 +35,7 @@ public class CategoryController {
   @RequestMapping(Ui.URL_CATEGORIES)
   public String categoryList(Model model) {
     
-    searchController.addSearchModel(model, Ui.URL_CATEGORIES);
+    searchController.addSearchModel(model, Ui.URL_CATEGORIES, false);
     
     ArrayList<ContainerDto> allCategories = new ArrayList<ContainerDto>();
  

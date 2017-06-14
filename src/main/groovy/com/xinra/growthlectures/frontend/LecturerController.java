@@ -33,7 +33,7 @@ public class LecturerController {
   @RequestMapping(Ui.URL_LECTURERS)
   public String lecturerList(Model model) {
     
-    searchController.addSearchModel(model, Ui.URL_LECTURERS);
+    searchController.addSearchModel(model, Ui.URL_LECTURERS, false);
     
     ArrayList<ContainerDto> allLecturers = new ArrayList<ContainerDto>();
     for(Lecturer l : lecturerService.getAllLecturers()) {
@@ -75,7 +75,7 @@ public class LecturerController {
   @RequestMapping(Ui.URL_LECTURERS + "/{SLUG}")
   public String lecturer(Model model, @PathVariable("SLUG") String slug) {
     
-    searchController.addSearchModel(model, Ui.URL_LECTURERS);
+    searchController.addSearchModel(model, Ui.URL_LECTURERS, false);
     
     System.out.println(slug);
     try {

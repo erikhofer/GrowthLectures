@@ -31,17 +31,24 @@ public class SearchController {
   @RequestMapping(Ui.URL_SEARCH)
   public String search(Model model) {
     
-    addSearchModel(model, Ui.URL_SEARCH);
+    addSearchModel(model, Ui.URL_SEARCH, false);
 
     model.addAttribute("results", Collections.emptyList());
     
     return "search";
   }
   
-  public void addSearchModel(Model model, String path) {
-  
-    OrderBy currentOrder;
+  public void addSearchModel(Model model, String path, boolean searchFieldOnly) {
     
+    model.addAttribute("searchFieldOnly", searchFieldOnly);
+    model.addAttribute("searchPath", path);
+    
+    
+    if (searchFieldOnly) {
+      return;
+    }
+
+    OrderBy currentOrder; 
     String orderParam = context.getParameter("orderby");    
     if (orderParam == null) {
       currentOrder = DEFAULT_ORDER;
@@ -52,6 +59,8 @@ public class SearchController {
         currentOrder = DEFAULT_ORDER;
       }
     }
+    
+    boolean decending = !"false".equals(context.getParameter("decending"));
     
     String queryParam = context.getParameter("q");
     if (queryParam == null) {
@@ -83,11 +92,16 @@ public class SearchController {
       orders.add(orderDto);
     }
     
+    OrderByDto currentOrderDto = dtoFactory.createDto(OrderByDto.class);
+    currentOrderDto.setValue(currentOrder.name().toLowerCase());
+    currentOrderDto.setName(names.get(currentOrder));
+    currentOrderDto.setIcon(icons.get(currentOrder));
+    
     model.addAttribute("searchQuery", queryParam);
-    model.addAttribute("searchPath", path);
+    
     model.addAttribute("searchOrders", orders);
-    model.addAttribute("searchCurrentOrderName", names.get(currentOrder));
-    model.addAttribute("searchCurrentOrderIcon", icons.get(currentOrder));
+    model.addAttribute("searchCurrentOrder", currentOrderDto);
+    model.addAttribute("searchDecending", decending);
   }
   
 }
