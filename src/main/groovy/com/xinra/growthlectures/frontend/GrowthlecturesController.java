@@ -22,4 +22,12 @@ public abstract class GrowthlecturesController {
     return principal == null ? null : (UserDto) ((Authentication) principal).getPrincipal();
   }
   
+  /**
+   * @return The ID of the current user or {@code null} if the user is not authenticated.
+   */
+  public String getUserId() {
+    UserDto dto = getUserDto();
+    return dto == null ? null : dto.getPk().getId();
+  }
+  
 }

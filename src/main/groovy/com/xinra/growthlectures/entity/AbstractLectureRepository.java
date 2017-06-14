@@ -10,5 +10,7 @@ public interface AbstractLectureRepository<T extends Lecture>
   
   @Query("SELECT l.id, l.category.slug FROM Lecture l WHERE l.slug = :slug")
   String[][] getIdAndCatgorySlug(@Param("slug") String slug);
+  
+  Lecture findBySlugAndCategorySlug(String slug, String categorySlug);
 
 }

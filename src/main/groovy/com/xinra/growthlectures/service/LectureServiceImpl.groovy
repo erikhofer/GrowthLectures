@@ -1,12 +1,11 @@
 package com.xinra.growthlectures.service
 
-import com.google.javascript.jscomp.Denormalize
 import com.xinra.growthlectures.Util
+import com.xinra.growthlectures.entity.AbstractLectureUserDataRepository
 import com.xinra.growthlectures.entity.Lecture
 import com.xinra.growthlectures.entity.LectureRepository
 import com.xinra.growthlectures.entity.LectureUserData
 import com.xinra.growthlectures.entity.LectureUserDataRepository
-import com.xinra.growthlectures.entity.User
 import com.xinra.growthlectures.entity.UserRepository
 import com.xinra.nucleus.entity.EntityFactory
 import com.xinra.nucleus.service.DtoFactory
@@ -55,8 +54,7 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
 		return dto as LectureSummaryDto;
 	}
   
-  private LectureSummaryDto convertToDto(Lecture lecture) {
-    LectureSummaryDto dto = dtoFactory.createDto(LectureSummaryDto.class);
+  private void convertToSummaryDto(Lecture lecture, LectureSummaryDto dto) {
     dto.description = lecture.getDescription();
     dto.rating = lecture.getRatingAverage()
     NamedDto cat = new NamedDtoImpl() as NamedDto;
@@ -70,10 +68,13 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
     lecturer.setSlug(lecture.getLecturer().getSlug());
     dto.setLecturer(lecturer);
     dto.setAdded(lecture.getAdded());
-    
-    return dto;
   }
   
+  private LectureSummaryDto convertToSummaryDto(Lecture lecture) {
+	  LectureSummaryDto dto = dtoFactory.createDto(LectureSummaryDto.class);
+	  convertToSummaryDto(lecture, dto);
+	  return dto;
+  }
 
 	public List<LectureSummaryDto> getRecentLectures() {
 		List<LectureSummaryDto> dtos = new ArrayList<>();
@@ -90,6 +91,33 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
 		}
 		return dtos;
   }
+  
+  public LectureDto getBySlug(String lectureSlug, String categorySlug, String userId)
+      throws SlugNotFoundException {
+		Objects.requireNonNull(lectureSlug);
+		Objects.requireNonNull(categorySlug);
+		
+		Lecture lecture = lectureRepo.findBySlugAndCategorySlug(lectureSlug, categorySlug);
+		
+		if (lecture == null) {
+			throw new SlugNotFoundException();
+		}
+		
+		LectureDto lectureDto = dtoFactory.createDto(LectureDto.class);
+		convertToSummaryDto(lecture, lectureDto);
+		
+		if (userId != null) {
+  		LectureUserData userData = lectureUserDataRepo
+  		    .findByLectureIdAndUserId(lecture.getPk().getId(), userId);
+  			
+  		if (userData != null) {
+  			lectureDto.setNote(userData.getNote());
+  			lectureDto.setUserRating(userData.getRating());
+  		}
+		}
+		
+		return lectureDto;
+	}
   
   public String getLectureId(String lectureSlug, String categorySlug) 
       throws SlugNotFoundException {
