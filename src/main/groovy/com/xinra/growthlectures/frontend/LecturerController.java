@@ -27,8 +27,13 @@ public class LecturerController {
   @Autowired
   private DtoFactory dtoFactory;
   
+  @Autowired
+  SearchController searchController;
+  
   @RequestMapping(Ui.URL_LECTURERS)
   public String lecturerList(Model model) {
+    
+    searchController.addSearchModel(model, Ui.URL_LECTURERS);
     
     ArrayList<ContainerDto> allLecturers = new ArrayList<ContainerDto>();
     for(Lecturer l : lecturerService.getAllLecturers()) {
@@ -69,6 +74,9 @@ public class LecturerController {
   
   @RequestMapping(Ui.URL_LECTURERS + "/{SLUG}")
   public String lecturer(Model model, @PathVariable("SLUG") String slug) {
+    
+    searchController.addSearchModel(model, Ui.URL_LECTURERS);
+    
     System.out.println(slug);
     try {
       model.addAttribute("lecturer", lecturerService.getLecturer(slug));

@@ -29,10 +29,14 @@ public class CategoryController {
   @Autowired
   CategoryService categoryService;
   
+  @Autowired
+  SearchController searchController;
+  
   @RequestMapping(Ui.URL_CATEGORIES)
   public String categoryList(Model model) {
     
-
+    searchController.addSearchModel(model, Ui.URL_CATEGORIES);
+    
     ArrayList<ContainerDto> allCategories = new ArrayList<ContainerDto>();
  
     Collection<Category> categories = categoryService.getAllCategories();

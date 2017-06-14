@@ -5,6 +5,7 @@
 </head>
 <body>
   <div layout:fragment="content">
+    <div th:replace="fragments/search :: search-input"></div>
 	  <div class="container">
       <h1 th:text="${lecturer.name}"></h1>
 		  <!-- add search fragment here -->
