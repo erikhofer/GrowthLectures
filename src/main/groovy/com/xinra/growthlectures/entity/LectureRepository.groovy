@@ -17,6 +17,8 @@ public interface AbstractLectureRepository<T extends Lecture>
   
   Lecture findBySlugAndCategorySlug(String slug, String categorySlug);
 
+  Iterable<Lecture> findByCategorySlug(String categorySlug);
+  
   @Query("SELECT l.name FROM Lecture l WHERE l.slug = :slug")
   String getNameBySlug(@Param("slug") String slug);
   

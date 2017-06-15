@@ -95,11 +95,13 @@ public class CategoryController {
   public String category(Model model, 
                           @PathVariable("SLUG") String slug) throws SlugNotFoundException {
  
-    NamedDto category = categoryService.getCategory(slug);
-    List<LectureSummaryDto> lectures = lectureService.getPopularLectures();
+    NamedDto category = categoryService.getCategory(slug);    
+    List<LectureSummaryDto> lectures = lectureService.getLecturesByCategory(slug);
    
     model.addAttribute("category", category);
     model.addAttribute("lectures", lectures );
+    
+    // New Lecture
     model.addAttribute("allCategories", categoryService.getAllCategories());
     model.addAttribute("allLecturers", lecturerService.getAllLecturers());
     model.addAttribute("newLecture", dtoFactory.createDto(NewLectureDto.class));

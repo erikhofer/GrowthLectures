@@ -56,6 +56,14 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
   @Autowired
   private EntityFactory entityFactory;
   
+  public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
+    
+    return Streams.stream(lectureRepo.findByCategorySlug(categorySlug))
+        .map(this::convertToSummaryDto)
+        .collect(Collectors.toList());
+    
+  }
+
   public List<LectureSummaryDto> getAllLectures() {
     
     return Streams.stream(lectureRepo.findAll())
