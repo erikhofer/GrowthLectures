@@ -4,7 +4,9 @@
   </head>
   <body>
     <div th:fragment="search-input" class="container">
-      <form th:attr="action=@{${@ui.URL_SEARCH}}" class="form-inline search">
+      <form th:attr="action=@{${searchPath}}" class="form-inline search">
+        <input th:if="!${searchFieldOnly}" type="hidden" name="orderby" th:value="${searchCurrentOrder.value}" />
+        <input th:if="!${searchFieldOnly}" type="hidden" name="decending" th:value="${searchDecending}" />
         <div class="input-group input-group-lg">
           <input type="text" class="form-control" name="q" th:value="${searchQuery}" placeholder="Search for..." />
           <span class="input-group-btn">

@@ -28,7 +28,7 @@ public class IndexController {
   @RequestMapping(Ui.URL_INDEX)
   public String index(Model model) {
     
-    searchController.addSearchModel(model, Ui.URL_CATEGORIES, true);
+    searchController.addSearchModel(model, Ui.URL_SEARCH, true);
     
     // PopularLecures
     List<LectureSummaryDto> popularLectures = lectureServiceImpl.getPopularLectures();
