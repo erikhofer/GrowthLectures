@@ -86,6 +86,8 @@ public class CategoryController {
     model.addAttribute("categoryList", allCategories );
     model.addAttribute("firstMainCat", firstMainCat);
     model.addAttribute("secondMainCat", secondMainCat);
+    
+    model.addAttribute("newCategory", dtoFactory.createDto(NamedDto.class));
      
     return "categories";
   }
