@@ -1,6 +1,6 @@
 package com.xinra.growthlectures.service;
 
-import com.google.javascript.jscomp.ConformanceRules.BanUnknownDirectThisPropsReferences
+import com.xinra.growthlectures.Util
 import com.xinra.growthlectures.entity.Category
 import com.xinra.growthlectures.entity.CategoryRepository
 import com.xinra.nucleus.service.DtoFactory
@@ -59,6 +59,19 @@ class CategoryServiceImpl extends GrowthlecturesServiceImpl implements CategoryS
       dtos.add(newCategory);
     }
     return dtos;    
+  }
+  
+  public NamedDto createCategory(NamedDto newCategoryDto) {
+    Category newCategory = new Category();
+    
+    String name = Util.normalize(newCategoryDto.getName());
+    String slug = Util.normalize(newCategoryDto.getSlug());
+    newCategory.setName(name);
+    newCategory.setSlug(slug);
+    categoryRepo.save(newCategory);
+    
+    return newCategoryDto;
+    
   }
  
 }

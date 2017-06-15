@@ -1,3 +1,6 @@
+var slugDidChange = false;
+var slugAtBegin;
+
 $("form#newCategory").submit(function(e){
   
     $("#new-category-errors").addClass("hidden");
@@ -18,6 +21,7 @@ $("form#newCategory").submit(function(e){
         processData: false,
         timeout : 100000,
         success : function(data) {
+          console.log(data);
           // Show success msg
           $("#new-category-success").removeClass("hidden");
           
@@ -36,5 +40,34 @@ $("form#newCategory").submit(function(e){
           console.log("DONE");
         }
     });
+    
     e.preventDefault();
+});
+
+function showErrors(errorList) {
+    $.each(errorList, function(key, value) {
+      $("#new-category-errors").append("<p>"+value+"</p>");      
+    });
+    $("#new-category-errors").removeClass("hidden");
+}
+
+function showError(error) {
+  showErrors([error]);
+}
+
+$("#input-category-slug").focus(function() {
+  slugAtBegin = $(this).val();
+});
+
+$("#input-category-slug").blur(function() {
+  if(!slugDidChange) {
+    if(slugAtBegin != $(this).val()) {
+      slugDidChange = true;
+    }    
+  }
+});
+
+$("#input-category-title").keyup(function() {
+  if(!slugDidChange)   
+    $("#input-category-slug").val(slugify($(this).val()));
 });
