@@ -1,10 +1,10 @@
 package com.xinra.growthlectures.service
 
+import com.xinra.growthlectures.Util
 import com.xinra.growthlectures.entity.Lecturer
 import com.xinra.growthlectures.entity.LecturerRepository
 import com.xinra.nucleus.service.DtoFactory
 import groovy.transform.CompileStatic
-import java.util.Collection
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -57,4 +57,16 @@ class LecturerServiceImpl extends GrowthlecturesServiceImpl implements LecturerS
     return dtos;
   }
   
+  public NamedDto createLecturer(NamedDto newLecurerDto) {
+    Lecturer newLecturer = new Lecturer();
+    
+    String name = Util.normalize(newLecurerDto.getName());
+    String slug = Util.normalize(newLecurerDto.getSlug());
+    newLecturer.setName(name);
+    newLecturer.setSlug(slug);
+    lecturerRepo.save(newLecturer);
+    
+    return newLecurerDto;
+    
+  }
 }
