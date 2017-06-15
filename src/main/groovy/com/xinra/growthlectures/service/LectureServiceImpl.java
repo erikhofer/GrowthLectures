@@ -39,12 +39,6 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
   private CategoryRepository categoryRepo;
   
   @Autowired
-  private CategoryService categoryService;
-  
-  @Autowired
-  private LecturerService lecturerService;
-  
-  @Autowired
   private MediaRepository mediaRepo;
 
   @Autowired
@@ -56,13 +50,21 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
   @Autowired
   private EntityFactory entityFactory;
   
-  public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
+public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
     
     return Streams.stream(lectureRepo.findByCategorySlug(categorySlug))
         .map(this::convertToSummaryDto)
         .collect(Collectors.toList());
     
   }
+
+  public List<LectureSummaryDto> getLecturesByLecturer(String lecturerSlug) {
+  
+  return Streams.stream(lectureRepo.findByLecturerSlug(lecturerSlug))
+      .map(this::convertToSummaryDto)
+      .collect(Collectors.toList());
+  
+}
 
   public List<LectureSummaryDto> getAllLectures() {
     

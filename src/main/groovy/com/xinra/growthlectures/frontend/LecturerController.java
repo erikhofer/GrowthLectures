@@ -75,10 +75,10 @@ public class LecturerController {
   
   @RequestMapping(Ui.URL_LECTURERS + "/{SLUG}")
   public String lecturer(Model model, @PathVariable("SLUG") String slug) {
-    System.out.println(slug);
+    
     try {
       model.addAttribute("lecturer", lecturerService.getLecturer(slug));
-      model.addAttribute("lectures", lectureService.getPopularLectures());
+      model.addAttribute("lectures", lectureService.getLecturesByLecturer(slug));
     } catch (SlugNotFoundException snfe) {
       throw new ResourceNotFoundException();
     }
