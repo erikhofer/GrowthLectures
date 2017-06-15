@@ -12,7 +12,9 @@
           <span th:text="${lecture.name}"></span>
         </h1>
         <div class="embed-responsive embed-responsive-16by9 lecture-video-frame">
-          <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/_S9xgqXHHwM?rel=0&amp;showinfo=0" allowfullscreen="yes"></iframe>
+          <th:block th:switch="${lecture.media.type.name()}">
+            <iframe th:case="YOUTUBE" class="embed-responsive-item" th:src="@{https://www.youtube.com/embed/}+${lecture.media.youtubeId}+@{?start=}+${lecture.media.start}+@{&amp;end=}+${lecture.media.end}" allowfullscreen="yes"></iframe>
+          </th:block>    
         </div>
         <div class="row">
           <div class="col-md-7">

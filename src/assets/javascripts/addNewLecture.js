@@ -4,6 +4,7 @@ var YOUTUBE_EXP = /https?:\/\/((.+\.)?youtube.com|youtu.be)\/(.+)/i;
 var VIMEO_EXP = /https?:\/\/(.*\.)?vimeo.com\/(video\/)?(\d+)(\?(.*))?/i;
 
 var slugDidChange = false;
+var slugAtBegin;
 
 $("#new-lecture-continue").click(function() {
   
@@ -62,7 +63,7 @@ function getYoutubeVideoData(link) {
         returnData["title"] = snippet["title"];
         returnData["description"] = snippet["description"];
         returnData["id"] = youtubeId;
-        returnData["platform"] = "youtube";
+        returnData["platform"] = "YOUTUBE";
           
         thumbnails = snippet["thumbnails"]
         thumb = thumbnails["maxres"];
@@ -186,8 +187,16 @@ function addZero(i) {
   return i;
 }
 
+$("#input-lecture-slug").focus(function() {
+  slugAtBegin = $(this).val();
+});
+
 $("#input-lecture-slug").blur(function() {
-  slugDidChange = true;
+  if(!slugDidChange) {
+    if(slugAtBegin != $(this).val()) {
+      slugDidChange = true;
+    }    
+  }
 });
 
 $("#input-lecture-title").keyup(function() {
@@ -234,7 +243,6 @@ $("form#newLecture").submit(function(e){
           },
           error : function(e) {
             errorMsgs = e.responseJSON;
-            console.log(e);
             showErrors(errorMsgs);
           },
           done : function(e) {
@@ -249,6 +257,10 @@ $("#create-lecture-modal").on('hidden.bs.modal', function (e) {
   resetForm($("form#newLecture"));  
 })
 
+$("#create-lecture-modal").on('show.bs.modal', function (e) {
+  $("#input-lecture-category").val($("#input-lecture-category").data("default"));
+})
+
 function resetForm(form) {
   form.trigger("reset");
   $("#input-lecture-description").text("");
@@ -261,6 +273,9 @@ function resetForm(form) {
   
   $("#new-lecture-link-form").removeClass("hidden");
   $("#new-lecture-data-form").addClass("hidden");
+  
+  slugDidChange = false;
+  slugAtBegin = "";
 }
 
 $("#close-success-alert").click(function() {
