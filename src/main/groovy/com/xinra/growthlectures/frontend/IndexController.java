@@ -1,8 +1,7 @@
 package com.xinra.growthlectures.frontend;
 
-import com.xinra.growthlectures.service.ContainerDto;
-import com.xinra.growthlectures.service.ContainerDtoImpl;
 import com.xinra.growthlectures.service.LectureServiceImpl;
+import com.xinra.growthlectures.service.ContainerDto;
 import com.xinra.growthlectures.service.LectureSummaryDto;
 import com.xinra.nucleus.service.DtoFactory;
 import java.util.ArrayList;
@@ -25,14 +24,13 @@ public class IndexController {
   @RequestMapping(Ui.URL_INDEX)
   public String index(Model model) {
     
-    // PopularLecures
-    
+    // PopularLectures
     List<LectureSummaryDto> popularLectures = lectureServiceImpl.getPopularLectures();
-    model.addAttribute("popularLectures", popularLectures );
+    model.addAttribute("popularLectures", popularLectures);
     
     // Recent Lecturers
     List<LectureSummaryDto> recentLectures = lectureServiceImpl.getRecentLectures();
-    model.addAttribute("recentLectures", recentLectures );
+    model.addAttribute("recentLectures", recentLectures);
     
     // Popular Categories
     ArrayList<ContainerDto> popularCategories = new ArrayList<ContainerDto>();

@@ -9,13 +9,13 @@
           <div class="row">
             <div class="col-sm-3">
               <a th:href="@{${@ui.lectureUrl(lecture)}}" class="thumbnail">
-                <img src="http://lorempixel.com/400/200" alt="TODO" />
+                <img th:src="${lecture.media.thumbnail}" />
               </a>
             </div>
             <div class="col-sm-9">
               <h3>
                 <a th:href="@{${@ui.categoryUrl(lecture.category)}}"><span th:text="${lecture.category.name}" class="label label-default"></span></a> 
-                <a th:href="@{${@ui.lectureUrl(lecture)}}" th:text="${lecture.name}"></a> <span class="glyphicon glyphicon-ok listened"></span>
+                <a th:href="@{${@ui.lectureUrl(lecture)}}" th:text="${@formatter.shortString(lecture.name, 55)}"></a> <span th:if="${lecture.played}" class="glyphicon glyphicon-ok listened"></span>
               </h3>
               <div class="row">
                 <div class="col-sm-4">
@@ -25,7 +25,7 @@
                   <p><span class="glyphicon glyphicon-calendar"></span> <span th:text="@{${@formatter.date(lecture.added)}}"></span></p>
                 </div>
               </div>
-              <p th:text="${lecture.description}"></p>
+              <p th:text="${@formatter.shortString(lecture.description,230)}"></p>
               <div class="row">
                 <div class="col-sm-4">
                   <input id="input-id" name="input-name" type="number" class="rating" min="1" max="5" step="1" data-size="xs" data-show-caption="false" /> 
@@ -34,7 +34,7 @@
                   Clicks
                 </div>
                 <div class="col-sm-4">
-                  <span class="glyphicon glyphicon-time"></span> <span th:text="${@formatter.duration(lecture.duration)}"></span>
+                  <span class="glyphicon glyphicon-time"></span> <span th:text="${@formatter.duration(lecture.media.end-lecture.media.start)}"></span>
                 </div>
               </div>
             </div>

@@ -16,5 +16,6 @@ class NewLectureDtoImpl extends NamedDtoImpl {
   def String end;
   def String videoId;
   def String platform;
+  def String thumbnail;
   
 }

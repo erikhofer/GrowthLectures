@@ -157,7 +157,6 @@ public class CategoryController {
     String start = Util.normalize(newLectureDto.getStart());
     String end = Util.normalize(newLectureDto.getEnd());
     
-    
     if (videoId == null || url == null || platform == null) {
       responseList.add("Invalid Url - Please cancel and restart adding!");      
     } else {

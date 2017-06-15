@@ -21,4 +21,6 @@ abstract class Media extends BaseEntity {
   @Column(nullable = false)
   def Integer duration;
   
+  def String thumbnail;
+  
 }

@@ -55,18 +55,18 @@ public class LecturerController {
     secondMainLecturer.setAmount(124);
     
     List<LectureSummaryDto> firstLecturerLectures = lectureService.getPopularLectures();
-    while(firstLecturerLectures.size() > 3) {
+    while (firstLecturerLectures.size() > 3) {
       firstLecturerLectures.remove(3);      
     }
-    model.addAttribute("firstMainLecturerLectures", firstLecturerLectures );
+    model.addAttribute("firstMainLecturerLectures", firstLecturerLectures);
     
     List<LectureSummaryDto> secondLecturerLectures = lectureService.getPopularLectures();
-    while(secondLecturerLectures.size() > 3) {
+    while (secondLecturerLectures.size() > 3) {
       secondLecturerLectures.remove(3);      
     }
-    model.addAttribute("secondMainLecturerLectures", secondLecturerLectures );
+    model.addAttribute("secondMainLecturerLectures", secondLecturerLectures);
     
-    model.addAttribute("lecturerList", allLecturers );
+    model.addAttribute("lecturerList", allLecturers);
     model.addAttribute("firstMainLecturer", firstMainLecturer);
     model.addAttribute("secondMainLecturer", secondMainLecturer);
     model.addAttribute("newLecturer", dtoFactory.createDto(NamedDto.class));

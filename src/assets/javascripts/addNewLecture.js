@@ -30,7 +30,6 @@ $("#new-lecture-continue").click(function() {
   
   if(data != null && data["title"] != "") {
     
-    console.log(data);
     fillDataInForm(data);
     $("#new-lecture-link-form").addClass("hidden");
     $("#new-lecture-data-form").removeClass("hidden");
@@ -134,6 +133,7 @@ function fillDataInForm(data) {
   $("#input-lecture-end").val(parseTime(parseInt(data["start"])+parseInt(data["duration"])));
   $("#input-lecture-description").text(data["description"]);
   $("#new-lecture-thumb").attr("src", data["thumbnail"]["url"]);
+  $("#input-lecture-thumbnail").val(data["thumbnail"]["url"]);
 }
 
 function generateYoutubeUrl(youtubeId) {

@@ -9,5 +9,6 @@ class MediaDtoImpl extends GrowthlecturesDtoImpl {
   def String url
   def Integer start
   def Integer end
+  def String thumbnail
   
 }
