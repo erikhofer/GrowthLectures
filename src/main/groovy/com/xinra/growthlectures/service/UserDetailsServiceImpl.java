@@ -34,14 +34,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
       EmailLogin login = emailLoginRepo.findByEmailIgnoreCase(username);
       Objects.requireNonNull(login);
       
-      Set<GrantedAuthority> authorities = login.getUser().getRoles().stream()
-          .map(Role::toString)
-          .map(SimpleGrantedAuthority::new)
-          .collect(ImmutableSet.toImmutableSet());
-      
-      return new User(login.getEmail(), login.getPassword(), authorities);
+      return new User(login.getEmail(), login.getPassword(), getAuthorities(login.getUser()));
     } catch (Exception ex) {
       throw new UsernameNotFoundException("User not found!");
     }
+  }
+  
+  /**
+   * Converts the roles of a user entity to Spring Security authorities.
+   */
+  public static Set<GrantedAuthority> getAuthorities(com.xinra.growthlectures.entity.User user) {
+    return user.getRoles().stream()
+        .map(Role::toString)
+        .map(SimpleGrantedAuthority::new)
+        .collect(ImmutableSet.toImmutableSet());
   }
 }

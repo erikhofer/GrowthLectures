@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
   <title>This is title</title>
@@ -6,10 +6,95 @@
 <body>
   <div layout:fragment="content">
     <div class="container">
-      <h1 th:text="${category.name}"></h1>
+      <div id="new-lecture-success" class="alert alert-success hidden">
+        <button type="button" id="close-success-alert" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        The lecture has been created successfully. It can be watched <a id="new-lecture-link" href="">here</a>.
+      </div>
+      <h1 style="float: left;" th:text="${category.name}"></h1>
+      <div style="float: right;">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create-lecture-modal"><span class="glyphicon glyphicon-plus"></span> Create new lecture</button>
+      </div>
+      <div style="clear: both;"></div>
       <!-- add search fragment here -->
       <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${lectures})"></div>
     </div>
+    
+    <div class="modal fade" id="create-lecture-modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="newLecture" th:object="${newLecture}" th:action="@{${@ui.categoryUrl(category)}}" method="post">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">New lecture</h4>
+            </div>
+            <div class="modal-body">
+              <div id="new-lecture-errors" class="alert alert-danger hidden"></div>
+              <div id="new-lecture-link-form">
+                <div class="form-group">
+                 <label for="input-lecture-link">Video Link</label>
+                  <input th:field="*{link}" type="url" class="form-control" id="input-lecture-link" placeholder="Video Link" autocomplete="off" />
+                  <input th:field="*{videoId}" id="input-lecture-video-id" type="hidden" />
+                  <input th:field="*{platform}" id="input-lecture-platform" type="hidden" />
+                </div>
+              </div>
+              <div id="new-lecture-data-form" class="hidden">
+                <div class="form-group">
+                  <label for="input-lecture-title">Title</label>
+                  <input th:field="*{name}" type="text" class="form-control" id="input-lecture-title" placeholder="" />
+                </div>
+                <div class="form-group">
+                  <label for="input-lecture-title">Slug</label>
+                  <input th:field="*{slug}" type="text" class="form-control" id="input-lecture-slug" placeholder="" />
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <a class="thumbnail">
+                      <img id="new-lecture-thumb" alt=""/>
+                    </a>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="input-lecture-start">Start at (e.g. 2:40)</label>
+                      <input th:field="*{start}" type="time" class="form-control" id="input-lecture-start" />
+                    </div>
+                    <div class="form-group">
+                      <label for="input-lecture-end">Stop at (e.g. 4:22)</label>
+                      <input th:field="*{end}" type="time" class="form-control" id="input-lecture-end" />
+                    </div>
+                  </div>              
+                </div>
+                <div class="form-group">
+                  <label for="input-lecture-description">Description</label>
+                  <textarea th:field="*{description}" id="input-lecture-description" class="form-control" rows="5"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="input-lecture-lecturer">Lecturer</label>
+                  <select th:field="*{newlecturer}" id="input-lecture-lecturer" class="form-control">
+                    <option value="">Select Lecturer</option>
+                    <option th:each="lecturer : ${allLecturers}" th:value="${lecturer.slug}" th:text="${lecturer.name}"></option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="input-lecture-category">Category</label>
+                  <select th:field="*{newcategory}" id="input-lecture-category" class="form-control">
+                    <option value="">Select Category</option>
+                    <option th:each="category : ${allCategories}" th:value="${category.slug}" th:text="${category.name}"></option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button id="new-lecture-continue" type="button" class="btn btn-primary">Continue</button>
+              <input id="new-lecture-submit" type="submit" disabled="true" name="input-lecture-submit" value="Add lecture" class="btn btn-success" />
+            </div>
+          </form>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  </div>
+  <div layout:fragment="scripts">
+    <script src="/assets/addNewLecture.js"></script>
   </div>
 </body>
 </html>

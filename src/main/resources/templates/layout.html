@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    
+    <meta th:name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+    
     <title>Growth Lectures</title>
 
     <!-- Bootstrap -->
@@ -35,9 +39,17 @@
             <li><a th:href="@{${@ui.URL_CATEGORIES}}">Categories</a></li>
             <li><a th:href="@{${@ui.URL_LECTURERS}}">Lecturers</a></li>
           </ul>  
-          <ul class="nav navbar-nav navbar-right"> 
+          <ul sec:authorize="!isAuthenticated()" class="nav navbar-nav navbar-right"> 
             <li><a th:href="@{${@ui.URL_LOGIN}}">Login</a></li>
             <li><a th:href="@{${@ui.URL_REGISTER}}">Register</a></li>
+          </ul>
+          <ul sec:authorize="isAuthenticated()" class="nav navbar-nav navbar-right"> 
+            <li class="dropdown">
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> <span sec:authentication="name"></span> <span class="caret"></span></a>
+		          <ul class="dropdown-menu">
+		            <li><a th:href="@{${@ui.URL_LOGOUT}}">Logout</a></li>
+		          </ul>
+		        </li>
           </ul>
         </div>
       </div>
@@ -55,5 +67,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-star-rating/4.0.1/js/star-rating.min.js"></script> -->
     <script src="/assets/script.js"></script>
+
+    <div layout:fragment="scripts" th:remove="tag"></div>
   </body>
 </html>

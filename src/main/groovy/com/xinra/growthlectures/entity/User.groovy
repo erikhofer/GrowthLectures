@@ -6,6 +6,7 @@ import javax.persistence.ElementCollection
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
+import javax.persistence.FetchType
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
@@ -17,7 +18,7 @@ class User extends BaseEntity {
 	@OneToMany(mappedBy = "user")
 	def Set<Login> logins;
   
-  @ElementCollection
+  @ElementCollection(fetch = FetchType.EAGER)
   @Enumerated(EnumType.STRING)
   def Set<Role> roles;
 	
