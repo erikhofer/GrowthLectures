@@ -5,8 +5,9 @@ import com.xinra.nucleus.interfacegenerator.InterfaceNamingStrategy
 import com.xinra.nucleus.service.DtoImpl
 import org.codehaus.groovy.transform.trait.Traits.Implemented
 
-class LectureDtoImpl extends GrowthlecturesDtoImpl {
+class LectureDtoImpl extends LectureSummaryDtoImpl {
 	
-	def String title;
+	def String note;
+  def Integer userRating;
 	
 }

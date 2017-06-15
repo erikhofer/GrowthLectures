@@ -6,6 +6,7 @@ import com.xinra.growthlectures.entity.Lecture;
 import com.xinra.growthlectures.entity.LectureRepository;
 import com.xinra.growthlectures.entity.Lecturer;
 import com.xinra.growthlectures.entity.LecturerRepository;
+import com.xinra.growthlectures.service.LectureService;
 import com.xinra.growthlectures.service.UserService;
 import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class GrowthlecturesApplication implements CommandLineRunner {
   
   @Autowired
   private UserService userService;
+  
+  @Autowired
+  private LectureService lectureService;
   
   @Autowired
   private LecturerRepository lecturerRepo;
@@ -67,9 +71,8 @@ public class GrowthlecturesApplication implements CommandLineRunner {
     lecture.setLecturer(l);
     lecture.setRatingAmount(3);
     lecture.setRatingAverage(1.5);
-    lecture.setSlug("loewenzahn_-_folge_3");
+    lecture.setSlug("lz3");
     lectureRepo.save(lecture);
-    
     
   }
 
