@@ -10,7 +10,7 @@
         <button type="button" id="close-success-alert" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         The lecture has been created successfully. It can be watched <a id="new-lecture-link" href="">here</a>.
       </div>
-      <div style="float: right;">
+      <div style="float: right;" sec:authorize="hasRole('MODERATOR')">
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create-lecture-modal"><span class="glyphicon glyphicon-plus"></span> Create new lecture</button>
       </div>
       <h1 th:text="${category.name}"></h1>
@@ -18,7 +18,7 @@
       <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${lectures})"></div>
     </div>
     
-    <div class="modal fade" id="create-lecture-modal" tabindex="-1" role="dialog">
+    <div class="modal fade" id="create-lecture-modal" tabindex="-1" role="dialog" sec:authorize="hasRole('MODERATOR')">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form id="newLecture" th:object="${newLecture}" th:action="@{${@ui.URL_CATEGORIES}}" method="post">
@@ -88,12 +88,12 @@
               <input id="new-lecture-submit" type="submit" disabled="true" name="input-lecture-submit" value="Add lecture" class="btn btn-success" />
             </div>
           </form>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+        </div>
+      </div>
+    </div>
   </div>
   <div layout:fragment="scripts">
-    <script src="/assets/addNewLecture.js"></script>
+    <script src="/assets/addNewLecture.js" sec:authorize="hasRole('MODERATOR')"></script>
   </div>
 </body>
 </html>
