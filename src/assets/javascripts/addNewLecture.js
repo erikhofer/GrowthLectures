@@ -201,41 +201,47 @@ $("form#newLecture").submit(function(e){
     $("#new-lecture-success").addClass("hidden");
     $("#new-lecture-errors").html("");
     
-    formData = new FormData($(this)[0]);
-       
-    form = $(this);
-    $.ajax({
-        url: window.location.pathname,
-        type: 'POST',
-        data: formData,
-        async: false,
-        cache: false,
-        contentType: false,
-        processData: false,
-        timeout : 100000,
-        success : function(data) {
-          // Reset Form
-          $("#new-lecture-success").removeClass("hidden");
-          
-          // Close Modal
-          $("#create-lecture-modal").modal("hide");
-          
-          // Show Link to created Video
-          $("#new-lecture-link").attr("href", data);
-          $("#new-lecture-success").removeAttr("hidden");
-          
-          resetForm(form);
-          
-        },
-        error : function(e) {
-          errorMsgs = e.responseJSON;
-          showErrors(errorMsgs);
-        },
-        done : function(e) {
-          console.log("DONE");
-        }
-    });
-
+    var category = $("#input-lecture-category").val();
+    if(category == "") {
+      showError("Please select a category!");
+    } else {
+      formData = new FormData($(this)[0]);
+    
+      form = $(this);
+      var requestUrl = form.attr("action")+"/"+category;
+      $.ajax({
+          url: requestUrl,
+          type: 'POST',
+          data: formData,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          timeout : 100000,
+          success : function(data) {
+            // Reset Form
+            $("#new-lecture-success").removeClass("hidden");
+            
+            // Close Modal
+            $("#create-lecture-modal").modal("hide");
+            
+            // Show Link to created Video
+            $("#new-lecture-link").attr("href", data);
+            $("#new-lecture-success").removeAttr("hidden");
+            
+            resetForm(form);
+            
+          },
+          error : function(e) {
+            errorMsgs = e.responseJSON;
+            console.log(e);
+            showErrors(errorMsgs);
+          },
+          done : function(e) {
+            console.log("DONE");
+          }
+      });
+    }
     e.preventDefault();
 });
 

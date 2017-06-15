@@ -107,7 +107,7 @@ public class CategoryController {
   
   @ResponseBody
   @RequestMapping(value = Ui.URL_CATEGORIES + "/{SLUG}", method = RequestMethod.POST)
-  public List<String> category(NewLectureDto newLectureDto, HttpServletResponse response) throws SlugNotFoundException {
+  public List<String> category(@PathVariable("SLUG") String categorySlug, NewLectureDto newLectureDto, HttpServletResponse response) throws SlugNotFoundException {
      
     List<String> responseList = new ArrayList<String>();
     
@@ -116,7 +116,7 @@ public class CategoryController {
     String slug = Util.normalize(newLectureDto.getSlug());
     String description = Util.normalize(newLectureDto.getDescription());
     String url = Util.normalize(newLectureDto.getLink());
-    String category = Util.normalize(newLectureDto.getNewcategory());
+    String category = Util.normalize(categorySlug);
     String lecturer = Util.normalize(newLectureDto.getNewlecturer());
     String platform = Util.normalize(newLectureDto.getPlatform());
     
@@ -143,8 +143,10 @@ public class CategoryController {
       if(category == null) {
         responseList.add("The selected category is not valid!");
       } else {
-        if(!categoryService.doesExists(newLectureDto.getNewcategory())) {
-          responseList.add("The selected category does not exist!");
+        try {
+          categoryService.getCategory(category);
+        } catch (SlugNotFoundException snfe) {
+          throw new ResourceNotFoundException();
         }
       }
       if(lecturer == null) {
