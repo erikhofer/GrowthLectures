@@ -134,6 +134,9 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
   }
   
   public String getNote(String lectureId, String userId) {
+	  Objects.requireNonNull(lectureId);
+	  Objects.requireNonNull(userId);
+	  
     String[][] result = lectureUserDataRepo.getNote(lectureId, userId);
 	  return result.length == 0 ? null : result[0][0];
   }
@@ -152,10 +155,25 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
 	  }
 	  
 	  note = Util.normalize(note);
+	  if (note.length() > 4000) {
+		  note = note.substring(0, 4000);
+	  }
 	  lectureUserData.setNote(note);
 	  lectureUserDataRepo.save(lectureUserData);
 	  
 	  return note;
   }
   
+  public void deleteNote(String lectureId, String userId) {
+	  Objects.requireNonNull(lectureId);
+	  Objects.requireNonNull(userId);
+	  
+	  LectureUserData lectureUserData = lectureUserDataRepo
+	      .findByLectureIdAndUserId(lectureId, userId);
+		
+		if (lectureUserData != null) {
+			lectureUserData.setNote(null);
+			lectureUserDataRepo.save(lectureUserData);
+		}
+  }
 }
