@@ -47,6 +47,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .hasAuthority(Role.MODERATOR.toString())
             .antMatchers(HttpMethod.POST, Ui.URL_LECTURERS)
                 .hasAuthority(Role.MODERATOR.toString())
+            .antMatchers(HttpMethod.POST, Ui.URL_CATEGORIES + "/*")
+                .hasAuthority(Role.MODERATOR.toString())
         .and()
             .formLogin()
             .loginPage(Ui.URL_LOGIN)

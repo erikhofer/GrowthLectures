@@ -6,7 +6,7 @@
 <body>
   <div layout:fragment="content">
     <div class="container">
-      <div style="float: right;">
+      <div style="float: right;" sec:authorize="hasRole('MODERATOR')">
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create-category-modal"><span class="glyphicon glyphicon-plus"></span> Create new category</button>
       </div>
       <h1>Categories</h1>
@@ -33,7 +33,7 @@
       </div>
     </div>
     
-    <div class="modal fade" id="create-category-modal" tabindex="-1" role="dialog">
+    <div class="modal fade" id="create-category-modal" tabindex="-1" role="dialog" sec:authorize="hasRole('MODERATOR')">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form id="newCategory" th:object="${newCategory}" th:action="@{${@ui.URL_CATEGORIES}}" method="post">
@@ -61,12 +61,12 @@
               <input id="new-lecture-submit" type="submit" name="input-category-submit" value="Add category" class="btn btn-success" />
             </div>
           </form>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+        </div>
+      </div>
+    </div>
   </div>
   <div layout:fragment="scripts">
-    <script src="/assets/addNewCategory.js"></script>
+    <script src="/assets/addNewCategory.js" sec:authorize="hasRole('MODERATOR')"></script>
   </div>
 </body>
 </html>
