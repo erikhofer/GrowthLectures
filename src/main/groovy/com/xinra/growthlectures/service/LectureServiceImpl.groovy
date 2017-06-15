@@ -9,7 +9,6 @@ import com.xinra.growthlectures.entity.Media
 import com.xinra.growthlectures.entity.MediaRepository
 import com.xinra.growthlectures.entity.UserRepository
 import com.xinra.growthlectures.entity.YoutubeMedia
-import com.xinra.growthlectures.entity.YoutubeMediaRepository
 import com.xinra.nucleus.entity.EntityFactory
 import com.xinra.nucleus.service.DtoFactory
 import groovy.transform.CompileStatic
@@ -47,9 +46,6 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
   
   @Autowired
   private EntityFactory entityFactory;
-  
-  @Autowired
-  private YoutubeMediaRepository youtubeMediaRepo;
   
 	//TODO: remove
 	private LectureSummaryDto getSampleLecture() {
