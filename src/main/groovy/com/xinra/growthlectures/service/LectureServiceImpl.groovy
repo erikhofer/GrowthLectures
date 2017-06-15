@@ -1,6 +1,5 @@
 package com.xinra.growthlectures.service
 
-import com.github.slugify.Slugify
 import com.xinra.growthlectures.Util
 import com.xinra.growthlectures.entity.Lecture
 import com.xinra.growthlectures.entity.LectureRepository
