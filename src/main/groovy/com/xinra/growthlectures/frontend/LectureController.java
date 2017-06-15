@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -44,7 +44,7 @@ public class LectureController extends GrowthlecturesController {
    * REST controller for retrieving a lecture note.
    */
   @ResponseBody
-  @RequestMapping(PATH + "/note")
+  @RequestMapping(path = PATH + "/note", method = RequestMethod.GET)
   public String getNote(
       @PathVariable(value = "category") String category,
       @PathVariable(value = "lecture") String lecture) {
@@ -65,11 +65,29 @@ public class LectureController extends GrowthlecturesController {
   public String postNote(
       @PathVariable("category") String category,
       @PathVariable("lecture") String lecture,
-      @RequestParam("note") String note) {
+      @RequestBody String note) {
     
     try {
       String lectureId = lectureService.getLectureId(lecture, category);
       return lectureService.saveNote(lectureId, getUserId(), note);
+    } catch (SlugNotFoundException snfe) {
+      throw new ResourceNotFoundException();
+    }
+  }
+  
+  /**
+   * REST controller for saving a lecture note.
+   */
+  @ResponseBody
+  @RequestMapping(path = PATH + "/note", method = RequestMethod.DELETE)
+  public String deleteNote(
+      @PathVariable("category") String category,
+      @PathVariable("lecture") String lecture) {
+    
+    try {
+      String lectureId = lectureService.getLectureId(lecture, category);
+      lectureService.deleteNote(lectureId, getUserId());
+      return null;
     } catch (SlugNotFoundException snfe) {
       throw new ResourceNotFoundException();
     }

@@ -9,6 +9,7 @@ import com.xinra.growthlectures.entity.Media
 import com.xinra.growthlectures.entity.MediaRepository
 import com.xinra.growthlectures.entity.UserRepository
 import com.xinra.growthlectures.entity.YoutubeMedia
+import com.xinra.growthlectures.entity.YoutubeMediaRepository
 import com.xinra.nucleus.entity.EntityFactory
 import com.xinra.nucleus.service.DtoFactory
 import groovy.transform.CompileStatic
@@ -46,6 +47,9 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
   
   @Autowired
   private EntityFactory entityFactory;
+  
+  @Autowired
+  private YoutubeMediaRepository youtubeMediaRepo;
   
 	//TODO: remove
 	private LectureSummaryDto getSampleLecture() {
@@ -179,13 +183,7 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
     
     return newLectureSummaryDto;
   }
-  
-  public boolean doesSlugExists(String slug) {
-    Lecture l = lectureRepo.findBySlug(slug);
-    if(l == null) return false;
-    return true;
-  }
-  
+
   public LectureDto getBySlug(String lectureSlug, String categorySlug, String userId)
       throws SlugNotFoundException {
 		Objects.requireNonNull(lectureSlug);
@@ -228,6 +226,9 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
   }
   
   public String getNote(String lectureId, String userId) {
+	  Objects.requireNonNull(lectureId);
+	  Objects.requireNonNull(userId);
+	  
     String[][] result = lectureUserDataRepo.getNote(lectureId, userId);
 	  return result.length == 0 ? null : result[0][0];
   }
@@ -246,10 +247,32 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
 	  }
 	  
 	  note = Util.normalize(note);
+	  if (note.length() > 4000) {
+		  note = note.substring(0, 4000);
+	  }
 	  lectureUserData.setNote(note);
 	  lectureUserDataRepo.save(lectureUserData);
 	  
 	  return note;
+  }
+    
+  public void deleteNote(String lectureId, String userId) {
+	  Objects.requireNonNull(lectureId);
+	  Objects.requireNonNull(userId);
+	  
+	  LectureUserData lectureUserData = lectureUserDataRepo
+	      .findByLectureIdAndUserId(lectureId, userId);
+		
+		if (lectureUserData != null) {
+			lectureUserData.setNote(null);
+			lectureUserDataRepo.save(lectureUserData);
+		}
+  }
+  
+  public boolean doesSlugExists(String slug) {
+    Lecture l = lectureRepo.findBySlug(slug);
+    if(l == null) return false;
+    return true;
   }
   
 }
