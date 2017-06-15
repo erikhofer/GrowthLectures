@@ -1,15 +1,15 @@
 package com.xinra.growthlectures.service
 
 import com.xinra.growthlectures.Util
-import com.xinra.growthlectures.entity.AbstractLectureUserDataRepository
 import com.xinra.growthlectures.entity.Lecture
 import com.xinra.growthlectures.entity.LectureRepository
 import com.xinra.growthlectures.entity.LectureUserData
 import com.xinra.growthlectures.entity.LectureUserDataRepository
+import com.xinra.growthlectures.entity.Media
+import com.xinra.growthlectures.entity.MediaRepository
 import com.xinra.growthlectures.entity.UserRepository
-import com.xinra.nucleus.entity.EntityFactory
 import com.xinra.growthlectures.entity.YoutubeMedia
-import com.xinra.growthlectures.entity.YoutubeMediaRepository
+import com.xinra.nucleus.entity.EntityFactory
 import com.xinra.nucleus.service.DtoFactory
 import groovy.transform.CompileStatic
 import java.time.LocalDate
@@ -36,7 +36,7 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
   private LecturerService lecturerService;
   
   @Autowired
-  private YoutubeMediaRepository youtubeMediaRepo;
+  private MediaRepository mediaRepo;
 
   @Autowired
   private LectureUserDataRepository lectureUserDataRepo;
@@ -58,7 +58,7 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
 		dto.duration = 783;
 		dto.rating = 3.5D;
 		dto.name = "Hallo i bims"
-		dto.slug = "hallo-i-bims"
+		dto.slug = "lz3"
     NamedDto lecturer = dtoFactory.createDto(NamedDto.class);
     lecturer.setName("Peter Lustig");
     lecturer.setSlug("peter-lustig");
@@ -82,6 +82,19 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
     lecturer.setSlug(lecture.getLecturer().getSlug());
     dto.setLecturer(lecturer);
     dto.setAdded(lecture.getAdded());
+    
+    MediaDto mediaDto = null;
+    
+    if(lecture.getMedia() instanceof YoutubeMedia) {
+      mediaDto = dtoFactory.createDto(YoutubeMediaDto.class);
+      mediaDto.setType(MediaType.YOUTUBE);
+      YoutubeMedia youtubeMedia = (YoutubeMedia)lecture.getMedia();
+      mediaDto.setYoutubeId(youtubeMedia.getYoutubeId());
+    }
+    mediaDto.setStart(lecture.getMedia().getStart());
+    mediaDto.setEnd(lecture.getMedia().getStart()+lecture.getMedia().getDuration());
+    mediaDto.setUrl(lecture.getMedia().getUrl());
+    dto.setMedia(mediaDto);
   }
   
   private LectureSummaryDto convertToSummaryDto(Lecture lecture) {
@@ -133,6 +146,16 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
     String end = Util.normalize(newLectureDto.getEnd());
     String platform = Util.normalize(newLectureDto.getPlatform());
     
+    Media newMedia;
+    if(platform.equals(MediaType.YOUTUBE.name())) {
+      newMedia = new YoutubeMedia();
+      newMedia.setStart(Util.parseTime(start));
+      newMedia.setDuration(Util.parseTime(end) - Util.parseTime(start));
+      newMedia.setYoutubeId(videoId);
+      newMedia.setUrl(url);
+      mediaRepo.save(newMedia);
+    }
+    
     Lecture newLecture = new Lecture();
     newLecture.setName(title);
     newLecture.setDescription(description);
@@ -142,16 +165,10 @@ class LectureServiceImpl extends GrowthlecturesServiceImpl implements LectureSer
     newLecture.setRatingAmount(0);
     newLecture.setRatingAverage(0d);
     newLecture.setSlug(slug);
+    newLecture.setMedia(newMedia);
     lectureRepo.save(newLecture);
    
-    if(platform.equals("youtube")) {
-      YoutubeMedia newMedia = new YoutubeMedia();
-      newMedia.setStart(Util.parseTime(start));
-      newMedia.setDuration(Util.parseTime(end) - Util.parseTime(start));
-      newMedia.setYoutubeId(videoId);
-      newMedia.setUrl(url);
-      youtubeMediaRepo.save(newMedia);
-    }
+    
     
     LectureSummaryDto newLectureSummaryDto = dtoFactory.createDto(LectureSummaryDto.class);
     newLectureSummaryDto.setSlug(newLecture.getSlug());

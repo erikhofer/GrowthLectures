@@ -6,6 +6,8 @@ import com.xinra.growthlectures.entity.Lecture;
 import com.xinra.growthlectures.entity.LectureRepository;
 import com.xinra.growthlectures.entity.Lecturer;
 import com.xinra.growthlectures.entity.LecturerRepository;
+import com.xinra.growthlectures.entity.MediaRepository;
+import com.xinra.growthlectures.entity.YoutubeMedia;
 import com.xinra.growthlectures.service.LectureService;
 import com.xinra.growthlectures.service.UserService;
 import java.time.LocalDate;
@@ -37,6 +39,9 @@ public class GrowthlecturesApplication implements CommandLineRunner {
   
   @Autowired
   private LectureRepository lectureRepo;
+  
+  @Autowired
+  private MediaRepository mediaRepo;
 
   @Override
   public void run(String... args) throws Exception {
@@ -62,6 +67,13 @@ public class GrowthlecturesApplication implements CommandLineRunner {
     c2.setName("Java-Entwicklung");
     c2.setSlug("java-entwicklung");
     categoryRepo.save(c2);
+        
+    YoutubeMedia media = new YoutubeMedia();
+    media.setUrl("https://www.youtube.com/embed/S0Vzykygwvk?rel=0&amp;showinfo=0");
+    media.setYoutubeId("S0Vzykygwvk");
+    media.setStart(0);
+    media.setDuration(1519);
+    mediaRepo.save(media);
     
     Lecture lecture = new Lecture();
     lecture.setAdded(LocalDate.now());
@@ -72,6 +84,7 @@ public class GrowthlecturesApplication implements CommandLineRunner {
     lecture.setRatingAmount(3);
     lecture.setRatingAverage(1.5);
     lecture.setSlug("lz3");
+    lecture.setMedia(media);
     lectureRepo.save(lecture);
     
   }
