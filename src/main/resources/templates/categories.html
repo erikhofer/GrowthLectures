@@ -6,6 +6,9 @@
 <body>
   <div layout:fragment="content">
     <div class="container">
+      <div style="float: right;" sec:authorize="hasRole('MODERATOR')">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create-category-modal"><span class="glyphicon glyphicon-plus"></span> Create new category</button>
+      </div>
       <h1>Categories</h1>
       <!-- add search fragment here -->
       
@@ -29,6 +32,41 @@
         </ul>
       </div>
     </div>
+    
+    <div class="modal fade" id="create-category-modal" tabindex="-1" role="dialog" sec:authorize="hasRole('MODERATOR')">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="newCategory" th:object="${newCategory}" th:action="@{${@ui.URL_CATEGORIES}}" method="post">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">New Category</h4>
+            </div>
+            <div class="modal-body">
+              <div id="new-category-success" class="alert alert-success hidden">
+                <button type="button" id="close-success-alert" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                The Category has been created successfully. It can be watched <a id="new-category-link" href="">here</a>.
+              </div>
+              <div id="new-category-errors" class="alert alert-danger hidden"></div>
+              <div class="form-group">
+                <label for="input-category-title">Title</label>
+                <input th:field="*{name}" type="text" class="form-control" id="input-category-title" placeholder="" />
+              </div>
+              <div class="form-group">
+                <label for="input-category-title">Slug</label>
+                <input th:field="*{slug}" type="text" class="form-control" id="input-category-slug" placeholder="" />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <input id="new-lecture-submit" type="submit" name="input-category-submit" value="Add category" class="btn btn-success" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div layout:fragment="scripts">
+    <script src="/assets/addNewCategory.js" sec:authorize="hasRole('MODERATOR')"></script>
   </div>
 </body>
 </html>

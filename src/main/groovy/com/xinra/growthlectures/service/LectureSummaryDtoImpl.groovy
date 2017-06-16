@@ -20,23 +20,29 @@ class LectureSummaryDtoImpl extends NamedDtoImpl {
   def Integer duration;
   def LocalDate added;
   
+  private MediaDto media;
   private NamedDto lecturer;
-  
   private NamedDto category;
   
+  public MediaDto getMedia() {
+    return media;
+  }
+  public void setMedia(MediaDto media) {
+    this.media = media;
+  }
   public NamedDto getLecturer() {
     return lecturer;
   }
-
   public void setLecturer(NamedDto lecturer) {
     this.lecturer = lecturer;
   }
-
   public NamedDto getCategory() {
     return category;
   }
-  
   public void setCategory(NamedDto category) {
     this.category = category;
   }
+  
+  
+  
 }

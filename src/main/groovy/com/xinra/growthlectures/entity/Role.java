@@ -9,4 +9,9 @@ public enum Role {
   MODERATOR,
   ADMIN;
   
+  @Override
+  public String toString() {
+    return "ROLE_" + super.toString();
+  }
+  
 }
