@@ -43,6 +43,9 @@
       </div>
     </div>
    
-    <div th:fragment="lecture-list (lectures)" th:each="lecture : ${lectures}" th:include="fragments/lecture-summary :: lecture-summary" th:with="lecture=${lecture}" th:remove="tag"></div>
+    <div th:fragment="lecture-list (lectures)" th:remove="tag">
+      <div th:if="${#lists.size(lectures) eq 0}" class="alert alert-warning" role="alert">There are currently no videos!</div>
+      <div th:if="${#lists.size(lectures) gt 0}" th:each="lecture : ${lectures}" th:include="fragments/lecture-summary :: lecture-summary" th:with="lecture=${lecture}"></div>
+    </div>
   </body>
 </html>
