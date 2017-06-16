@@ -16,4 +16,5 @@ public interface AbstractLecturerRepository<T extends Lecturer>
   @Query("SELECT l.name FROM Lecturer l WHERE l.slug = :slug")
   String getNameBySlug(@Param("slug") String slug);
   
+  Lecturer findOneBySlug(String slug);
 }

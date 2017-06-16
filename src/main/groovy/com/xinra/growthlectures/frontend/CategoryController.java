@@ -70,11 +70,12 @@ public class CategoryController {
                           @PathVariable("SLUG") String slug) throws SlugNotFoundException {
  
     try {
-      model.addAttribute("category", categoryService.getCategory(slug));
-      model.addAttribute("lectures", lectureService.getRecentLecturesByCategory(slug));
+      model.addAttribute("category", categoryService.getCategoryBySlug(slug));
     } catch (SlugNotFoundException snfe) {
       throw new ResourceNotFoundException();
     }
+    
+    model.addAttribute("lectures", lectureService.getRecentLecturesByCategory(slug));
     
     // New Lecture
     model.addAttribute("allCategories", categoryService.getAllCategories());
@@ -154,7 +155,7 @@ public class CategoryController {
         responseList.add("The selected category is not valid!");
       } else {
         try {
-          categoryService.getCategory(category);
+          categoryService.getCategoryBySlug(category);
         } catch (SlugNotFoundException snfe) {
           throw new ResourceNotFoundException();
         }

@@ -15,4 +15,6 @@ public interface AbstractCategoryRepository<T extends Category>
   @Query("SELECT c.name FROM Category c WHERE c.slug = :slug")
   String getNameBySlug(@Param("slug") String slug);
   
+  Category findOneBySlug(String slug);
+  
 }

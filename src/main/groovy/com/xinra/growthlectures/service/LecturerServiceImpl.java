@@ -35,9 +35,9 @@ class LecturerServiceImpl extends GrowthlecturesServiceImpl implements LecturerS
       return convertLecturer(randomLecturer);
   }
   
-  public ContainerDto getLecturer(String slug) throws SlugNotFoundException {
+  public ContainerDto getLecturerBySlug(String slug) throws SlugNotFoundException {
   
-    Lecturer l = lecturerRepo.findOne(slug);
+    Lecturer l = lecturerRepo.findOneBySlug(slug);
     if (l == null) {
       throw new SlugNotFoundException();
     }

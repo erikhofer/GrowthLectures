@@ -60,11 +60,12 @@ public class LecturerController {
   public String lecturer(Model model, @PathVariable("SLUG") String slug) {
     
     try {
-      model.addAttribute("lecturer", lecturerService.getLecturer(slug));
-      model.addAttribute("lectures", lectureService.getRecentLecturesByLecturer(slug));
+      model.addAttribute("lecturer", lecturerService.getLecturerBySlug(slug));
     } catch (SlugNotFoundException snfe) {
       throw new ResourceNotFoundException();
     }
+
+    model.addAttribute("lectures", lectureService.getRecentLecturesByLecturer(slug));
     
     return "lecturer";
   }
