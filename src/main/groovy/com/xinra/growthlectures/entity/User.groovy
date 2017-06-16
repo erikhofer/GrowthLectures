@@ -18,8 +18,7 @@ class User extends BaseEntity {
 	@OneToMany(mappedBy = "user")
 	def Set<Login> logins;
   
-  @ElementCollection(fetch = FetchType.EAGER)
   @Enumerated(EnumType.STRING)
-  def Set<Role> roles;
+  def Role role;
 	
 }

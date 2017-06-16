@@ -47,11 +47,11 @@ public class CategoryController extends GrowthlecturesController {
   
   @RequestMapping(Ui.URL_CATEGORIES)
   public String categoryList(Model model) {
-    
+
     ArrayList<ContainerDto> allCategories = new ArrayList<ContainerDto>();
  
     Collection<Category> categories = categoryService.getAllCategories();
-    for(Category cat : categories) {
+    for (Category cat : categories) {
       ContainerDto newCat = dtoFactory.createDto(ContainerDto.class);
       newCat.setName(cat.getName());
       newCat.setSlug(cat.getSlug());
@@ -71,26 +71,29 @@ public class CategoryController extends GrowthlecturesController {
     secondMainCat.setAmount(124);
     
     List<LectureSummaryDto> firstCatLectures = lectureService.getPopularLectures();
-    while(firstCatLectures.size() > 3) {
+    while (firstCatLectures.size() > 3) {
       firstCatLectures.remove(3);      
     }
-    model.addAttribute("firstMainCatLectures", firstCatLectures );
+    model.addAttribute("firstMainCatLectures", firstCatLectures);
     
     List<LectureSummaryDto> secondCatLectures = lectureService.getPopularLectures();
-    while(secondCatLectures.size() > 3) {
+    while (secondCatLectures.size() > 3) {
       secondCatLectures.remove(3);      
     }
-    model.addAttribute("secondMainCatLectures", secondCatLectures );
+    model.addAttribute("secondMainCatLectures", secondCatLectures);
     
-    model.addAttribute("categoryList", allCategories );
+    model.addAttribute("categoryList", allCategories);
     model.addAttribute("firstMainCat", firstMainCat);
     model.addAttribute("secondMainCat", secondMainCat);
+    
+    model.addAttribute("newCategory", dtoFactory.createDto(NamedDto.class));
      
     return "categories";
   }
   
   @RequestMapping(Ui.URL_CATEGORIES + "/{SLUG}")
   public String category(Model model, @PathVariable("SLUG") String slug) {
+
  
     NamedDto category;
     try {
@@ -110,8 +113,41 @@ public class CategoryController extends GrowthlecturesController {
   }
   
   @ResponseBody
+  @RequestMapping(value = Ui.URL_CATEGORIES, method = RequestMethod.POST)
+  public List<String> addCategory(NamedDto newCategoryDto, 
+                                HttpServletResponse response) {
+  
+    List<String> responseList = new ArrayList<String>();
+    String name = Util.normalize(newCategoryDto.getName());
+    String slug = Util.normalize(newCategoryDto.getSlug());
+    if (name == null) {
+      responseList.add("Invalid name!");
+    }
+    if (slug == null) {
+      responseList.add("Invalid slug!");
+    } else {
+      if (categoryService.doesExists(slug)) {
+        responseList.add("Slug alredy exists!");
+      }
+    }
+    
+    if (responseList.isEmpty()) {
+      categoryService.createCategory(newCategoryDto);
+      response.setStatus(HttpServletResponse.SC_OK);
+      responseList.add(Ui.URL_CATEGORIES + "/" + slug);
+    } else {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    }
+    
+    return responseList;
+  }
+  
+  @ResponseBody
   @RequestMapping(value = Ui.URL_CATEGORIES + "/{SLUG}", method = RequestMethod.POST)
-  public List<String> category(NewLectureDto newLectureDto, HttpServletResponse response) {
+  public List<String> addLectureInCategory(@PathVariable("SLUG") String categorySlug, 
+                                NewLectureDto newLectureDto, 
+                                HttpServletResponse response) throws SlugNotFoundException {
+
      
     List<String> responseList = new ArrayList<String>();
     
@@ -120,7 +156,7 @@ public class CategoryController extends GrowthlecturesController {
     String slug = Util.normalize(newLectureDto.getSlug());
     String description = Util.normalize(newLectureDto.getDescription());
     String url = Util.normalize(newLectureDto.getLink());
-    String category = Util.normalize(newLectureDto.getNewcategory());
+    String category = Util.normalize(categorySlug);
     String lecturer = Util.normalize(newLectureDto.getNewlecturer());
     String platform = Util.normalize(newLectureDto.getPlatform());
     
@@ -128,61 +164,63 @@ public class CategoryController extends GrowthlecturesController {
     String end = Util.normalize(newLectureDto.getEnd());
     
     
-    if(videoId == null || url == null || platform == null) {
+    if (videoId == null || url == null || platform == null) {
       responseList.add("Invalid Url - Please cancel and restart adding!");      
     } else {
-      if(title == null) {
+      if (title == null) {
         responseList.add("The title is not valid!");
       }
-      if(slug == null) {
+      if (slug == null) {
         responseList.add("The slug is not valid!");
       } else {
-        if(lectureService.doesSlugExists(slug)) {
+        if (lectureService.doesSlugExists(slug)) {
           responseList.add("The slug already exists!");
         }
       }
-      if(description.length() > 4000) {
+      if (description.length() > 4000) {
         responseList.add("Description must be shorter than 4000 chars!");
       }
-      if(category == null) {
-        responseList.add("The category is not valid!");
+      if (category == null) {
+        responseList.add("The selected category is not valid!");
       } else {
-        if(!categoryService.doesExists(newLectureDto.getNewcategory())) {
-          responseList.add("The selected category does not exist!");
+        try {
+          categoryService.getCategory(category);
+        } catch (SlugNotFoundException snfe) {
+          throw new ResourceNotFoundException();
         }
       }
-      if(lecturer == null) {
-        responseList.add("Invalid Lecturer");
+      if (lecturer == null) {
+        responseList.add("The selected lecturer is not valid!");
       } else {
-        if(!lecturerService.doesExists(newLectureDto.getNewlecturer())) {
+        if (!lecturerService.doesExists(newLectureDto.getNewlecturer())) {
           responseList.add("The selected lecturer does not exist!");
         }
       }    
-      if(start == null) {
+      if (start == null) {
         responseList.add("Please enter a start time!");
       } else {
-        if(Util.parseTime(start) == null) {
+        if (Util.parseTime(start) == null) {
           responseList.add("The entered start time is not valid!");
         }
       }
-      if(end == null) {
+      if (end == null) {
         responseList.add("Please enter an end time!");        
       } else {
-        if(Util.parseTime(end) == null) {
+        if (Util.parseTime(end) == null) {
           responseList.add("The entered end time is not valid!");
         }
       }
-      if(start != null && end != null) {
-        if(Util.parseTime(start) != null && Util.parseTime(end) != null) {
-          if(Util.parseTime(start) >= Util.parseTime(end)) {
+      if (start != null && end != null) {
+        if (Util.parseTime(start) != null && Util.parseTime(end) != null) {
+          if (Util.parseTime(start) >= Util.parseTime(end)) {
             responseList.add("The start time must be smaller than end time!");
           }
         }
       }
     }
-    if(responseList.isEmpty()) {
+    if (responseList.isEmpty()) {
       LectureSummaryDto newLecture = lectureService.createLecture(newLectureDto);
-      response.setStatus( HttpServletResponse.SC_OK  );      
+      response.setStatus(HttpServletResponse.SC_OK);      
       responseList.add(ui.lectureUrl(newLecture.getCategory().getSlug(), newLecture.getSlug()));
     } else {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

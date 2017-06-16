@@ -42,7 +42,7 @@ class UserServiceImpl extends GrowthlecturesServiceImpl implements UserService {
 	    
     User user = entityFactory.createEntity(User.class);
     user.setLogins(ImmutableSet.of((Login) login));
-	  user.setRoles(ImmutableSet.of(Role.USER));
+	  user.setRole(Role.USER);
     login.setUser(user);
 	  
 	  userRepo.save(user);

@@ -1,21 +1,24 @@
 package com.xinra.growthlectures.frontend;
 
+import com.xinra.growthlectures.Util;
 import com.xinra.growthlectures.entity.Lecturer;
 import com.xinra.growthlectures.service.ContainerDto;
 import com.xinra.growthlectures.service.LectureService;
 import com.xinra.growthlectures.service.LectureSummaryDto;
 import com.xinra.growthlectures.service.LecturerService;
-import com.xinra.growthlectures.service.OrderBy;
-import com.xinra.growthlectures.service.SearchService;
+import com.xinra.growthlectures.service.NamedDto;
 import com.xinra.growthlectures.service.SlugNotFoundException;
 import com.xinra.nucleus.service.DtoFactory;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class LecturerController extends GrowthlecturesController {
@@ -33,7 +36,7 @@ public class LecturerController extends GrowthlecturesController {
   public String lecturerList(Model model) {
     
     ArrayList<ContainerDto> allLecturers = new ArrayList<ContainerDto>();
-    for(Lecturer l : lecturerService.getAllLecturers()) {
+    for (Lecturer l : lecturerService.getAllLecturers()) {
       ContainerDto newLecuturer = dtoFactory.createDto(ContainerDto.class);
       newLecuturer.setName(l.getName());
       newLecuturer.setSlug(l.getSlug());
@@ -66,6 +69,7 @@ public class LecturerController extends GrowthlecturesController {
     model.addAttribute("lecturerList", allLecturers );
     model.addAttribute("firstMainLecturer", firstMainLecturer);
     model.addAttribute("secondMainLecturer", secondMainLecturer);
+    model.addAttribute("newLecturer", dtoFactory.createDto(NamedDto.class));
     return "lecturers";
   }
   
@@ -87,5 +91,35 @@ public class LecturerController extends GrowthlecturesController {
     });
     
     return "lecturer";
+  }
+  
+  @ResponseBody
+  @RequestMapping(value = Ui.URL_LECTURERS, method = RequestMethod.POST)
+  public List<String> addLecturer(NamedDto newLecturerDto, 
+                                  HttpServletResponse response) {
+  
+    List<String> responseList = new ArrayList<String>();
+    String name = Util.normalize(newLecturerDto.getName());
+    String slug = Util.normalize(newLecturerDto.getSlug());
+    if (name == null) {
+      responseList.add("Invalid name!");
+    }
+    if (slug == null) {
+      responseList.add("Invalid slug!");
+    } else {
+      if (lecturerService.doesExists(slug)) {
+        responseList.add("Slug alredy exists!");
+      }
+    }
+    
+    if (responseList.isEmpty()) {
+      lecturerService.createLecturer(newLecturerDto);
+      response.setStatus(HttpServletResponse.SC_OK);
+      responseList.add(Ui.URL_LECTURERS + "/" + slug);
+    } else {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    }
+    
+    return responseList;
   }
 }
