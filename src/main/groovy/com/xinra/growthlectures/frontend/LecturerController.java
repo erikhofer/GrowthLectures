@@ -35,29 +35,24 @@ public class LecturerController {
   @RequestMapping(Ui.URL_LECTURERS)
   public String lecturerList(Model model) {
     
-    ArrayList<ContainerDto> allLecturers = new ArrayList<ContainerDto>();
-    for (Lecturer l : lecturerService.getAllLecturers()) {
-      ContainerDto newLecuturer = dtoFactory.createDto(ContainerDto.class);
-      newLecuturer.setName(l.getName());
-      newLecuturer.setSlug(l.getSlug());
-      newLecuturer.setAmount(l.getLectures().size());
-      allLecturers.add(newLecuturer);
+    ContainerDto recommendedLecturer = lecturerService.getRandomLecturer();
+    if (recommendedLecturer == null) {
+      model.addAttribute("recommendedLecturer", null);    
+    } else {
+      model.addAttribute("recommendedLecturer", recommendedLecturer);
+      model.addAttribute("recommendedLecturerLectures", 
+          lectureService.getRecentLecturesByLecturer(recommendedLecturer.getSlug(), 6));
     }
     
-    ContainerDto firstMainLecturer = dtoFactory.createDto(ContainerDto.class);
-    firstMainLecturer.setName("Erik Hofer");
-    firstMainLecturer.setSlug("erik-hofer");
-    firstMainLecturer.setAmount(124);
-    
-    List<LectureSummaryDto> firstLecturerLectures = lectureService.getPopularLectures();
-    while (firstLecturerLectures.size() > 3) {
-      firstLecturerLectures.remove(3);      
+    List<ContainerDto> allLecturers = lecturerService.getAllLecturers();
+    if (allLecturers == null || allLecturers.size() == 0) {
+      model.addAttribute("lecturerList", null);  
+    } else {
+      model.addAttribute("lecturerList", allLecturers);   
     }
-    model.addAttribute("firstMainLecturerLectures", firstLecturerLectures);
+
+    model.addAttribute("newLecturer", dtoFactory.createDto(NamedDto.class));   
     
-    model.addAttribute("lecturerList", allLecturers);
-    model.addAttribute("firstMainLecturer", firstMainLecturer);
-    model.addAttribute("newLecturer", dtoFactory.createDto(NamedDto.class));
     return "lecturers";
   }
   
@@ -66,7 +61,7 @@ public class LecturerController {
     
     try {
       model.addAttribute("lecturer", lecturerService.getLecturer(slug));
-      model.addAttribute("lectures", lectureService.getLecturesByLecturer(slug));
+      model.addAttribute("lectures", lectureService.getRecentLecturesByLecturer(slug));
     } catch (SlugNotFoundException snfe) {
       throw new ResourceNotFoundException();
     }

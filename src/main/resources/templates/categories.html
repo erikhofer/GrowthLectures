@@ -12,18 +12,26 @@
       <h1>Categories</h1>
       <!-- add search fragment here -->
       
-      <h3 th:text="@{Recommended:&nbsp;}+${firstMainCat.name}"></h3>
-      <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${firstMainCatLectures})"></div>
+      <th:block th:if="${recommendedCategory != null}">
+        <h3 th:text="@{Recommended:&nbsp;}+${recommendedCategory.name}"></h3>
+        <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${recommendedCategoryLectures})"></div>
+      </th:block>
       
-      <h2>More Categories</h2>
-      <div class="panel panel-default">
-        <ul class="list-group">
-          <a th:each="category : ${categoryList}" th:href="@{${@ui.categoryUrl(category)}}" class="list-group-item">
-            <span th:text="${category.name}"></span> 
-            <span th:text="${category.amount}" class="badge"></span>
-          </a>
-        </ul>
-      </div>
+      <th:block th:if="${categoryList != null}">
+        <h2>More Categories</h2>
+        <div class="panel panel-default">
+          <ul class="list-group">
+            <a th:each="category : ${categoryList}" th:href="@{${@ui.categoryUrl(category)}}" class="list-group-item">
+              <span th:text="${category.name}"></span> 
+              <span th:text="${category.amount}" class="badge"></span>
+            </a>
+          </ul>
+        </div>
+      </th:block>
+      <th:block th:if="${categoryList == null}">
+        <div class="alert alert-warning">No categories can be found!</div>
+      </th:block>
+      
     </div>
     
     <div class="modal fade" id="create-category-modal" tabindex="-1" role="dialog" sec:authorize="hasRole('MODERATOR')">

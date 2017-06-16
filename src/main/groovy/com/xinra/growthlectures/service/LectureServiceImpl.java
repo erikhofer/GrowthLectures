@@ -16,10 +16,12 @@ import com.xinra.nucleus.entity.EntityFactory;
 import com.xinra.nucleus.service.DtoFactory;
 import groovy.transform.CompileStatic;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @CompileStatic
@@ -60,9 +62,9 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
 
   public List<LectureSummaryDto> getLecturesByLecturer(String lecturerSlug) {
   
-  return Streams.stream(lectureRepo.findByLecturerSlug(lecturerSlug))
-      .map(this::convertToSummaryDto)
-      .collect(Collectors.toList());
+    return Streams.stream(lectureRepo.findByLecturerSlug(lecturerSlug))
+        .map(this::convertToSummaryDto)
+        .collect(Collectors.toList());
   
 }
 
@@ -73,66 +75,65 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
         .collect(Collectors.toList());
        
   }
-   
-  private void convertToSummaryDto(Lecture lecture, LectureSummaryDto dto) {
-
-    dto.setName(lecture.getName());
-    dto.setSlug(lecture.getSlug());
-    dto.setDescription(lecture.getDescription());
-    dto.setRating(lecture.getRatingAverage());
-    dto.setAdded(lecture.getAdded());
-    
-    NamedDto cat = dtoFactory.createDto(NamedDto.class);
-    cat.setName(lecture.getCategory().getName());
-    cat.setSlug(lecture.getCategory().getSlug());
-    dto.setCategory(cat);
-    
-    NamedDto lecturer = dtoFactory.createDto(NamedDto.class);
-    lecturer.setName(lecture.getLecturer().getName());
-    lecturer.setSlug(lecture.getLecturer().getSlug());
-    dto.setLecturer(lecturer);
-    
-    MediaDto mediaDto = null;
-    if (lecture.getMedia() instanceof YoutubeMedia) {
-      YoutubeMediaDto youtubeMediaDto = dtoFactory.createDto(YoutubeMediaDto.class);
-      youtubeMediaDto.setType(MediaType.YOUTUBE);
-      YoutubeMedia youtubeMedia = (YoutubeMedia)lecture.getMedia();
-      youtubeMediaDto.setYoutubeId(youtubeMedia.getYoutubeId());
-      mediaDto = youtubeMediaDto;
+  
+  public List<LectureSummaryDto> getRecentLectures(Integer count) {
+    List<LectureSummaryDto> returnList = new ArrayList<LectureSummaryDto>();
+    for (Lecture l : lectureRepo.findByOrderByAddedDesc(new PageRequest(0, count))) {
+      returnList.add(convertToSummaryDto(l));
     }
-    mediaDto.setThumbnail(lecture.getMedia().getThumbnail());
-    mediaDto.setStart(lecture.getMedia().getStart());
-    mediaDto.setEnd(lecture.getMedia().getStart() + lecture.getMedia().getDuration());
-    mediaDto.setUrl(lecture.getMedia().getUrl());
-    dto.setMedia(mediaDto);
+    return returnList;
   }
   
-  private LectureSummaryDto convertToSummaryDto(Lecture lecture) {
-    LectureSummaryDto dto = dtoFactory.createDto(LectureSummaryDto.class);
-    convertToSummaryDto(lecture, dto);
-    return dto;
-  }
-
-  public List<LectureSummaryDto> getRecentLectures() {
-    return getAllLectures();
+  public List<LectureSummaryDto> getPopularLectures(Integer count) {
+    List<LectureSummaryDto> returnList = new ArrayList<LectureSummaryDto>();
+    for (Lecture l : lectureRepo.findByOrderByRatingAverageDesc(new PageRequest(0, count))) {
+      returnList.add(convertToSummaryDto(l));
+    }
+    return returnList;
   }
   
-  public List<LectureSummaryDto> getPopularLectures() {
-    return getAllLectures();
+  public List<LectureSummaryDto> getRecentLecturesByCategory(String categorySlug) {
+    List<LectureSummaryDto> returnList = new ArrayList<LectureSummaryDto>();
+    for (Lecture l : lectureRepo.findByCategorySlugOrderByAddedDesc(categorySlug)) {
+      returnList.add(convertToSummaryDto(l));
+    }
+    return returnList;
+  }
+  
+  public List<LectureSummaryDto> getRecentLecturesByLecturer(String lecturerSlug) {
+    List<LectureSummaryDto> returnList = new ArrayList<LectureSummaryDto>();
+    for (Lecture l : lectureRepo.findByLecturerSlugOrderByAddedDesc(lecturerSlug)) {
+      returnList.add(convertToSummaryDto(l));
+    }
+    return returnList;
+  }
+  
+  public List<LectureSummaryDto> getRecentLecturesByCategory(String categorySlug, int count) {
+    List<LectureSummaryDto> returnList = new ArrayList<LectureSummaryDto>();
+    for (Lecture l : 
+          lectureRepo.findByCategorySlugOrderByAddedDesc(categorySlug, new PageRequest(0, count))) {
+      returnList.add(convertToSummaryDto(l));
+    }
+    return returnList;
+  }
+  
+  public List<LectureSummaryDto> getRecentLecturesByLecturer(String lecturerSlug, int count) {
+    List<LectureSummaryDto> returnList = new ArrayList<LectureSummaryDto>();
+    for (Lecture l : 
+          lectureRepo.findByLecturerSlugOrderByAddedDesc(lecturerSlug, new PageRequest(0, count))) {
+      returnList.add(convertToSummaryDto(l));
+    }
+    return returnList;
   }
 
   public NamedDto getLecture(String slug) throws SlugNotFoundException {
     
-    String name = lectureRepo.getNameBySlug(slug);
-    if (name == null) {
+    Lecture l = lectureRepo.findBySlug(slug);
+    if (l == null) {
       throw new SlugNotFoundException();
     }
      
-    NamedDto dto = dtoFactory.createDto(NamedDto.class);
-    dto.setSlug(slug);
-    dto.setName(name);
-    
-    return dto;
+    return convertLectureToNamedDto(l);
   }
   
   public LectureSummaryDto createLecture(NewLectureDto newLectureDto) {
@@ -174,16 +175,7 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
     newLecture.setMedia(newMedia);
     lectureRepo.save(newLecture);
    
-    
-    
-    LectureSummaryDto newLectureSummaryDto = dtoFactory.createDto(LectureSummaryDto.class);
-    newLectureSummaryDto.setSlug(newLecture.getSlug());
-      NamedDto categoryDto = dtoFactory.createDto(NamedDto.class);
-      categoryDto.setName(newLecture.getCategory().getName());
-      categoryDto.setSlug(newLecture.getCategory().getSlug());
-    newLectureSummaryDto.setCategory(categoryDto);
-    
-    return newLectureSummaryDto;
+    return convertToSummaryDto(newLecture);
   }
 
   public LectureDto getBySlug(String lectureSlug, String categorySlug, String userId)
@@ -272,9 +264,58 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
   }
   
   public boolean doesSlugExists(String slug) {
-    Lecture l = lectureRepo.findBySlug(slug);
-    if (l == null) return false;
+    Lecture l = lectureRepo.findBySlug(slug); 
+    if (l == null) {
+      return false;
+    }
     return true;
+  }   
+  
+  private NamedDto convertLectureToNamedDto(Lecture l) {
+    NamedDto returnDto = dtoFactory.createDto(NamedDto.class);
+    returnDto.setName(l.getName());
+    returnDto.setSlug(l.getSlug());
+    return returnDto;
   }
+  
+  private void convertToSummaryDto(Lecture lecture, LectureSummaryDto dto) {
+
+    dto.setName(lecture.getName());
+    dto.setSlug(lecture.getSlug());
+    dto.setDescription(lecture.getDescription());
+    dto.setRating(lecture.getRatingAverage());
+    dto.setAdded(lecture.getAdded());
+    
+    NamedDto cat = dtoFactory.createDto(NamedDto.class);
+    cat.setName(lecture.getCategory().getName());
+    cat.setSlug(lecture.getCategory().getSlug());
+    dto.setCategory(cat);
+    
+    NamedDto lecturer = dtoFactory.createDto(NamedDto.class);
+    lecturer.setName(lecture.getLecturer().getName());
+    lecturer.setSlug(lecture.getLecturer().getSlug());
+    dto.setLecturer(lecturer);
+    
+    MediaDto mediaDto = null;
+    if (lecture.getMedia() instanceof YoutubeMedia) {
+      YoutubeMediaDto youtubeMediaDto = dtoFactory.createDto(YoutubeMediaDto.class);
+      youtubeMediaDto.setType(MediaType.YOUTUBE);
+      YoutubeMedia youtubeMedia = (YoutubeMedia)lecture.getMedia();
+      youtubeMediaDto.setYoutubeId(youtubeMedia.getYoutubeId());
+      mediaDto = youtubeMediaDto;
+    }
+    mediaDto.setThumbnail(lecture.getMedia().getThumbnail());
+    mediaDto.setStart(lecture.getMedia().getStart());
+    mediaDto.setEnd(lecture.getMedia().getStart() + lecture.getMedia().getDuration());
+    mediaDto.setUrl(lecture.getMedia().getUrl());
+    dto.setMedia(mediaDto);
+  }
+  
+  private LectureSummaryDto convertToSummaryDto(Lecture lecture) {
+    LectureSummaryDto dto = dtoFactory.createDto(LectureSummaryDto.class);
+    convertToSummaryDto(lecture, dto);
+    return dto;
+  }
+
   
 }

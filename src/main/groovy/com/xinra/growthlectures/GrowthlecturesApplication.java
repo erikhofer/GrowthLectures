@@ -87,8 +87,8 @@ public class GrowthlecturesApplication implements CommandLineRunner {
     lecture.setCategory(c);
     lecture.setName("Löwenzahn - Folge 3");
     lecture.setLecturer(l);
-    lecture.setRatingAmount(3);
-    lecture.setRatingAverage(1.5);
+    lecture.setRatingAmount(4);
+    lecture.setRatingAverage(1.6d);
     lecture.setSlug("lz3");
     lecture.setMedia(media);
     lectureRepo.save(lecture);

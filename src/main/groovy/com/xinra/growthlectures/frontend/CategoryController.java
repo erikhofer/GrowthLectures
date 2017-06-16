@@ -1,7 +1,6 @@
 package com.xinra.growthlectures.frontend;
 
 import com.xinra.growthlectures.Util;
-import com.xinra.growthlectures.entity.Category;
 import com.xinra.growthlectures.entity.LectureRepository;
 import com.xinra.growthlectures.service.CategoryService;
 import com.xinra.growthlectures.service.ContainerDto;
@@ -13,7 +12,6 @@ import com.xinra.growthlectures.service.NewLectureDto;
 import com.xinra.growthlectures.service.SlugNotFoundException;
 import com.xinra.nucleus.service.DtoFactory;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,32 +45,20 @@ public class CategoryController {
   
   @RequestMapping(Ui.URL_CATEGORIES)
   public String categoryList(Model model) {
-   
-    ArrayList<ContainerDto> allCategories = new ArrayList<ContainerDto>();
- 
-    Collection<Category> categories = categoryService.getAllCategories();
-    for (Category cat : categories) {
-      ContainerDto newCat = dtoFactory.createDto(ContainerDto.class);
-      newCat.setName(cat.getName());
-      newCat.setSlug(cat.getSlug());
-      newCat.setAmount(cat.getLectures().size());
-     
-      allCategories.add(newCat);
+    
+    ContainerDto recommendetCategory = categoryService.getRandomCategory();
+    if (recommendetCategory != null) {
+      model.addAttribute("recommendedCategory", recommendetCategory);
+      model.addAttribute("recommendedCategoryLectures", 
+          lectureService.getRecentLecturesByCategory(recommendetCategory.getSlug(), 6));
     }
     
-    ContainerDto firstMainCat = dtoFactory.createDto(ContainerDto.class);
-    firstMainCat.setName("Hauptkategorie 1");
-    firstMainCat.setSlug("mainCatOne");
-    firstMainCat.setAmount(124);
-    
-    List<LectureSummaryDto> firstCatLectures = lectureService.getPopularLectures();
-    while (firstCatLectures.size() > 3) {
-      firstCatLectures.remove(3);      
+    List<ContainerDto> allCategories = categoryService.getAllCategories();
+    if (allCategories == null || allCategories.size() == 0) {
+      model.addAttribute("categoryList", null);      
+    } else {
+      model.addAttribute("categoryList", allCategories); 
     }
-    model.addAttribute("firstMainCatLectures", firstCatLectures);
-    
-    model.addAttribute("categoryList", allCategories);
-    model.addAttribute("firstMainCat", firstMainCat);
     
     model.addAttribute("newCategory", dtoFactory.createDto(NamedDto.class));
      
@@ -85,7 +71,7 @@ public class CategoryController {
  
     try {
       model.addAttribute("category", categoryService.getCategory(slug));
-      model.addAttribute("lectures", lectureService.getLecturesByCategory(slug));
+      model.addAttribute("lectures", lectureService.getRecentLecturesByCategory(slug));
     } catch (SlugNotFoundException snfe) {
       throw new ResourceNotFoundException();
     }
