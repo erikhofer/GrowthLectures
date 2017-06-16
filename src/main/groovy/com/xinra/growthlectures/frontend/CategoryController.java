@@ -65,26 +65,14 @@ public class CategoryController {
     firstMainCat.setSlug("mainCatOne");
     firstMainCat.setAmount(124);
     
-    ContainerDto secondMainCat = dtoFactory.createDto(ContainerDto.class);
-    secondMainCat.setName("Hauptkategorie 2");
-    secondMainCat.setSlug("mainCatTwo");
-    secondMainCat.setAmount(124);
-    
     List<LectureSummaryDto> firstCatLectures = lectureService.getPopularLectures();
     while (firstCatLectures.size() > 3) {
       firstCatLectures.remove(3);      
     }
     model.addAttribute("firstMainCatLectures", firstCatLectures);
     
-    List<LectureSummaryDto> secondCatLectures = lectureService.getPopularLectures();
-    while (secondCatLectures.size() > 3) {
-      secondCatLectures.remove(3);      
-    }
-    model.addAttribute("secondMainCatLectures", secondCatLectures);
-    
     model.addAttribute("categoryList", allCategories);
     model.addAttribute("firstMainCat", firstMainCat);
-    model.addAttribute("secondMainCat", secondMainCat);
     
     model.addAttribute("newCategory", dtoFactory.createDto(NamedDto.class));
      

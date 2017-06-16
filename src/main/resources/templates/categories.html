@@ -12,16 +12,9 @@
       <h1>Categories</h1>
       <!-- add search fragment here -->
       
-      <div class="row">
-        <div class="col-xs-12 col-lg-6">
-          <h3 th:text="${firstMainCat.name}"></h3>
-          <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${firstMainCatLectures})"></div>
-        </div>
-        <div class="col-xs-12 col-lg-6">
-          <h3 th:text="${secondMainCat.name}"></h3>
-          <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${secondMainCatLectures})"></div>
-        </div>
-      </div>
+      <h3 th:text="@{Recommended:&nbsp;}+${firstMainCat.name}"></h3>
+      <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${firstMainCatLectures})"></div>
+      
       <h2>More Categories</h2>
       <div class="panel panel-default">
         <ul class="list-group">
