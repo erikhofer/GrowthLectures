@@ -10,6 +10,22 @@ $(function() {
     }
   });
   
+  $(".lecture-summary").each(function() {
+    var platform = $(this).data("platform");
+    
+    var data = null;
+    if(platform == "YOUTUBE") {
+      var youtubeId = $(this).find(".lecture-data").data("youtubeid");
+      data = getYoutubeVideoData(youtubeId);
+    }
+    if(data != null) {
+      $(this).find(" .external-information-views").text(data["views"]);
+      $(this).find(" .external-information-likes").text(data["likes"]);
+      $(this).find(" .external-information-dislikes").text(data["dislikes"]);
+      $(this).find(".thumbnail img").attr("src", data["thumbnail"]["url"]);
+    }
+  });
+  
 });
 function getYoutubeVideoData(youtubeId) {
 

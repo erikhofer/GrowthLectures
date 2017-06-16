@@ -4,12 +4,13 @@
   </head>
   <body>
     <div th:fragment="lecture-summary">
-      <div class="panel panel-default lecture lecture-summary">
+      <div th:attr="data-platform=${lecture.media.type.name()}" class="panel panel-default lecture lecture-summary">
         <div class="panel-body">
+          <div th:if="${lecture.media.type.name() == 'YOUTUBE'}" class="lecture-data" th:attr="data-youtubeid=${lecture.media.youtubeId}"></div>
           <div class="row">
             <div class="col-sm-3">
               <a th:href="@{${@ui.lectureUrl(lecture)}}" class="thumbnail">
-                <img th:src="${lecture.media.thumbnail}" />
+                <img  />
               </a>
             </div>
             <div class="col-sm-9">
@@ -31,7 +32,9 @@
                   <input id="input-id" name="input-name" type="number" class="rating" min="1" max="5" step="1" data-size="xs" data-show-caption="false" /> 
                 </div>
                 <div class="col-sm-4">
-                  Clicks
+                  <p><span class="glyphicon glyphicon-eye-open"></span> <span class="external-information-views"></span></p>
+                  <p><span class="glyphicon glyphicon-thumbs-up"></span> <span class="external-information-likes"></span></p>
+                  <p><span class="glyphicon glyphicon-thumbs-down"></span> <span class="external-information-dislikes"></span></p>                  
                 </div>
                 <div class="col-sm-4">
                   <span class="glyphicon glyphicon-time"></span> <span th:text="${@formatter.duration(lecture.media.end-lecture.media.start)}"></span>
