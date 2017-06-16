@@ -45,7 +45,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     UserDto user = dtoFactory.createDto(UserDto.class);
     user.setPk(login.getUser().getPk());
     user.setName(login.getEmail());
-    user.setRoles(login.getUser().getRole().getTransitiveRoles());
+    user.setRole(login.getUser().getRole());
     
     return new UsernamePasswordAuthenticationToken(user, password,
         UserDetailsServiceImpl.getAuthorities(login.getUser()));
