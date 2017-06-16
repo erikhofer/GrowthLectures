@@ -49,26 +49,14 @@ public class LecturerController {
     firstMainLecturer.setSlug("erik-hofer");
     firstMainLecturer.setAmount(124);
     
-    ContainerDto secondMainLecturer = dtoFactory.createDto(ContainerDto.class);
-    secondMainLecturer.setName("Toby Möller");
-    secondMainLecturer.setSlug("toby-moeller");
-    secondMainLecturer.setAmount(124);
-    
     List<LectureSummaryDto> firstLecturerLectures = lectureService.getPopularLectures();
     while (firstLecturerLectures.size() > 3) {
       firstLecturerLectures.remove(3);      
     }
     model.addAttribute("firstMainLecturerLectures", firstLecturerLectures);
     
-    List<LectureSummaryDto> secondLecturerLectures = lectureService.getPopularLectures();
-    while (secondLecturerLectures.size() > 3) {
-      secondLecturerLectures.remove(3);      
-    }
-    model.addAttribute("secondMainLecturerLectures", secondLecturerLectures);
-    
     model.addAttribute("lecturerList", allLecturers);
     model.addAttribute("firstMainLecturer", firstMainLecturer);
-    model.addAttribute("secondMainLecturer", secondMainLecturer);
     model.addAttribute("newLecturer", dtoFactory.createDto(NamedDto.class));
     return "lecturers";
   }
