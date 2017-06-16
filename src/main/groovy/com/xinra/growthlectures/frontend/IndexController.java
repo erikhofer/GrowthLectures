@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
-public class IndexController {
+public class IndexController extends GrowthlecturesController {
   
   @Autowired
   LectureServiceImpl lectureServiceImpl;
@@ -22,13 +22,10 @@ public class IndexController {
   @Autowired
   private DtoFactory dtoFactory;
 
-  @Autowired
-  SearchController searchController;
-
   @RequestMapping(Ui.URL_INDEX)
   public String index(Model model) {
     
-    searchController.addSearchModel(model, Ui.URL_SEARCH, true);
+    addSearchModel(model, Ui.URL_SEARCH, null);
     
     // PopularLecures
     List<LectureSummaryDto> popularLectures = lectureServiceImpl.getPopularLectures();
@@ -56,5 +53,4 @@ public class IndexController {
     
     return "index";
   }
-
 }

@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class CategoryController {
+public class CategoryController extends GrowthlecturesController {
 
   @Autowired
   DtoFactory dtoFactory;
@@ -37,8 +37,6 @@ public class CategoryController {
   CategoryService categoryService;
   
   @Autowired
-  SearchController searchController;
-  @Autowired
   LecturerService lecturerService;
   
   @Autowired
@@ -49,8 +47,6 @@ public class CategoryController {
   
   @RequestMapping(Ui.URL_CATEGORIES)
   public String categoryList(Model model) {
-    
-    searchController.addSearchModel(model, Ui.URL_CATEGORIES, false);
     
     ArrayList<ContainerDto> allCategories = new ArrayList<ContainerDto>();
  
@@ -94,9 +90,14 @@ public class CategoryController {
   }
   
   @RequestMapping(Ui.URL_CATEGORIES + "/{SLUG}")
-  public String category(Model model, @PathVariable("SLUG") String slug) throws SlugNotFoundException {
+  public String category(Model model, @PathVariable("SLUG") String slug) {
  
-    NamedDto category = categoryService.getCategory(slug);
+    NamedDto category;
+    try {
+      category = categoryService.getCategory(slug);
+    } catch (SlugNotFoundException snfe) {
+      throw new ResourceNotFoundException();
+    }
     List<LectureSummaryDto> lectures = lectureService.getPopularLectures();
    
     model.addAttribute("category", category);
@@ -110,7 +111,7 @@ public class CategoryController {
   
   @ResponseBody
   @RequestMapping(value = Ui.URL_CATEGORIES + "/{SLUG}", method = RequestMethod.POST)
-  public List<String> category(NewLectureDto newLectureDto, HttpServletResponse response) throws SlugNotFoundException {
+  public List<String> category(NewLectureDto newLectureDto, HttpServletResponse response) {
      
     List<String> responseList = new ArrayList<String>();
     
