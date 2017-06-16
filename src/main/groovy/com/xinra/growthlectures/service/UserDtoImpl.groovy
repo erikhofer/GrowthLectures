@@ -9,7 +9,7 @@ class UserDtoImpl extends GrowthlecturesDtoImpl implements UserDto {
 
   def EntityPk pk;
   def String name;
-  def Set<Role> roles;
+  def Role role;
   
   @Override
   public String toString() {
