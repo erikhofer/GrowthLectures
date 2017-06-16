@@ -6,7 +6,6 @@
 <body>
   <div layout:fragment="content">
     <div class="container">
-      <h1>Lecturers</h1>   
       <div style="float: right;" sec:authorize="hasRole('MODERATOR')">
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create-lecturer-modal"><span class="glyphicon glyphicon-plus"></span> Create new lecturer</button>
       </div>
