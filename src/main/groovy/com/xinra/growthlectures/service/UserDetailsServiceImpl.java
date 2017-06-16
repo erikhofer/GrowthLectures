@@ -44,7 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
    * Converts the roles of a user entity to Spring Security authorities.
    */
   public static Set<GrantedAuthority> getAuthorities(com.xinra.growthlectures.entity.User user) {
-    return user.getRoles().stream()
+    return user.getRole().getTransitiveRoles().stream()
         .map(Role::toString)
         .map(SimpleGrantedAuthority::new)
         .collect(ImmutableSet.toImmutableSet());

@@ -1,6 +1,5 @@
 package com.xinra.growthlectures.service;
 
-import com.google.common.collect.ImmutableSet;
 import com.xinra.growthlectures.Util;
 import com.xinra.growthlectures.entity.EmailLogin;
 import com.xinra.growthlectures.entity.EmailLoginRepository;
@@ -46,7 +45,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     UserDto user = dtoFactory.createDto(UserDto.class);
     user.setPk(login.getUser().getPk());
     user.setName(login.getEmail());
-    user.setRoles(ImmutableSet.copyOf(login.getUser().getRoles()));
+    user.setRoles(login.getUser().getRole().getTransitiveRoles());
     
     return new UsernamePasswordAuthenticationToken(user, password,
         UserDetailsServiceImpl.getAuthorities(login.getUser()));
