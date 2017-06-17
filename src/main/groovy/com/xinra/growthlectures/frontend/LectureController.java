@@ -26,15 +26,9 @@ public class LectureController extends GrowthlecturesController {
   @RequestMapping(PATH)
   public String lecturePage(Model model,
       @PathVariable("category") String category, 
-      @PathVariable("lecture") String lecture) {
+      @PathVariable("lecture") String lecture) throws SlugNotFoundException {
     
-    LectureDto lectureDto;
-    try {
-      lectureDto = lectureService
-          .getBySlug(lecture, category, getUserId());
-    } catch (SlugNotFoundException snfe) {
-      throw new ResourceNotFoundException();
-    }
+    LectureDto lectureDto = lectureService.getBySlug(lecture, category, getUserId());
     
     model.addAttribute("lecture", lectureDto);
     return "lecture";
@@ -47,32 +41,24 @@ public class LectureController extends GrowthlecturesController {
   @RequestMapping(path = PATH + "/note", method = RequestMethod.GET)
   public String getNote(
       @PathVariable(value = "category") String category,
-      @PathVariable(value = "lecture") String lecture) {
+      @PathVariable(value = "lecture") String lecture) throws SlugNotFoundException {
     
-    try {
-      String lectureId = lectureService.getLectureId(lecture, category);
-      return lectureService.getNote(lectureId, getUserId());
-    } catch (SlugNotFoundException snfe) {
-      throw new ResourceNotFoundException();
-    }
+    String lectureId = lectureService.getLectureId(lecture, category);
+    return lectureService.getNote(lectureId, getUserId());
   }
   
   /**
-   * REST controller for saving a lecture note.
+   * REST controller for saving a lecture note. 
    */
   @ResponseBody
   @RequestMapping(path = PATH + "/note", method = RequestMethod.POST)
   public String postNote(
       @PathVariable("category") String category,
       @PathVariable("lecture") String lecture,
-      @RequestBody String note) {
+      @RequestBody String note) throws SlugNotFoundException {
     
-    try {
-      String lectureId = lectureService.getLectureId(lecture, category);
-      return lectureService.saveNote(lectureId, getUserId(), note);
-    } catch (SlugNotFoundException snfe) {
-      throw new ResourceNotFoundException();
-    }
+    String lectureId = lectureService.getLectureId(lecture, category);
+    return lectureService.saveNote(lectureId, getUserId(), note);
   }
   
   /**
@@ -82,14 +68,10 @@ public class LectureController extends GrowthlecturesController {
   @RequestMapping(path = PATH + "/note", method = RequestMethod.DELETE)
   public String deleteNote(
       @PathVariable("category") String category,
-      @PathVariable("lecture") String lecture) {
+      @PathVariable("lecture") String lecture) throws SlugNotFoundException {
     
-    try {
-      String lectureId = lectureService.getLectureId(lecture, category);
-      lectureService.deleteNote(lectureId, getUserId());
-      return null;
-    } catch (SlugNotFoundException snfe) {
-      throw new ResourceNotFoundException();
-    }
+    String lectureId = lectureService.getLectureId(lecture, category);
+    lectureService.deleteNote(lectureId, getUserId());
+    return null;
   }
 }

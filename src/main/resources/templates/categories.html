@@ -13,11 +13,11 @@
       <!-- add search fragment here -->
       
       <th:block th:if="${recommendedCategory != null}">
-        <h3 th:text="@{Recommended:&nbsp;}+${recommendedCategory.name}"></h3>
+        <h3>Recommended <span th:text="${recommendedCategory.name}"></span></h3>
         <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${recommendedCategoryLectures})"></div>
       </th:block>
       
-      <th:block th:if="${categoryList != null}">
+      <th:block th:if="${!categoryList.isEmpty()}">
         <h2>More Categories</h2>
         <div class="panel panel-default">
           <ul class="list-group">
@@ -28,9 +28,7 @@
           </ul>
         </div>
       </th:block>
-      <th:block th:if="${categoryList == null}">
-        <div class="alert alert-warning">No categories can be found!</div>
-      </th:block>
+      <div th:if="${categoryList.isEmpty()}" class="alert alert-warning">No categories can be found!</div>
       
     </div>
     

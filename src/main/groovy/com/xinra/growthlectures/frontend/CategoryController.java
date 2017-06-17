@@ -54,11 +54,7 @@ public class CategoryController {
     }
     
     List<ContainerDto> allCategories = categoryService.getAllCategories();
-    if (allCategories == null || allCategories.size() == 0) {
-      model.addAttribute("categoryList", null);      
-    } else {
-      model.addAttribute("categoryList", allCategories); 
-    }
+    model.addAttribute("categoryList", allCategories); 
     
     model.addAttribute("newCategory", dtoFactory.createDto(NamedDto.class));
      
@@ -66,14 +62,10 @@ public class CategoryController {
   }
   
   @RequestMapping(Ui.URL_CATEGORIES + "/{SLUG}")
-  public String category(Model model, 
-                          @PathVariable("SLUG") String slug) throws SlugNotFoundException {
+  public String category(Model model,
+      @PathVariable("SLUG") String slug) throws SlugNotFoundException {
  
-    try {
-      model.addAttribute("category", categoryService.getCategoryBySlug(slug));
-    } catch (SlugNotFoundException snfe) {
-      throw new ResourceNotFoundException();
-    }
+    model.addAttribute("category", categoryService.getCategoryBySlug(slug));
     
     model.addAttribute("lectures", lectureService.getRecentLecturesByCategory(slug));
     
@@ -86,42 +78,39 @@ public class CategoryController {
   }
   
   @ResponseBody
-  @RequestMapping(value = Ui.URL_CATEGORIES, method = RequestMethod.POST)
-  public List<String> addCategory(NamedDto newCategoryDto, 
-                                HttpServletResponse response) {
+  @RequestMapping(path = Ui.URL_CATEGORIES, method = RequestMethod.POST)
+  public String addCategory(NamedDto categoryDto,
+      HttpServletResponse response) throws InvalidDataException {
   
-    List<String> responseList = new ArrayList<String>();
-    String name = Util.normalize(newCategoryDto.getName());
-    String slug = Util.normalize(newCategoryDto.getSlug());
+    List<String> errors = new ArrayList<>();
+    
+    String name = Util.normalize(categoryDto.getName());
+    String slug = Util.normalize(categoryDto.getSlug());
+    
     if (name == null) {
-      responseList.add("Invalid name!");
+      errors.add("Invalid name!");
     }
     if (slug == null) {
-      responseList.add("Invalid slug!");
-    } else {
-      if (categoryService.doesExists(slug)) {
-        responseList.add("Slug alredy exists!");
-      }
+      errors.add("Invalid slug!");
+    } else if (categoryService.doesExists(slug)) {
+      errors.add("Slug already exists!");
     }
     
-    if (responseList.isEmpty()) {
-      categoryService.createCategory(newCategoryDto);
-      response.setStatus(HttpServletResponse.SC_OK);
-      responseList.add(Ui.URL_CATEGORIES + "/" + slug);
-    } else {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    if (!errors.isEmpty()) {
+      throw new InvalidDataException(errors);
     }
     
-    return responseList;
+    categoryService.createCategory(categoryDto);
+    return Ui.URL_CATEGORIES + "/" + slug;
   }
   
   @ResponseBody
   @RequestMapping(value = Ui.URL_CATEGORIES + "/{SLUG}", method = RequestMethod.POST)
-  public List<String> addLectureInCategory(@PathVariable("SLUG") String categorySlug, 
+  public String addLectureInCategory(@PathVariable("SLUG") String categorySlug, 
                                 NewLectureDto newLectureDto, 
-                                HttpServletResponse response) throws SlugNotFoundException {
+                                HttpServletResponse response) throws InvalidDataException {
      
-    List<String> responseList = new ArrayList<String>();
+    List<String> errors = new ArrayList<String>();
     
     String videoId = Util.normalize(newLectureDto.getVideoId());
     String title = Util.normalize(newLectureDto.getName());
@@ -136,70 +125,67 @@ public class CategoryController {
     String end = Util.normalize(newLectureDto.getEnd());
     
     if (videoId == null || url == null || platform == null) {
-      responseList.add("Invalid Url - Please cancel and restart adding!");      
+      errors.add("Invalid Url - Please cancel and restart adding!");      
     } else {
       if (title == null) {
-        responseList.add("The title is not valid!");
+        errors.add("The title is not valid!");
       }
       if (slug == null) {
-        responseList.add("The slug is not valid!");
+        errors.add("The slug is not valid!");
       } else {
         if (lectureService.doesSlugExists(slug)) {
-          responseList.add("The slug already exists!");
+          errors.add("The slug already exists!");
         }
       }
       if (description.length() > 4000) {
-        responseList.add("Description must be shorter than 4000 chars!");
+        errors.add("Description must be shorter than 4000 chars!");
       }
       if (category == null) {
-        responseList.add("The selected category is not valid!");
+        errors.add("The selected category is not valid!");
       } else {
         try {
           categoryService.getCategoryBySlug(category);
         } catch (SlugNotFoundException snfe) {
-          throw new ResourceNotFoundException();
+          errors.add("The selected category does not exist!");
         }
       }
       if (lecturer == null) {
-        responseList.add("The selected lecturer is not valid!");
+        errors.add("The selected lecturer is not valid!");
       } else {
         if (!lecturerService.doesExists(newLectureDto.getNewlecturer())) {
-          responseList.add("The selected lecturer does not exist!");
+          errors.add("The selected lecturer does not exist!");
         }
       }    
       if (start == null) {
-        responseList.add("Please enter a start time!");
+        errors.add("Please enter a start time!");
       } else {
         if (Util.parseTime(start) == null) {
-          responseList.add("The entered start time is not valid!");
+          errors.add("The entered start time is not valid!");
         }
       }
       if (end == null) {
-        responseList.add("Please enter an end time!");        
+        errors.add("Please enter an end time!");        
       } else {
         if (Util.parseTime(end) == null) {
-          responseList.add("The entered end time is not valid!");
+          errors.add("The entered end time is not valid!");
         }
       }
       if (start != null && end != null) {
         if (Util.parseTime(start) != null && Util.parseTime(end) != null) {
           if (Util.parseTime(start) >= Util.parseTime(end)) {
-            responseList.add("The start time must be smaller than end time!");
+            errors.add("The start time must be smaller than end time!");
           }
         }
       }
     }
-    if (responseList.isEmpty()) {
-      LectureSummaryDto newLecture = lectureService.createLecture(newLectureDto);
-      response.setStatus(HttpServletResponse.SC_OK);      
-      responseList.add(ui.lectureUrl(newLecture.getCategory().getSlug(), newLecture.getSlug()));
-    } else {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    
+    if (!errors.isEmpty()) {
+      throw new InvalidDataException(errors);
     }
-  
-    return responseList;  
+    
+    LectureSummaryDto newLecture = lectureService.createLecture(newLectureDto);
+    return ui.lectureUrl(newLecture.getCategory().getSlug(), newLecture.getSlug()); 
   }
-  
   
   
 }

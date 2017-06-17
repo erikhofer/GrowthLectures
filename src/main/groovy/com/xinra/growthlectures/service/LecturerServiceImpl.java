@@ -16,32 +16,32 @@ import org.springframework.stereotype.Service;
 @CompileStatic
 @Service
 class LecturerServiceImpl extends GrowthlecturesServiceImpl implements LecturerService {
-	
-	@Autowired
-	private DtoFactory dtoFactory;
-	
-	@Autowired
-	private LecturerRepository lecturerRepo;
-	
+
+  @Autowired
+  private DtoFactory dtoFactory;
+
+  @Autowired
+  private LecturerRepository lecturerRepo;
+
   public ContainerDto getRandomLecturer() {
-  
-      Long lecturersCount = lecturerRepo.count();
-      int randomIndex = (int)(Math.random() * lecturersCount);
-      Page<Lecturer> lecturerList = lecturerRepo.findAll(new PageRequest(randomIndex,1));
-      Lecturer randomLecturer = null;
-      for (Lecturer l : lecturerList) {
-        randomLecturer = l;
-      }
-      return convertLecturer(randomLecturer);
+
+    Long lecturersCount = lecturerRepo.count();
+    int randomIndex = (int) (Math.random() * lecturersCount);
+    Page<Lecturer> lecturerList = lecturerRepo.findAll(new PageRequest(randomIndex, 1));
+    Lecturer randomLecturer = null;
+    for (Lecturer l : lecturerList) {
+      randomLecturer = l;
+    }
+    return convertLecturer(randomLecturer);
   }
   
   public ContainerDto getLecturerBySlug(String slug) throws SlugNotFoundException {
   
-    Lecturer l = lecturerRepo.findOneBySlug(slug);
-    if (l == null) {
-      throw new SlugNotFoundException();
+    Lecturer lecture = lecturerRepo.findOneBySlug(slug);
+    if (lecture == null) {
+      throw new SlugNotFoundException(slug);
     }
-    return convertLecturer(l);
+    return convertLecturer(lecture);
   }
 
   public List<ContainerDto> getAllLecturers() {

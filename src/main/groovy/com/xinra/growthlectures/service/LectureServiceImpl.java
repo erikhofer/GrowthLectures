@@ -130,7 +130,7 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
     
     Lecture l = lectureRepo.findBySlug(slug);
     if (l == null) {
-      throw new SlugNotFoundException();
+      throw new SlugNotFoundException(slug);
     }
      
     return convertLectureToNamedDto(l);
@@ -186,7 +186,7 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
     Lecture lecture = lectureRepo.findBySlugAndCategorySlug(lectureSlug, categorySlug);
     
     if (lecture == null) {
-      throw new SlugNotFoundException();
+      throw new SlugNotFoundException(categorySlug, lectureSlug);
     }
     
     LectureDto lectureDto = dtoFactory.createDto(LectureDto.class);
@@ -212,8 +212,10 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
     
     String[][] result = lectureRepo.getIdAndCatgorySlug(lectureSlug);
     
-    if (result.length == 0 || !result[0][1].equals(categorySlug)) {
-      throw new SlugNotFoundException();
+    if (result.length == 0) {
+      throw new SlugNotFoundException(lectureSlug);
+    } else if (!result[0][1].equals(categorySlug)) {
+      throw new SlugNotFoundException(categorySlug);
     }
     
     return result[0][0];

@@ -57,13 +57,10 @@ public class LecturerController {
   }
   
   @RequestMapping(Ui.URL_LECTURERS + "/{SLUG}")
-  public String lecturer(Model model, @PathVariable("SLUG") String slug) {
+  public String lecturer(Model model, @PathVariable("SLUG") String slug) 
+      throws SlugNotFoundException {
     
-    try {
-      model.addAttribute("lecturer", lecturerService.getLecturerBySlug(slug));
-    } catch (SlugNotFoundException snfe) {
-      throw new ResourceNotFoundException();
-    }
+    model.addAttribute("lecturer", lecturerService.getLecturerBySlug(slug));
 
     model.addAttribute("lectures", lectureService.getRecentLecturesByLecturer(slug));
     
@@ -72,32 +69,29 @@ public class LecturerController {
   
   @ResponseBody
   @RequestMapping(value = Ui.URL_LECTURERS, method = RequestMethod.POST)
-  public List<String> addLecturer(NamedDto newLecturerDto, 
-                                  HttpServletResponse response) {
+  public String addLecturer(NamedDto newLecturerDto, 
+                                  HttpServletResponse response) throws InvalidDataException {
   
-    List<String> responseList = new ArrayList<String>();
+    List<String> errors = new ArrayList<String>();
     String name = Util.normalize(newLecturerDto.getName());
     String slug = Util.normalize(newLecturerDto.getSlug());
     if (name == null) {
-      responseList.add("Invalid name!");
+      errors.add("Invalid name!");
     }
     if (slug == null) {
-      responseList.add("Invalid slug!");
+      errors.add("Invalid slug!");
     } else {
       if (lecturerService.doesExists(slug)) {
-        responseList.add("Slug alredy exists!");
+        errors.add("Slug alredy exists!");
       }
     }
     
-    if (responseList.isEmpty()) {
-      lecturerService.createLecturer(newLecturerDto);
-      response.setStatus(HttpServletResponse.SC_OK);
-      responseList.add(Ui.URL_LECTURERS + "/" + slug);
-    } else {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    if (!errors.isEmpty()) {
+      throw new InvalidDataException(errors);
     }
     
-    return responseList;
+    lecturerService.createLecturer(newLecturerDto);
+    return Ui.URL_LECTURERS + "/" + slug;
   }
 
 }

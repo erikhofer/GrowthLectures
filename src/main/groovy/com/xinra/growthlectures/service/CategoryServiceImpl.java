@@ -36,12 +36,12 @@ class CategoryServiceImpl extends GrowthlecturesServiceImpl implements CategoryS
     
   public ContainerDto getCategoryBySlug(String slug) throws SlugNotFoundException {
     
-    Category c = categoryRepo.findOneBySlug(slug);
-    if (c == null) {
-      throw new SlugNotFoundException();
+    Category category = categoryRepo.findOneBySlug(slug);
+    if (category == null) {
+      throw new SlugNotFoundException(slug);
     }
     
-    return convertCategory(c);
+    return convertCategory(category);
   }
   
   public List<ContainerDto> getAllCategories() {
