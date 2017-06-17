@@ -21,7 +21,6 @@ $("form#newLecturer").submit(function(e){
         processData: false,
         timeout : 100000,
         success : function(data) {
-          console.log(data);
           // Show success msg
           $("#new-lecturer-success").removeClass("hidden");
           
@@ -37,7 +36,6 @@ $("form#newLecturer").submit(function(e){
           showErrors(errorMsgs);
         },
         done : function(e) {
-          console.log("DONE");
         }
     });
     

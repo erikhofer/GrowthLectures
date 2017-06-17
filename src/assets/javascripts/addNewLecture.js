@@ -1,5 +1,3 @@
-var API_KEY = "AIzaSyBlWQkVfTva6wY8wey_CZY8qE8WZhhXmnA";
-
 var YOUTUBE_EXP = /https?:\/\/((.+\.)?youtube.com|youtu.be)\/(.+)/i;
 var VIMEO_EXP = /https?:\/\/(.*\.)?vimeo.com\/(video\/)?(\d+)(\?(.*))?/i;
 
@@ -15,7 +13,9 @@ $("#new-lecture-continue").click(function() {
   if(link.match(YOUTUBE_EXP)) {
     var data;
     if(isValidYoutubeVideo(link)) {
-      data = getYoutubeVideoData(link);
+      youtubeId = extractYoutubeId(link);
+      data = getYoutubeVideoData(youtubeId);
+      finalData = correctYoutubeStartEnd(data, link);
     } else {
       showError("Link is not a Valid Link");
       return;
@@ -28,9 +28,9 @@ $("#new-lecture-continue").click(function() {
     return; 
   }
   
-  if(data != null && data["title"] != "") {
+  if(finalData != null && finalData["title"] != "") {
     
-    fillDataInForm(data);
+    fillDataInForm(finalData);
     $("#new-lecture-link-form").addClass("hidden");
     $("#new-lecture-data-form").removeClass("hidden");
     
@@ -42,76 +42,29 @@ $("#new-lecture-continue").click(function() {
   }
 });
 
-function getYoutubeVideoData(link) {
+function correctYoutubeStartEnd(data, path) {
   
+  var start = /(\?|\&)(start|t)=(\d+)/i.exec(path);
+  var end = /(\?|\&)(end)=(\d+)/i.exec(path);      
+    
+  if(start == null) {
+    data["start"] = 0;
+  } else {
+    data["start"] = start[3];
+  }
+  
+  data["duration"] = data["duration"] - data["start"];
+  if(end != null) {
+    data["duration"] = end[3] - data["start"];
+  }
+  
+  return data;
+}
+
+function extractYoutubeId(link) {
   var path = /https?:\/\/((.+\.)?youtube.com|youtu.be)\/(.+)/i.exec(link)[3];
   var youtubeId = /((\?|\&)(v)=|^|embed\/)([a-zA-Z0-9-_]{11})/.exec(path)[4];
-  
-  var requestUrl = "https://www.googleapis.com/youtube/v3/videos?id="+youtubeId+"&key="+API_KEY+"&part=snippet,contentDetails,statistics";
-  var returnData = {};
-  $.ajax({
-    url: requestUrl,
-    dataType: 'json',
-    async: false,
-    success: function(data) {
-      isVideo = data["pageInfo"]["totalResults"];
-      if(isVideo) {
-        items = data["items"][0];
-  
-        snippet = items["snippet"];
-        returnData["title"] = snippet["title"];
-        returnData["description"] = snippet["description"];
-        returnData["id"] = youtubeId;
-        returnData["platform"] = "YOUTUBE";
-          
-        thumbnails = snippet["thumbnails"]
-        thumb = thumbnails["maxres"];
-        if(thumb == null) {
-          thumb = thumbnails["medium"];
-        }
-        if(thumb == null) {
-          thumb = thumbnails["default"];
-        }
-        returnData["thumbnail"] = thumb;
-        returnData["url"] = generateYoutubeUrl(youtubeId);
-        
-        var start = /(\?|\&)(start|t)=(\d+)/i.exec(path);
-        var end = /(\?|\&)(end)=(\d+)/i.exec(path);      
-        
-        details = items["contentDetails"];
-        duration = details["duration"];
-        
-        durationElements = /PT((\d{0,3})H)?((\d{0,2})M)?((\d{0,2})S)?/ig.exec(duration);
-         
-        hours = durationElements[2];
-        minutes = durationElements[4];
-        seconds = durationElements[6];
-         
-        durationInSeconds = parseInt(seconds);
-        if(minutes) durationInSeconds += parseInt(minutes)*60;
-        if(hours) durationInSeconds += parseInt(hours)*60*60;
-         
-        if(start == null) {
-          returnData["start"] = 0;
-        } else {
-          console.log(start);
-          returnData["start"] = start[3];
-        }
-        if(end == null) {
-          returnData["duration"] = durationInSeconds;
-        } else {
-          console.log(end);
-          returnData["duration"] = end[3]-returnData["start"];
-        }
-        return;
-        
-      } else {
-        returnData = null;
-        return;
-      }
-    }
-  });
-  return returnData;
+  return youtubeId;
 }
 
 function isValidYoutubeVideo(link) {
@@ -129,15 +82,14 @@ function fillDataInForm(data) {
   $("#input-lecture-title").val(data["title"]);
   var slug = slugify(data["title"]);
   $("#input-lecture-slug").val(slug);
-  $("#input-lecture-start").val(parseTime(data["start"]));
   $("#input-lecture-end").val(parseTime(parseInt(data["start"])+parseInt(data["duration"])));
   $("#input-lecture-description").text(data["description"]);
   $("#new-lecture-thumb").attr("src", data["thumbnail"]["url"]);
   $("#input-lecture-thumbnail").val(data["thumbnail"]["url"]);
-}
-
-function generateYoutubeUrl(youtubeId) {
-  return "https://www.youtube.com/watch?v="+youtubeId;
+  $("#input-lecture-start").val(parseTime(data["start"]));    
+  
+  $("#input-lecture-end").val(parseTime(parseInt(data["start"])+parseInt(data["duration"]))); 
+  
 }
 
 function showErrors(errorList) {
@@ -157,7 +109,7 @@ function hideErrors() {
 }
 
 function parseTime(time) {
-   seconds = time % 60;
+  seconds = time % 60;
   if(seconds == time) {
     return "0:"+addZero(seconds);
   } else {
@@ -169,11 +121,6 @@ function parseTime(time) {
       return hours+":"+addZero(minutes)+":"+addZero(seconds);
     }
   }
-}
-
-function addZero(i) {
-  if(i<10) return "0"+i;
-  return i;
 }
 
 $("#input-lecture-slug").focus(function() {
@@ -235,7 +182,6 @@ $("form#newLecture").submit(function(e){
             showErrors(errorMsgs);
           },
           done : function(e) {
-            console.log("DONE");
           }
       });
     }
