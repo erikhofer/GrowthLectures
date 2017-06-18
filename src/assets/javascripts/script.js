@@ -26,6 +26,11 @@ $(function() {
     }
   });
   
+  // Rating
+  $(".community-rating").rating({
+    size:'xs',
+    displayOnly: true
+  });
 });
 function getYoutubeVideoData(youtubeId) {
 

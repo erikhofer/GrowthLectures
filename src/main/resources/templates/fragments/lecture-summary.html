@@ -29,7 +29,7 @@
               <p th:text="${@formatter.shortString(lecture.description,230)}"></p>
               <div class="row">
                 <div class="col-sm-4">
-                  <input id="input-id" name="input-name" type="number" class="rating" min="1" max="5" step="1" data-size="xs" data-show-caption="false" /> 
+                  <input type="number" class="community-rating" th:value="${lecture.rating}" />
                 </div>
                 <div class="col-sm-4">
                   <p><span class="glyphicon glyphicon-eye-open"></span> <span class="external-information-views"></span></p>
