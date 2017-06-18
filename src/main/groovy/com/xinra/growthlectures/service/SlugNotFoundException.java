@@ -5,7 +5,6 @@ import com.xinra.nucleus.service.ServiceException;
 
 /**
  * Thrown by services if no entity with the given slug exists.
- * If multiple slugs are returned by {@link #getSlugs()}, at least one of them does not exist.
  */
 public class SlugNotFoundException extends ServiceException {
 
@@ -27,6 +26,10 @@ public class SlugNotFoundException extends ServiceException {
     this.slugs = ImmutableList.copyOf(slugs);
   }
 
+  /**
+   * Returns the non-existing slug(s). If multiple slugs are returned,
+   * at least one of them does not exist.
+   */
   public ImmutableList<String> getSlugs() {
     return slugs;
   }

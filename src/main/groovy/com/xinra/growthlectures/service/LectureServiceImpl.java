@@ -136,43 +136,58 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
     return convertLectureToNamedDto(l);
   }
   
-  public LectureSummaryDto createLecture(NewLectureDto newLectureDto) {
+  public LectureSummaryDto createLecture(EditLectureDto dto) throws SlugNotFoundException {
     
-    String title = Util.normalize(newLectureDto.getName());
-    String videoId = Util.normalize(newLectureDto.getVideoId());
-    String slug = Util.normalize(newLectureDto.getSlug());
-    String description = Util.normalize(newLectureDto.getDescription());
-    String url = Util.normalize(newLectureDto.getLink());
-    String category = Util.normalize(newLectureDto.getNewcategory());
-    String lecturer = Util.normalize(newLectureDto.getNewlecturer());
-    String start = Util.normalize(newLectureDto.getStart());
-    String end = Util.normalize(newLectureDto.getEnd());
-    String platform = Util.normalize(newLectureDto.getPlatform());
-    String thumbnail = Util.normalize(newLectureDto.getThumbnail());
+    Util.checkNotNull(dto, 
+        EditLectureDto.Name,
+        EditLectureDto.VideoId,
+        EditLectureDto.Slug,
+        EditLectureDto.Link,
+        EditLectureDto.Newcategory,
+        EditLectureDto.Newlecturer,
+        EditLectureDto.Start,
+        EditLectureDto.End,
+        EditLectureDto.Platform,
+        EditLectureDto.Thumbnail);
+    
+    if (doesSlugExists(dto.getSlug())) {
+      throw new IllegalArgumentException("Slug already exists!");
+    }
     
     Media newMedia = null;
-    if (platform.equals(MediaType.YOUTUBE.name())) {
+    if (dto.getPlatform().equals(MediaType.YOUTUBE.name())) {
       YoutubeMedia youtubeMedia = entityFactory.createEntity(YoutubeMedia.class);
-      youtubeMedia.setStart(Util.parseTime(start));
-      youtubeMedia.setDuration(Util.parseTime(end) - Util.parseTime(start));
-      youtubeMedia.setYoutubeId(videoId);
-      youtubeMedia.setUrl(url);
-      youtubeMedia.setThumbnail(thumbnail);
+      youtubeMedia.setYoutubeId(dto.getVideoId());
       newMedia = youtubeMedia;
     }
+    
+    if (newMedia == null) {
+      throw new IllegalArgumentException("Invalid video platform!");
+    }
+    
+    newMedia.setStart(Util.parseDuration(dto.getStart()));
+    newMedia.setDuration(Util.parseDuration(dto.getEnd()) - newMedia.getStart());
+    newMedia.setUrl(dto.getLink());
+    newMedia.setThumbnail(dto.getThumbnail());
     
     mediaRepo.save(newMedia);
     
     Lecture newLecture = new Lecture();
-    newLecture.setName(title);
-    newLecture.setDescription(description);
+    newLecture.setName(dto.getName());
+    newLecture.setDescription(dto.getDescription());
     newLecture.setAdded(LocalDate.now());
-    newLecture.setCategory(categoryRepo.findBySlug(category));
-    newLecture.setLecturer(lecturerRepo.findBySlug(lecturer));
     newLecture.setRatingAmount(0);
     newLecture.setRatingAverage(0d);
-    newLecture.setSlug(slug);
+    newLecture.setSlug(dto.getSlug());
     newLecture.setMedia(newMedia);
+    newLecture.setCategory(categoryRepo.findBySlug(dto.getNewcategory()));
+    newLecture.setLecturer(lecturerRepo.findBySlug(dto.getNewlecturer()));
+    if (newLecture.getCategory() == null) {
+      throw new SlugNotFoundException(dto.getNewcategory());
+    } else if (newLecture.getLecturer() == null) {
+      throw new SlugNotFoundException(dto.getNewlecturer());
+    }
+    
     lectureRepo.save(newLecture);
    
     return convertToSummaryDto(newLecture);

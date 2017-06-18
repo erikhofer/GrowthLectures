@@ -30,8 +30,16 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     return getResponse(throwable.getMessage(), controllerMethod, HttpStatus.NOT_FOUND);
   }
   
+  @ExceptionHandler(IllegalArgumentException.class)
+  public final Object handleIllegalArgumentException(IllegalArgumentException iae,
+      HandlerMethod controllerMethod) {
+    return getResponse(iae.getMessage(), controllerMethod, HttpStatus.BAD_REQUEST);
+  }
+  
   /**
-   * Generates a response depending on the current controller. For normal controllers
+   * Generates a response depending on the current controller. For normal controllers the "error" 
+   * template is returned and supplied with the usual model, for REST controllers the
+   * {@code message} is returned as response body.
    */
   protected Object getResponse(Object message, HandlerMethod controllerMethod, HttpStatus status) {
     
@@ -43,7 +51,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
       return new ResponseEntity<>(message, status);
     } else {
       Map<String, Object> model = ImmutableMap.of(
-          "message", message,
+          "message", message != null ? message : "No message available.",
           "status", status.value(),
           "error", status.getReasonPhrase()
         );

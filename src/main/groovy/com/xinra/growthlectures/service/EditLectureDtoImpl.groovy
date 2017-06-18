@@ -6,7 +6,7 @@ import com.xinra.nucleus.interfacegenerator.GenerateInterface
 import groovy.transform.CompileStatic
 
 @CompileStatic
-class NewLectureDtoImpl extends NamedDtoImpl {
+class EditLectureDtoImpl extends NamedDtoImpl {
 
   def String description;
   def String link;
