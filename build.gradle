@@ -52,7 +52,8 @@ dependencies {
 	compile('com.bertramlabs.plugins:asset-pipeline-spring-boot:2.14.2')
 	compile('com.bertramlabs.plugins:sass-asset-pipeline:2.14.2')
 	compile('org.webjars:bootstrap-sass:3.3.7')
-	
+  //compile('org.webjars.bower:bootstrap-star-rating:4.0.1')
+  
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
