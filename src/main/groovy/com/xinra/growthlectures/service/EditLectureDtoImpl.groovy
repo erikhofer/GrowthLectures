@@ -6,7 +6,7 @@ import com.xinra.nucleus.interfacegenerator.GenerateInterface
 import groovy.transform.CompileStatic
 
 @CompileStatic
-class NewLectureDtoImpl extends NamedDtoImpl {
+class EditLectureDtoImpl extends NamedDtoImpl {
 
   def String description;
   def String link;
@@ -16,5 +16,6 @@ class NewLectureDtoImpl extends NamedDtoImpl {
   def String end;
   def String videoId;
   def String platform;
+  def String thumbnail;
   
 }

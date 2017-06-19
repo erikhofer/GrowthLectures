@@ -8,12 +8,12 @@
     <div class="container">
       <div class="lecture lecture-full">
         <h1>
-          <span th:text="${lecture.category.name}" class="label label-default"></span>
+          <a th:href="@{${@ui.categoryUrl(lecture.category)}}" th:text="${lecture.category.name}" class="label label-default"></a>
           <span th:text="${lecture.name}"></span>
         </h1>
-        <div class="embed-responsive embed-responsive-16by9 lecture-video-frame">
+        <div th:attr="data-media-platform=${lecture.media.type.name()}" class="embed-responsive embed-responsive-16by9 lecture-video-frame">
           <th:block th:switch="${lecture.media.type.name()}">
-            <iframe th:case="YOUTUBE" class="embed-responsive-item" th:src="@{https://www.youtube.com/embed/}+${lecture.media.youtubeId}+@{?start=}+${lecture.media.start}+@{&amp;end=}+${lecture.media.end}" allowfullscreen="yes"></iframe>
+            <iframe th:attr="data-youtube-id=${lecture.media.youtubeId}" th:case="YOUTUBE" class="embed-responsive-item" th:src="@{https://www.youtube.com/embed/}+${lecture.media.youtubeId}+@{?start=}+${lecture.media.start}+@{&amp;end=}+${lecture.media.end}" allowfullscreen="yes"></iframe>
           </th:block>    
         </div>
         <div class="row">
@@ -45,9 +45,39 @@
           <div class="col-md-5">
             <h3>Video Information</h3>
             <div class="panel panel-default">
-              <div class="panel-body">Ein paar Infos zum Video</div>
+              <div class="panel-body">
+                <table class="table table-striped video-information-table">
+                  <tr>
+                    <td class="external-video-information-label">Lecturer</td>
+                    <td colspan="2"><a th:text="${lecture.lecturer.name}" th:href="@{${@ui.lecturerUrl(lecture.lecturer)}}"></a></td>
+                  </tr>
+                  <tr>
+                    <td class="external-video-information-label">Added on</td>
+                    <td colspan="2"><span th:text="@{${@formatter.date(lecture.added)}}"></span></td>
+                  </tr>
+                </table>
+              </div>
             </div>
-            <h3>Watch more from <span th:text="${lecture.lecturer.name}"></span></h3>
+            <h3><span id="external-information-source"></span> Information</h3>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <table class="table table-striped video-information-table">
+                  <tr>
+                    <td class="external-video-information-label">Channel Title</td>
+                    <td colspan="2"><a id="external-information-channel-title" href="" target="_blank"></a></td>
+                  </tr>
+                  <tr>
+                    <td><span class="glyphicon glyphicon-thumbs-up"></span> <span id="external-information-likes"></span></td>
+                    <td><span class="glyphicon glyphicon-thumbs-down"></span> <span id="external-information-dislikes"></span></td>
+                    <td><span class="glyphicon glyphicon-eye-open"></span> <span id="external-information-views"></span></td>
+                  </tr>
+                  <tr>
+                    <td class="external-video-information-label">Video on Youtube</td>
+                    <td colspan="2"><a id="external-information-video-link" href="" target="_blank">Go to Youtube</a></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -56,6 +86,7 @@
   
   <div layout:fragment="scripts">
     <script sec:authorize="isAuthenticated()" src="/assets/lecture.js"></script>
+    <script src="/assets/externalLectureData.js"></script>
   </div>
 </body>
 </html>

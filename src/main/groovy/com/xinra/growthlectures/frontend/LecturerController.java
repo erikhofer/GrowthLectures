@@ -1,10 +1,8 @@
 package com.xinra.growthlectures.frontend;
 
 import com.xinra.growthlectures.Util;
-import com.xinra.growthlectures.entity.Lecturer;
 import com.xinra.growthlectures.service.ContainerDto;
 import com.xinra.growthlectures.service.LectureService;
-import com.xinra.growthlectures.service.LectureSummaryDto;
 import com.xinra.growthlectures.service.LecturerService;
 import com.xinra.growthlectures.service.NamedDto;
 import com.xinra.growthlectures.service.SlugNotFoundException;
@@ -32,88 +30,75 @@ public class LecturerController {
   @Autowired
   private DtoFactory dtoFactory;
   
+  /**
+   * Lists all categories.
+   */
   @RequestMapping(Ui.URL_LECTURERS)
   public String lecturerList(Model model) {
     
-    ArrayList<ContainerDto> allLecturers = new ArrayList<ContainerDto>();
-    for (Lecturer l : lecturerService.getAllLecturers()) {
-      ContainerDto newLecuturer = dtoFactory.createDto(ContainerDto.class);
-      newLecuturer.setName(l.getName());
-      newLecuturer.setSlug(l.getSlug());
-      newLecuturer.setAmount(l.getLectures().size());
-      allLecturers.add(newLecuturer);
+    ContainerDto recommendedLecturer = lecturerService.getRandomLecturer();
+    if (recommendedLecturer == null) {
+      model.addAttribute("recommendedLecturer", null);    
+    } else {
+      model.addAttribute("recommendedLecturer", recommendedLecturer);
+      model.addAttribute("recommendedLecturerLectures", 
+          lectureService.getRecentLecturesByLecturer(recommendedLecturer.getSlug(), 6));
     }
     
-    ContainerDto firstMainLecturer = dtoFactory.createDto(ContainerDto.class);
-    firstMainLecturer.setName("Erik Hofer");
-    firstMainLecturer.setSlug("erik-hofer");
-    firstMainLecturer.setAmount(124);
-    
-    ContainerDto secondMainLecturer = dtoFactory.createDto(ContainerDto.class);
-    secondMainLecturer.setName("Toby Möller");
-    secondMainLecturer.setSlug("toby-moeller");
-    secondMainLecturer.setAmount(124);
-    
-    List<LectureSummaryDto> firstLecturerLectures = lectureService.getPopularLectures();
-    while(firstLecturerLectures.size() > 3) {
-      firstLecturerLectures.remove(3);      
+    List<ContainerDto> allLecturers = lecturerService.getAllLecturers();
+    if (allLecturers == null || allLecturers.size() == 0) {
+      model.addAttribute("lecturerList", null);  
+    } else {
+      model.addAttribute("lecturerList", allLecturers);   
     }
-    model.addAttribute("firstMainLecturerLectures", firstLecturerLectures );
+
+    model.addAttribute("newLecturer", dtoFactory.createDto(NamedDto.class));   
     
-    List<LectureSummaryDto> secondLecturerLectures = lectureService.getPopularLectures();
-    while(secondLecturerLectures.size() > 3) {
-      secondLecturerLectures.remove(3);      
-    }
-    model.addAttribute("secondMainLecturerLectures", secondLecturerLectures );
-    
-    model.addAttribute("lecturerList", allLecturers );
-    model.addAttribute("firstMainLecturer", firstMainLecturer);
-    model.addAttribute("secondMainLecturer", secondMainLecturer);
-    model.addAttribute("newLecturer", dtoFactory.createDto(NamedDto.class));
     return "lecturers";
   }
   
+  /**
+   * Single lecturer page.
+   */
   @RequestMapping(Ui.URL_LECTURERS + "/{SLUG}")
-  public String lecturer(Model model, @PathVariable("SLUG") String slug) {
-    System.out.println(slug);
-    try {
-      model.addAttribute("lecturer", lecturerService.getLecturer(slug));
-      model.addAttribute("lectures", lectureService.getPopularLectures());
-    } catch (SlugNotFoundException snfe) {
-      throw new ResourceNotFoundException();
-    }
+  public String lecturer(Model model, @PathVariable("SLUG") String slug) 
+      throws SlugNotFoundException {
+    
+    model.addAttribute("lecturer", lecturerService.getLecturerBySlug(slug));
+
+    model.addAttribute("lectures", lectureService.getRecentLecturesByLecturer(slug));
     
     return "lecturer";
   }
   
+  /**
+   * REST controller for saving a new lecturer.
+   */
   @ResponseBody
   @RequestMapping(value = Ui.URL_LECTURERS, method = RequestMethod.POST)
-  public List<String> addLecturer(NamedDto newLecturerDto, 
-                                  HttpServletResponse response) {
+  public String addLecturer(NamedDto newLecturerDto, 
+                                  HttpServletResponse response) throws InvalidDataException {
   
-    List<String> responseList = new ArrayList<String>();
+    List<String> errors = new ArrayList<String>();
     String name = Util.normalize(newLecturerDto.getName());
     String slug = Util.normalize(newLecturerDto.getSlug());
     if (name == null) {
-      responseList.add("Invalid name!");
+      errors.add("Invalid name!");
     }
     if (slug == null) {
-      responseList.add("Invalid slug!");
+      errors.add("Invalid slug!");
     } else {
       if (lecturerService.doesExists(slug)) {
-        responseList.add("Slug alredy exists!");
+        errors.add("Slug alredy exists!");
       }
     }
     
-    if (responseList.isEmpty()) {
-      lecturerService.createLecturer(newLecturerDto);
-      response.setStatus(HttpServletResponse.SC_OK);
-      responseList.add(Ui.URL_LECTURERS + "/" + slug);
-    } else {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    if (!errors.isEmpty()) {
+      throw new InvalidDataException(errors);
     }
     
-    return responseList;
+    lecturerService.createLecturer(newLecturerDto);
+    return Ui.URL_LECTURERS + "/" + slug;
   }
 
 }

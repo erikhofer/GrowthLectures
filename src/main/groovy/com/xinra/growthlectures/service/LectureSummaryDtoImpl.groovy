@@ -17,7 +17,6 @@ class LectureSummaryDtoImpl extends NamedDtoImpl {
   def String description;
   def Double rating;
   def Integer userRating;
-  def Integer duration;
   def LocalDate added;
   
   private MediaDto media;
