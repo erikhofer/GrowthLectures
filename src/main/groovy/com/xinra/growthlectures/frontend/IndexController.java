@@ -1,11 +1,10 @@
 package com.xinra.growthlectures.frontend;
 
+import com.xinra.growthlectures.service.CategoryService;
 import com.xinra.growthlectures.service.ContainerDto;
-import com.xinra.growthlectures.service.ContainerDtoImpl;
 import com.xinra.growthlectures.service.LectureServiceImpl;
 import com.xinra.growthlectures.service.LectureSummaryDto;
-import com.xinra.nucleus.service.DtoFactory;
-import java.util.ArrayList;
+import com.xinra.growthlectures.service.LecturerService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,36 +19,36 @@ public class IndexController extends GrowthlecturesController {
   LectureServiceImpl lectureServiceImpl;
   
   @Autowired
-  private DtoFactory dtoFactory;
 
+  private CategoryService categoryService;
+  
+  @Autowired 
+  LecturerService lecturerService;
+  
+  /**
+   * Index page.
+   */
   @RequestMapping(Ui.URL_INDEX)
   public String index(Model model) {
     
-    addSearchModel(model, Ui.URL_SEARCH, null);
-    
-    // PopularLecures
-    List<LectureSummaryDto> popularLectures = lectureServiceImpl.getPopularLectures();
-    model.addAttribute("popularLectures", popularLectures );
+    // PopularLectures
+    List<LectureSummaryDto> popularLectures = lectureServiceImpl.getPopularLectures(4);
+    model.addAttribute("popularLectures", popularLectures);
     
     // Recent Lecturers
-    List<LectureSummaryDto> recentLectures = lectureServiceImpl.getRecentLectures();
-    model.addAttribute("recentLectures", recentLectures );
+    List<LectureSummaryDto> recentLectures = lectureServiceImpl.getRecentLectures(4);
+    model.addAttribute("recentLectures", recentLectures);
+    
     
     // Popular Categories
-    ArrayList<ContainerDto> popularCategories = new ArrayList<ContainerDto>();
-    ContainerDto cat = dtoFactory.createDto(ContainerDto.class);
-    cat.setName("Category One");
-    cat.setSlug("catone");
-    popularCategories.add(cat);
+    List<ContainerDto> popularCategories = categoryService.getPopularCategories(5);
     model.addAttribute("popularCategories", popularCategories);
     
     // Pupular Lecuturers 
-    ArrayList<ContainerDto> popularLecturers = new ArrayList<ContainerDto>();
-    ContainerDto lec = dtoFactory.createDto(ContainerDto.class);
-    lec.setName("Peter Lustig");
-    lec.setSlug("peter-lustig");
-    popularLecturers.add(lec);
+    List<ContainerDto> popularLecturers = lecturerService.getPopularLecturers(5);
     model.addAttribute("popularLecturers", popularLecturers);
+    
+    addSearchModel(model, Ui.URL_SEARCH, null);
     
     return "index";
   }

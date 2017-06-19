@@ -18,7 +18,7 @@ public class Ui {
   public static final String URL_REGISTER = "/register";
   
   public String lectureUrl(LectureSummaryDto dto) {
-    return this.lectureUrl(dto.getCategory().getSlug(), dto.getSlug() );
+    return this.lectureUrl(dto.getCategory().getSlug(), dto.getSlug());
   }
   
   public String lectureUrl(String categorySlug, String lectureSlug) {

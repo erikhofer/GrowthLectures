@@ -1,7 +1,7 @@
 package com.xinra.growthlectures.entity;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import java.util.Set;
 
 /**
  * User roles that grant certain permissions.
@@ -13,17 +13,17 @@ public enum Role {
   ADMIN(USER, MODERATOR);
   
   private final Role[] include;
-  private Set<Role> transitiveRoles;
+  private ImmutableSet<Role> transitiveRoles;
   
   private Role(Role... include) {
     this.include = include;
   }
   
   /**
-   * Returns an immutable set of this role as well of all roles that are inherited.
+   * Returns an enum set of this role as well of all roles that are inherited.
    * For example, a {@link #MODERATOR} is also a {@link #USER}.
    */
-  public Set<Role> getTransitiveRoles() {
+  public ImmutableSet<Role> getTransitiveRoles() {
     // EnumSet can not be used in the constructor. It is thus created
     // the first time the getter is called.
     if (transitiveRoles == null) {

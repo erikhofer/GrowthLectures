@@ -1,19 +1,16 @@
 package com.xinra.growthlectures.frontend;
 
 import com.xinra.growthlectures.Util;
-import com.xinra.growthlectures.entity.Category;
 import com.xinra.growthlectures.entity.LectureRepository;
 import com.xinra.growthlectures.service.CategoryService;
 import com.xinra.growthlectures.service.ContainerDto;
+import com.xinra.growthlectures.service.EditLectureDto;
 import com.xinra.growthlectures.service.LectureService;
-import com.xinra.growthlectures.service.LectureSummaryDto;
 import com.xinra.growthlectures.service.LecturerService;
 import com.xinra.growthlectures.service.NamedDto;
-import com.xinra.growthlectures.service.NewLectureDto;
 import com.xinra.growthlectures.service.SlugNotFoundException;
 import com.xinra.nucleus.service.DtoFactory;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,193 +42,79 @@ public class CategoryController extends GrowthlecturesController {
   @Autowired
   Ui ui;
   
+  /**
+   * Lists all categories.
+   */
   @RequestMapping(Ui.URL_CATEGORIES)
   public String categoryList(Model model) {
-
-    ArrayList<ContainerDto> allCategories = new ArrayList<ContainerDto>();
- 
-    Collection<Category> categories = categoryService.getAllCategories();
-    for (Category cat : categories) {
-      ContainerDto newCat = dtoFactory.createDto(ContainerDto.class);
-      newCat.setName(cat.getName());
-      newCat.setSlug(cat.getSlug());
-      newCat.setAmount(cat.getLectures().size());
-     
-      allCategories.add(newCat);
+    
+    ContainerDto recommendetCategory = categoryService.getRandomCategory();
+    if (recommendetCategory != null) {
+      model.addAttribute("recommendedCategory", recommendetCategory);
+      model.addAttribute("recommendedCategoryLectures", 
+          lectureService.getRecentLecturesByCategory(recommendetCategory.getSlug(), 6));
     }
     
-    ContainerDto firstMainCat = dtoFactory.createDto(ContainerDto.class);
-    firstMainCat.setName("Hauptkategorie 1");
-    firstMainCat.setSlug("mainCatOne");
-    firstMainCat.setAmount(124);
-    
-    ContainerDto secondMainCat = dtoFactory.createDto(ContainerDto.class);
-    secondMainCat.setName("Hauptkategorie 2");
-    secondMainCat.setSlug("mainCatTwo");
-    secondMainCat.setAmount(124);
-    
-    List<LectureSummaryDto> firstCatLectures = lectureService.getPopularLectures();
-    while (firstCatLectures.size() > 3) {
-      firstCatLectures.remove(3);      
-    }
-    model.addAttribute("firstMainCatLectures", firstCatLectures);
-    
-    List<LectureSummaryDto> secondCatLectures = lectureService.getPopularLectures();
-    while (secondCatLectures.size() > 3) {
-      secondCatLectures.remove(3);      
-    }
-    model.addAttribute("secondMainCatLectures", secondCatLectures);
-    
-    model.addAttribute("categoryList", allCategories);
-    model.addAttribute("firstMainCat", firstMainCat);
-    model.addAttribute("secondMainCat", secondMainCat);
+    List<ContainerDto> allCategories = categoryService.getAllCategories();
+    model.addAttribute("categoryList", allCategories); 
     
     model.addAttribute("newCategory", dtoFactory.createDto(NamedDto.class));
      
     return "categories";
   }
   
+  /**
+   * Single category page.
+   */
   @RequestMapping(Ui.URL_CATEGORIES + "/{SLUG}")
-  public String category(Model model, @PathVariable("SLUG") String slug) {
-
+  public String category(Model model,
+      @PathVariable("SLUG") String slug) throws SlugNotFoundException {
  
-    NamedDto category;
-    try {
-      category = categoryService.getCategory(slug);
-    } catch (SlugNotFoundException snfe) {
-      throw new ResourceNotFoundException();
-    }
+    model.addAttribute("category", categoryService.getCategoryBySlug(slug));
+    
+    model.addAttribute("lectures", lectureService.getRecentLecturesByCategory(slug));
     
     addSearchModel(model, slug, (query, orderBy, decending) -> {
       
       return searchService.searchForCategory(slug, query, orderBy, decending);
-  });
-   
-    model.addAttribute("category", category);
+    });
+    
+    // New Lecture
     model.addAttribute("allCategories", categoryService.getAllCategories());
     model.addAttribute("allLecturers", lecturerService.getAllLecturers());
-    model.addAttribute("newLecture", dtoFactory.createDto(NewLectureDto.class));
+    model.addAttribute("newLecture", dtoFactory.createDto(EditLectureDto.class));
  
     return "category";
   }
   
+  /**
+   * REST controller for saving a new category.
+   */
   @ResponseBody
-  @RequestMapping(value = Ui.URL_CATEGORIES, method = RequestMethod.POST)
-  public List<String> addCategory(NamedDto newCategoryDto, 
-                                HttpServletResponse response) {
+  @RequestMapping(path = Ui.URL_CATEGORIES, method = RequestMethod.POST)
+  public String addCategory(NamedDto categoryDto,
+      HttpServletResponse response) throws InvalidDataException {
   
-    List<String> responseList = new ArrayList<String>();
-    String name = Util.normalize(newCategoryDto.getName());
-    String slug = Util.normalize(newCategoryDto.getSlug());
+    List<String> errors = new ArrayList<>();
+    
+    String name = Util.normalize(categoryDto.getName());
+    String slug = Util.normalize(categoryDto.getSlug());
+    
     if (name == null) {
-      responseList.add("Invalid name!");
+      errors.add("Invalid name!");
     }
     if (slug == null) {
-      responseList.add("Invalid slug!");
-    } else {
-      if (categoryService.doesExists(slug)) {
-        responseList.add("Slug alredy exists!");
-      }
+      errors.add("Invalid slug!");
+    } else if (categoryService.doesExists(slug)) {
+      errors.add("Slug already exists!");
     }
     
-    if (responseList.isEmpty()) {
-      categoryService.createCategory(newCategoryDto);
-      response.setStatus(HttpServletResponse.SC_OK);
-      responseList.add(Ui.URL_CATEGORIES + "/" + slug);
-    } else {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    if (!errors.isEmpty()) {
+      throw new InvalidDataException(errors);
     }
     
-    return responseList;
-  }
-  
-  @ResponseBody
-  @RequestMapping(value = Ui.URL_CATEGORIES + "/{SLUG}", method = RequestMethod.POST)
-  public List<String> addLectureInCategory(@PathVariable("SLUG") String categorySlug, 
-                                NewLectureDto newLectureDto, 
-                                HttpServletResponse response) throws SlugNotFoundException {
-
-     
-    List<String> responseList = new ArrayList<String>();
-    
-    String videoId = Util.normalize(newLectureDto.getVideoId());
-    String title = Util.normalize(newLectureDto.getName());
-    String slug = Util.normalize(newLectureDto.getSlug());
-    String description = Util.normalize(newLectureDto.getDescription());
-    String url = Util.normalize(newLectureDto.getLink());
-    String category = Util.normalize(categorySlug);
-    String lecturer = Util.normalize(newLectureDto.getNewlecturer());
-    String platform = Util.normalize(newLectureDto.getPlatform());
-    
-    String start = Util.normalize(newLectureDto.getStart());
-    String end = Util.normalize(newLectureDto.getEnd());
-    
-    
-    if (videoId == null || url == null || platform == null) {
-      responseList.add("Invalid Url - Please cancel and restart adding!");      
-    } else {
-      if (title == null) {
-        responseList.add("The title is not valid!");
-      }
-      if (slug == null) {
-        responseList.add("The slug is not valid!");
-      } else {
-        if (lectureService.doesSlugExists(slug)) {
-          responseList.add("The slug already exists!");
-        }
-      }
-      if (description.length() > 4000) {
-        responseList.add("Description must be shorter than 4000 chars!");
-      }
-      if (category == null) {
-        responseList.add("The selected category is not valid!");
-      } else {
-        try {
-          categoryService.getCategory(category);
-        } catch (SlugNotFoundException snfe) {
-          throw new ResourceNotFoundException();
-        }
-      }
-      if (lecturer == null) {
-        responseList.add("The selected lecturer is not valid!");
-      } else {
-        if (!lecturerService.doesExists(newLectureDto.getNewlecturer())) {
-          responseList.add("The selected lecturer does not exist!");
-        }
-      }    
-      if (start == null) {
-        responseList.add("Please enter a start time!");
-      } else {
-        if (Util.parseTime(start) == null) {
-          responseList.add("The entered start time is not valid!");
-        }
-      }
-      if (end == null) {
-        responseList.add("Please enter an end time!");        
-      } else {
-        if (Util.parseTime(end) == null) {
-          responseList.add("The entered end time is not valid!");
-        }
-      }
-      if (start != null && end != null) {
-        if (Util.parseTime(start) != null && Util.parseTime(end) != null) {
-          if (Util.parseTime(start) >= Util.parseTime(end)) {
-            responseList.add("The start time must be smaller than end time!");
-          }
-        }
-      }
-    }
-    if (responseList.isEmpty()) {
-      LectureSummaryDto newLecture = lectureService.createLecture(newLectureDto);
-      response.setStatus(HttpServletResponse.SC_OK);      
-      responseList.add(ui.lectureUrl(newLecture.getCategory().getSlug(), newLecture.getSlug()));
-    } else {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    }
-  
-    return responseList;  
-  }
-  
-  
+    categoryService.createCategory(categoryDto);
+    return Ui.URL_CATEGORIES + "/" + slug;
+  } 
   
 }

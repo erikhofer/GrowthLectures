@@ -1,5 +1,7 @@
 package com.xinra.growthlectures.frontend;
 
+import static org.springframework.http.HttpMethod.POST;
+
 import com.xinra.growthlectures.entity.EmailLoginRepository;
 import com.xinra.growthlectures.entity.Role;
 import com.xinra.growthlectures.service.AuthenticationProviderImpl;
@@ -42,13 +44,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     http
         .authorizeRequests()
             .antMatchers("/").permitAll()
-            .antMatchers(Ui.URL_CATEGORIES + "/**/note").authenticated()
-            .antMatchers(HttpMethod.POST, Ui.URL_CATEGORIES)
-                .hasAuthority(Role.MODERATOR.toString())
-            .antMatchers(HttpMethod.POST, Ui.URL_LECTURERS)
-                .hasAuthority(Role.MODERATOR.toString())
-            .antMatchers(HttpMethod.POST, Ui.URL_CATEGORIES + "/*")
-                .hasAuthority(Role.MODERATOR.toString())
+            .antMatchers("/assets/partials/**").denyAll()
+            .antMatchers(Ui.URL_CATEGORIES + "/*/*/note").authenticated()
         .and()
             .formLogin()
             .loginPage(Ui.URL_LOGIN)
@@ -57,6 +54,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .logout()
             // Enable logout via GET. WARNING: This disables CSRF prevention!
             .logoutRequestMatcher(new AntPathRequestMatcher(Ui.URL_LOGOUT));
+    
+    authorizeForRole(http, Ui.URL_CATEGORIES, Role.MODERATOR, POST);
+    authorizeForRole(http, Ui.URL_LECTURERS, Role.MODERATOR, POST);
+    authorizeForRole(http, Ui.URL_CATEGORIES + "/*", Role.MODERATOR, POST);
+  }
+  
+  private void authorizeForRole(HttpSecurity http, String antPattern, Role role,
+      HttpMethod... methods) throws Exception {
+    
+    for (HttpMethod method : methods) {
+      http.authorizeRequests().antMatchers(method, antPattern).hasAuthority(role.toString());
+    }
   }
   
 }

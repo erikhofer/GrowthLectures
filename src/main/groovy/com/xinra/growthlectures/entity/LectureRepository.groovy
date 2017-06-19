@@ -1,6 +1,7 @@
 package com.xinra.growthlectures.entity;
 
 import groovy.transform.CompileStatic
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.query.Param
@@ -19,6 +20,16 @@ interface AbstractLectureRepository<T extends Lecture>
   
   Lecture findBySlugAndCategorySlug(String slug, String categorySlug);
 
+  
+  Iterable<Lecture> findByCategorySlug(String categorySlug);
+  Iterable<Lecture> findByLecturerSlug(String lecturerSlug);
+  Iterable<Lecture> findByCategorySlugOrderByAddedDesc(String categorySlug);
+  Iterable<Lecture> findByLecturerSlugOrderByAddedDesc(String lecturerSlug);
+  List<Lecture> findByCategorySlugOrderByAddedDesc(String categorySlug, Pageable pageable);
+  List<Lecture> findByLecturerSlugOrderByAddedDesc(String lecturerSlug, Pageable pageable);
+  List<Lecture> findByOrderByAddedDesc(Pageable pageable);
+  List<Lecture> findByOrderByRatingAverageDesc(Pageable pageable);
+  
   @Query("SELECT l.name FROM Lecture l WHERE l.slug = :slug")
   String getNameBySlug(@Param("slug") String slug);
   

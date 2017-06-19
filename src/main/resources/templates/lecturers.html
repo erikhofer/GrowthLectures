@@ -10,25 +10,27 @@
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create-lecturer-modal"><span class="glyphicon glyphicon-plus"></span> Create new lecturer</button>
       </div>
       <h1>Lecturers</h1>
-      <div class="row">
-        <div class="col-xs-12 col-lg-6">
-          <h3 th:text="${firstMainLecturer.name}"></h3>
-          <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${firstMainLecturerLectures})"></div>
+      
+      <th:block th:if="${recommendedLecturer != null}">
+        <h3 th:text="@{Recommended:&nbsp;}+${recommendedLecturer.name}"></h3>
+        <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${recommendedLecturerLectures})"></div>
+      </th:block>
+      
+      <th:block th:if="${lecturerList != null}">
+        <h2>More Lecturers</h2>
+        <div class="panel panel-default">
+          <ul class="list-group">
+            <a th:each="lecturer : ${lecturerList}" th:href="@{${@ui.lecturerUrl(lecturer)}}" class="list-group-item">
+              <span th:text="${lecturer.name}"></span> 
+              <span th:text="${lecturer.amount}" class="badge"></span>
+            </a>
+          </ul>
         </div>
-        <div class="col-xs-12 col-lg-6">
-          <h3 th:text="${secondMainLecturer.name}"></h3>
-          <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${secondMainLecturerLectures})"></div>
-        </div>
-      </div>
-      <h2>More Lecturers</h2>
-      <div class="panel panel-default">
-        <ul class="list-group">
-          <a th:each="lecturer : ${lecturerList}" th:href="@{${@ui.lecturerUrl(lecturer)}}" class="list-group-item">
-            <span th:text="${lecturer.name}"></span> 
-            <span th:text="${lecturer.amount}" class="badge"></span>
-          </a>
-        </ul>
-      </div>
+      </th:block>
+      <th:block th:if="${lecturerList == null}">
+        <div class="alert alert-warning">No lecturers can be found!</div>
+      </th:block>
+      
     </div>
     
     <div class="modal fade" id="create-lecturer-modal" tabindex="-1" role="dialog" sec:authorize="hasRole('MODERATOR')">
