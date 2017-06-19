@@ -317,7 +317,9 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
   
   public void supplyRatings(Iterable<LectureSummaryDto> lectures, String userId) {
     Map<String, LectureSummaryDto> map = Maps.uniqueIndex(lectures, LectureSummaryDto::getId);
-    lectureUserDataRepo.getRatings(map.keySet(), userId);
+    for (Object[] result : lectureUserDataRepo.getRatings(map.keySet(), userId)) {
+      map.get(result[0]).setUserRating((Integer) result[1]);
+    }
   }
 
   public void saveRating(String lectureSlug, String categorySlug, String userId, int rating)
