@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
-  <title>This is title</title>
+  <title>Categories</title>
 </head>
 <body>
   <div layout:fragment="content">
@@ -13,7 +13,7 @@
       <!-- add search fragment here -->
       
       <th:block th:if="${recommendedCategory != null}">
-        <h3>Recommended <span th:text="${recommendedCategory.name}"></span></h3>
+        <h3>Recommended: <span th:text="${recommendedCategory.name}"></span></h3>
         <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${recommendedCategoryLectures})"></div>
       </th:block>
       

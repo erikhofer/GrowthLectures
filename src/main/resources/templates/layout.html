@@ -10,7 +10,7 @@
     <meta th:name="_csrf" th:content="${_csrf.token}"/>
     <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
     
-    <title>Growth Lectures</title>
+    <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">Groth Lectures</title>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="/assets/style.css" />
