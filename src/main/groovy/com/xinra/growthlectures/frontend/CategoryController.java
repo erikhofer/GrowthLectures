@@ -42,6 +42,9 @@ public class CategoryController {
   @Autowired
   Ui ui;
   
+  /**
+   * Lists all categories.
+   */
   @RequestMapping(Ui.URL_CATEGORIES)
   public String categoryList(Model model) {
     
@@ -60,6 +63,9 @@ public class CategoryController {
     return "categories";
   }
   
+  /**
+   * Single category page.
+   */
   @RequestMapping(Ui.URL_CATEGORIES + "/{SLUG}")
   public String category(Model model,
       @PathVariable("SLUG") String slug) throws SlugNotFoundException {
@@ -76,6 +82,9 @@ public class CategoryController {
     return "category";
   }
   
+  /**
+   * REST controller for saving a new category.
+   */
   @ResponseBody
   @RequestMapping(path = Ui.URL_CATEGORIES, method = RequestMethod.POST)
   public String addCategory(NamedDto categoryDto,

@@ -1,10 +1,8 @@
 package com.xinra.growthlectures.frontend;
 
 import com.xinra.growthlectures.Util;
-import com.xinra.growthlectures.entity.Lecturer;
 import com.xinra.growthlectures.service.ContainerDto;
 import com.xinra.growthlectures.service.LectureService;
-import com.xinra.growthlectures.service.LectureSummaryDto;
 import com.xinra.growthlectures.service.LecturerService;
 import com.xinra.growthlectures.service.NamedDto;
 import com.xinra.growthlectures.service.SlugNotFoundException;
@@ -32,6 +30,9 @@ public class LecturerController {
   @Autowired
   private DtoFactory dtoFactory;
   
+  /**
+   * Lists all categories.
+   */
   @RequestMapping(Ui.URL_LECTURERS)
   public String lecturerList(Model model) {
     
@@ -56,6 +57,9 @@ public class LecturerController {
     return "lecturers";
   }
   
+  /**
+   * Single lecturer page.
+   */
   @RequestMapping(Ui.URL_LECTURERS + "/{SLUG}")
   public String lecturer(Model model, @PathVariable("SLUG") String slug) 
       throws SlugNotFoundException {
@@ -67,6 +71,9 @@ public class LecturerController {
     return "lecturer";
   }
   
+  /**
+   * REST controller for saving a new lecturer.
+   */
   @ResponseBody
   @RequestMapping(value = Ui.URL_LECTURERS, method = RequestMethod.POST)
   public String addLecturer(NamedDto newLecturerDto, 

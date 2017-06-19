@@ -15,6 +15,9 @@ public class Formatter {
   
   private final DateTimeFormatter dateFormatter =  DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
+  /**
+   * Converts a duration in seconds to a String.
+   */
   public String duration(Integer duration) {
     int hour = duration / 60 / 60;
     int minute = (duration / 60) % 60;
@@ -27,9 +30,12 @@ public class Formatter {
     return date.format(dateFormatter);
   }
   
+  /**
+   * Cuts a sting to a maximum of characters at the position of the last space before maximum.
+   */
   public String shortString(String string, Integer maxChars) {
     
-    Pattern pattern = Pattern.compile("(.{0,"+maxChars+"})( |$)");
+    Pattern pattern = Pattern.compile("(.{0," + maxChars + "})( |$)");
     Matcher matcher = pattern.matcher(string);
 
     List<String> listMatches = new ArrayList<String>();

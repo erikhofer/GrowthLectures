@@ -1,16 +1,13 @@
 package com.xinra.growthlectures.frontend;
 
 import com.xinra.growthlectures.Util;
-import com.xinra.growthlectures.service.CategoryService;
 import com.xinra.growthlectures.service.EditLectureDto;
 import com.xinra.growthlectures.service.LectureDto;
 import com.xinra.growthlectures.service.LectureService;
 import com.xinra.growthlectures.service.LectureSummaryDto;
-import com.xinra.growthlectures.service.LecturerService;
 import com.xinra.growthlectures.service.SlugNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,8 +23,6 @@ public class LectureController extends GrowthlecturesController {
   private static final String PATH = Ui.URL_CATEGORIES + "/{category}/{lecture}";
   
   private @Autowired LectureService lectureService;
-  private @Autowired CategoryService categoryService;
-  private @Autowired LecturerService lecturerService;
   private @Autowired Ui ui;
   
   /**
@@ -87,7 +82,6 @@ public class LectureController extends GrowthlecturesController {
   
   /**
    * REST controller for creating a new lecture.
-   * @throws SlugNotFoundException 
    */
   @ResponseBody
   @RequestMapping(path = Ui.URL_CATEGORIES + "/{category}", method = RequestMethod.POST)

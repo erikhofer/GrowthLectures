@@ -24,6 +24,9 @@ public class IndexController {
   @Autowired 
   LecturerService lecturerService;
   
+  /**
+   * Index page.
+   */
   @RequestMapping(Ui.URL_INDEX)
   public String index(Model model) {
     

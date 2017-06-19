@@ -52,87 +52,67 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
   @Autowired
   private EntityFactory entityFactory;
   
-public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
-    
+  public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
     return Streams.stream(lectureRepo.findByCategorySlug(categorySlug))
         .map(this::convertToSummaryDto)
         .collect(Collectors.toList());
-    
   }
 
   public List<LectureSummaryDto> getLecturesByLecturer(String lecturerSlug) {
-  
     return Streams.stream(lectureRepo.findByLecturerSlug(lecturerSlug))
         .map(this::convertToSummaryDto)
         .collect(Collectors.toList());
-  
-}
+  }
 
   public List<LectureSummaryDto> getAllLectures() {
-    
     return Streams.stream(lectureRepo.findAll())
         .map(this::convertToSummaryDto)
         .collect(Collectors.toList());
-       
   }
   
   public List<LectureSummaryDto> getRecentLectures(Integer count) {
-    List<LectureSummaryDto> returnList = new ArrayList<LectureSummaryDto>();
-    for (Lecture l : lectureRepo.findByOrderByAddedDesc(new PageRequest(0, count))) {
-      returnList.add(convertToSummaryDto(l));
-    }
-    return returnList;
+    return lectureRepo.findByOrderByAddedDesc(new PageRequest(0, count)).stream()
+        .map(this::convertToSummaryDto)
+        .collect(Collectors.toList());
   }
   
   public List<LectureSummaryDto> getPopularLectures(Integer count) {
-    List<LectureSummaryDto> returnList = new ArrayList<LectureSummaryDto>();
-    for (Lecture l : lectureRepo.findByOrderByRatingAverageDesc(new PageRequest(0, count))) {
-      returnList.add(convertToSummaryDto(l));
-    }
-    return returnList;
+    return lectureRepo.findByOrderByRatingAverageDesc(new PageRequest(0, count)).stream()
+        .map(this::convertToSummaryDto)
+        .collect(Collectors.toList());
   }
   
   public List<LectureSummaryDto> getRecentLecturesByCategory(String categorySlug) {
-    List<LectureSummaryDto> returnList = new ArrayList<LectureSummaryDto>();
-    for (Lecture l : lectureRepo.findByCategorySlugOrderByAddedDesc(categorySlug)) {
-      returnList.add(convertToSummaryDto(l));
-    }
-    return returnList;
+    return Streams.stream(lectureRepo.findByCategorySlugOrderByAddedDesc(categorySlug))
+        .map(this::convertToSummaryDto)
+        .collect(Collectors.toList());
+
   }
   
   public List<LectureSummaryDto> getRecentLecturesByLecturer(String lecturerSlug) {
-    List<LectureSummaryDto> returnList = new ArrayList<LectureSummaryDto>();
-    for (Lecture l : lectureRepo.findByLecturerSlugOrderByAddedDesc(lecturerSlug)) {
-      returnList.add(convertToSummaryDto(l));
-    }
-    return returnList;
+    return Streams.stream(lectureRepo.findByLecturerSlugOrderByAddedDesc(lecturerSlug))
+        .map(this::convertToSummaryDto)
+        .collect(Collectors.toList());
   }
   
   public List<LectureSummaryDto> getRecentLecturesByCategory(String categorySlug, int count) {
-    List<LectureSummaryDto> returnList = new ArrayList<LectureSummaryDto>();
-    for (Lecture l : 
-          lectureRepo.findByCategorySlugOrderByAddedDesc(categorySlug, new PageRequest(0, count))) {
-      returnList.add(convertToSummaryDto(l));
-    }
-    return returnList;
+    return lectureRepo.findByCategorySlugOrderByAddedDesc(categorySlug, new PageRequest(0, count))
+        .stream()
+        .map(this::convertToSummaryDto)
+        .collect(Collectors.toList());
   }
   
   public List<LectureSummaryDto> getRecentLecturesByLecturer(String lecturerSlug, int count) {
-    List<LectureSummaryDto> returnList = new ArrayList<LectureSummaryDto>();
-    for (Lecture l : 
-          lectureRepo.findByLecturerSlugOrderByAddedDesc(lecturerSlug, new PageRequest(0, count))) {
-      returnList.add(convertToSummaryDto(l));
-    }
-    return returnList;
+    return lectureRepo.findByLecturerSlugOrderByAddedDesc(lecturerSlug, new PageRequest(0, count)).stream()
+        .map(this::convertToSummaryDto)
+        .collect(Collectors.toList());
   }
 
   public NamedDto getLecture(String slug) throws SlugNotFoundException {
-    
     Lecture l = lectureRepo.findBySlug(slug);
     if (l == null) {
       throw new SlugNotFoundException(slug);
     }
-     
     return convertLectureToNamedDto(l);
   }
   
