@@ -27,7 +27,7 @@ $(function() {
   });
   
   // Rating
-  $(".community-rating").rating({
+  $(".community-rating > input, .user-rating > input").rating({
     size:'xs',
     displayOnly: true
   });

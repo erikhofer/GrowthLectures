@@ -18,18 +18,11 @@
                 <a th:href="@{${@ui.categoryUrl(lecture.category)}}"><span th:text="${lecture.category.name}" class="label label-default"></span></a> 
                 <a th:href="@{${@ui.lectureUrl(lecture)}}" th:text="${@formatter.shortString(lecture.name, 55)}"></a> <span th:if="${lecture.played}" class="glyphicon glyphicon-ok listened"></span>
               </h3>
-              <div class="row">
-                <div class="col-sm-4">
-                  <p><a th:href="@{${@ui.lecturerUrl(lecture.lecturer)}}" class="lecturer" th:text="${lecture.lecturer.name}"></a></p>
-                </div>
-                <div class="col-sm-4">
-                  <p><span class="glyphicon glyphicon-calendar"></span> <span th:text="@{${@formatter.date(lecture.added)}}"></span></p>
-                </div>
-              </div>
               <p th:text="${@formatter.shortString(lecture.description,230)}"></p>
               <div class="row">
                 <div class="col-sm-4">
-                  <input type="number" class="community-rating" th:value="${lecture.rating}" />
+                  <p class="community-rating"><input type="number" class="community-rating" th:value="${lecture.rating}" /></p>
+                  <p class="user-rating" sec:authorize="isAuthenticated()"><input type="number" class="community-rating" th:value="${lecture.userRating}" /></p>
                 </div>
                 <div class="col-sm-4">
                   <p><span class="glyphicon glyphicon-eye-open"></span> <span class="external-information-views"></span></p>
@@ -37,7 +30,9 @@
                   <p><span class="glyphicon glyphicon-thumbs-down"></span> <span class="external-information-dislikes"></span></p>                  
                 </div>
                 <div class="col-sm-4">
-                  <span class="glyphicon glyphicon-time"></span> <span th:text="${@formatter.duration(lecture.media.end-lecture.media.start)}"></span>
+                  <p><span class="glyphicon glyphicon-time"></span> <span th:text="${@formatter.duration(lecture.media.end-lecture.media.start)}"></span></p>
+                  <p><span class="glyphicon glyphicon-calendar"></span> <span th:text="@{${@formatter.date(lecture.added)}}"></span></p>
+                  <p>by <a th:href="@{${@ui.lecturerUrl(lecture.lecturer)}}" class="lecturer" th:text="${lecture.lecturer.name}"></a></p>
                 </div>
               </div>
             </div>

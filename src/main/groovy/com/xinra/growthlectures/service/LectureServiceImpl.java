@@ -2,6 +2,7 @@ package com.xinra.growthlectures.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Streams;
 import com.xinra.growthlectures.Util;
 import com.xinra.growthlectures.entity.CategoryRepository;
@@ -20,6 +21,7 @@ import groovy.transform.CompileStatic;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -128,16 +130,6 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
     }
     return returnList;
   }
-
-  public NamedDto getLecture(String slug) throws SlugNotFoundException {
-    
-    Lecture l = lectureRepo.findBySlug(slug);
-    if (l == null) {
-      throw new SlugNotFoundException(slug);
-    }
-     
-    return convertLectureToNamedDto(l);
-  }
   
   public LectureSummaryDto createLecture(EditLectureDto dto) throws SlugNotFoundException {
     
@@ -196,7 +188,7 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
     return convertToSummaryDto(newLecture);
   }
 
-  public LectureDto getBySlug(String lectureSlug, String categorySlug, String userId)
+  public LectureDto getBySlug(String lectureSlug, String categorySlug, Optional<String> userId)
       throws SlugNotFoundException {
     Objects.requireNonNull(lectureSlug);
     Objects.requireNonNull(categorySlug);
@@ -210,15 +202,15 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
     LectureDto lectureDto = dtoFactory.createDto(LectureDto.class);
     convertToSummaryDto(lecture, lectureDto);
     
-    if (userId != null) {
+    userId.ifPresent(u -> {
       LectureUserData userData = lectureUserDataRepo
-          .findByLectureIdAndUserId(lecture.getPk().getId(), userId);
+          .findByLectureIdAndUserId(lecture.getPk().getId(), u);
       
       if (userData != null) {
         lectureDto.setNote(userData.getNote());
         lectureDto.setUserRating(userData.getRating());
       }
-    }
+    });
     
     return lectureDto;
   }
@@ -321,6 +313,11 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
     LectureSummaryDto dto = dtoFactory.createDto(LectureSummaryDto.class);
     convertToSummaryDto(lecture, dto);
     return dto;
+  }
+  
+  public void supplyRatings(Iterable<LectureSummaryDto> lectures, String userId) {
+    Map<String, LectureSummaryDto> map = Maps.uniqueIndex(lectures, LectureSummaryDto::getId);
+    lectureUserDataRepo.getRatings(map.keySet(), userId);
   }
 
   public void saveRating(String lectureSlug, String categorySlug, String userId, int rating)

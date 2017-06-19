@@ -54,7 +54,7 @@ public class LectureController extends GrowthlecturesController {
       @PathVariable(value = "lecture") String lecture) throws SlugNotFoundException {
     
     String lectureId = lectureService.getLectureId(lecture, category);
-    return lectureService.getNote(lectureId, getUserId());
+    return lectureService.getNote(lectureId, getUserId().get());
   }
   
   /**
@@ -68,7 +68,7 @@ public class LectureController extends GrowthlecturesController {
       @RequestBody String note) throws SlugNotFoundException {
     
     String lectureId = lectureService.getLectureId(lecture, category);
-    return lectureService.saveNote(lectureId, getUserId(), note);
+    return lectureService.saveNote(lectureId, getUserId().get(), note);
   }
   
   /**
@@ -81,7 +81,7 @@ public class LectureController extends GrowthlecturesController {
       @PathVariable("lecture") String lecture) throws SlugNotFoundException {
     
     String lectureId = lectureService.getLectureId(lecture, category);
-    lectureService.deleteNote(lectureId, getUserId());
+    lectureService.deleteNote(lectureId, getUserId().get());
     return null;
   }
   
@@ -155,7 +155,7 @@ public class LectureController extends GrowthlecturesController {
       @PathVariable("lecture") String lecture,
       @RequestBody int rating) throws SlugNotFoundException {
     
-    lectureService.saveRating(lecture, category, getUserId(), rating);
+    lectureService.saveRating(lecture, category, getUserId().get(), rating);
   }
   
   /**
@@ -167,6 +167,6 @@ public class LectureController extends GrowthlecturesController {
       @PathVariable("category") String category,
       @PathVariable("lecture") String lecture) throws SlugNotFoundException {
     
-    lectureService.deleteRating(lecture, category, getUserId());
+    lectureService.deleteRating(lecture, category, getUserId().get());
   }
 }
