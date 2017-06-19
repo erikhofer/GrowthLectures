@@ -44,6 +44,12 @@ class CategoryServiceImpl extends GrowthlecturesServiceImpl implements CategoryS
     return convertCategory(category);
   }
   
+  public List<ContainerDto> getPopularCategories(int limit) {
+    
+    return categoryRepo.findByOrderByName(new PageRequest(0, limit)).stream().map(this::convertCategory).collect(Collectors.toList());
+    
+  }
+  
   public List<ContainerDto> getAllCategories() {
     return Streams.stream(categoryRepo.findAll())
             .map(this::convertCategory)

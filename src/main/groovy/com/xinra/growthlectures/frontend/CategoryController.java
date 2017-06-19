@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class CategoryController {
+public class CategoryController extends GrowthlecturesController {
 
   @Autowired
   DtoFactory dtoFactory;
@@ -42,6 +42,9 @@ public class CategoryController {
   @Autowired
   Ui ui;
   
+  /**
+   * Lists all categories.
+   */
   @RequestMapping(Ui.URL_CATEGORIES)
   public String categoryList(Model model) {
     
@@ -60,6 +63,9 @@ public class CategoryController {
     return "categories";
   }
   
+  /**
+   * Single category page.
+   */
   @RequestMapping(Ui.URL_CATEGORIES + "/{SLUG}")
   public String category(Model model,
       @PathVariable("SLUG") String slug) throws SlugNotFoundException {
@@ -67,6 +73,11 @@ public class CategoryController {
     model.addAttribute("category", categoryService.getCategoryBySlug(slug));
     
     model.addAttribute("lectures", lectureService.getRecentLecturesByCategory(slug));
+    
+    addSearchModel(model, slug, (query, orderBy, decending) -> {
+      
+      return searchService.searchForCategory(slug, query, orderBy, decending);
+    });
     
     // New Lecture
     model.addAttribute("allCategories", categoryService.getAllCategories());
@@ -76,6 +87,9 @@ public class CategoryController {
     return "category";
   }
   
+  /**
+   * REST controller for saving a new category.
+   */
   @ResponseBody
   @RequestMapping(path = Ui.URL_CATEGORIES, method = RequestMethod.POST)
   public String addCategory(NamedDto categoryDto,
