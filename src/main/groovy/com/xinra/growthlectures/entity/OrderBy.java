@@ -1,4 +1,4 @@
-package com.xinra.growthlectures.service;
+package com.xinra.growthlectures.entity;
 
 public enum OrderBy {
   

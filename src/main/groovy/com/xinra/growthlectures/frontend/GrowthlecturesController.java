@@ -1,8 +1,8 @@
 package com.xinra.growthlectures.frontend;
 
 import com.google.common.collect.ImmutableMap;
+import com.xinra.growthlectures.entity.OrderBy;
 import com.xinra.growthlectures.service.LectureSummaryDto;
-import com.xinra.growthlectures.service.OrderBy;
 import com.xinra.growthlectures.service.SearchService;
 import com.xinra.growthlectures.service.UserDto;
 import com.xinra.nucleus.service.DtoFactory;

@@ -1,12 +1,14 @@
 package com.xinra.growthlectures.entity;
 
+import groovy.transform.CompileStatic
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CategoryRepository extends AbstractCategoryRepository<Category> {}
+@CompileStatic
+interface CategoryRepository extends AbstractCategoryRepository<Category> {}
 
 @NoRepositoryBean
 public interface AbstractCategoryRepository<T extends Category>
@@ -16,3 +18,4 @@ public interface AbstractCategoryRepository<T extends Category>
   String getNameBySlug(@Param("slug") String slug);
   
 }
+

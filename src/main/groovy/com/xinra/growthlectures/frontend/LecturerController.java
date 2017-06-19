@@ -83,11 +83,8 @@ public class LecturerController extends GrowthlecturesController {
     }
         
     addSearchModel(model, slug, (query, orderBy, decending) -> {
-      try {
+    
         return searchService.searchForLecturer(slug, query, orderBy, decending);
-      } catch (SlugNotFoundException snfe) {
-        throw new ResourceNotFoundException();
-      }
     });
     
     return "lecturer";

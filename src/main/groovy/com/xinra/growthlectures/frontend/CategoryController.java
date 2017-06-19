@@ -101,10 +101,13 @@ public class CategoryController extends GrowthlecturesController {
     } catch (SlugNotFoundException snfe) {
       throw new ResourceNotFoundException();
     }
-    List<LectureSummaryDto> lectures = lectureService.getPopularLectures();
+    
+    addSearchModel(model, slug, (query, orderBy, decending) -> {
+      
+      return searchService.searchForCategory(slug, query, orderBy, decending);
+  });
    
     model.addAttribute("category", category);
-    model.addAttribute("lectures", lectures );
     model.addAttribute("allCategories", categoryService.getAllCategories());
     model.addAttribute("allLecturers", lecturerService.getAllLecturers());
     model.addAttribute("newLecture", dtoFactory.createDto(NewLectureDto.class));
