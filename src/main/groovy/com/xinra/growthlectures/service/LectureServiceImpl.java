@@ -1,5 +1,7 @@
 package com.xinra.growthlectures.service;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.collect.Streams;
 import com.xinra.growthlectures.Util;
 import com.xinra.growthlectures.entity.CategoryRepository;
@@ -19,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -245,17 +248,8 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
   }
   
   public String saveNote(String lectureId, String userId, String note) {
-    Objects.requireNonNull(lectureId);
-    Objects.requireNonNull(userId);
     
-    LectureUserData lectureUserData = lectureUserDataRepo
-        .findByLectureIdAndUserId(lectureId, userId);
-    
-    if (lectureUserData == null) {
-      lectureUserData = entityFactory.createEntity(LectureUserData.class);
-      lectureUserData.setUser(userRepo.findOne(userId));
-      lectureUserData.setLecture(lectureRepo.findOne(lectureId));
-    }
+    LectureUserData lectureUserData = getUserData(lectureId, userId);
     
     note = Util.normalize(note);
     if (note.length() > 4000) {
@@ -268,16 +262,11 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
   }
     
   public void deleteNote(String lectureId, String userId) {
-    Objects.requireNonNull(lectureId);
-    Objects.requireNonNull(userId);
     
-    LectureUserData lectureUserData = lectureUserDataRepo
-        .findByLectureIdAndUserId(lectureId, userId);
-    
-    if (lectureUserData != null) {
-      lectureUserData.setNote(null);
-      lectureUserDataRepo.save(lectureUserData);
-    }
+    getUserDataIfPresent(lectureId, userId).ifPresent(userData -> {
+      userData.setNote(null);
+      lectureUserDataRepo.save(userData);
+    });
   }
   
   public boolean doesSlugExists(String slug) {
@@ -334,5 +323,43 @@ public List<LectureSummaryDto> getLecturesByCategory(String categorySlug) {
     return dto;
   }
 
+  public void saveRating(String lectureSlug, String categorySlug, String userId, int rating)
+      throws SlugNotFoundException {
+    
+    checkArgument(rating >= 1 && rating <= 5 , "Rating must be between 1 and 5.");
+    
+    LectureUserData userData = getUserData(getLectureId(lectureSlug, categorySlug), userId);
+    userData.setRating(rating);
+    lectureUserDataRepo.save(userData);
+  }
+  
+  public void deleteRating(String lectureSlug, String categorySlug, String userId)
+      throws SlugNotFoundException {
+    
+    getUserDataIfPresent(getLectureId(lectureSlug, categorySlug), userId).ifPresent(userData -> {
+      userData.setRating(null);
+      lectureUserDataRepo.save(userData);
+    });
+  }
+  
+  /**
+   * Retrieves a {@link LectureUserData} or creates one if it does't exist.
+   */
+  private LectureUserData getUserData(String lectureId, String userId) {
+    
+    return getUserDataIfPresent(lectureId, userId).orElseGet(() -> {
+      LectureUserData lectureUserData = entityFactory.createEntity(LectureUserData.class);
+      lectureUserData.setUser(userRepo.findOne(userId));
+      lectureUserData.setLecture(lectureRepo.findOne(lectureId));
+      return lectureUserData;
+    });
+  }
+  
+  private Optional<LectureUserData> getUserDataIfPresent(String lectureId, String userId) {
+    Objects.requireNonNull(lectureId);
+    Objects.requireNonNull(userId);
+    
+    return Optional.ofNullable(lectureUserDataRepo.findByLectureIdAndUserId(lectureId, userId));
+  }
   
 }

@@ -1,5 +1,6 @@
 package com.xinra.growthlectures.frontend;
 
+import com.google.common.base.Preconditions;
 import com.xinra.growthlectures.Util;
 import com.xinra.growthlectures.service.CategoryService;
 import com.xinra.growthlectures.service.EditLectureDto;
@@ -10,7 +11,6 @@ import com.xinra.growthlectures.service.LecturerService;
 import com.xinra.growthlectures.service.SlugNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -87,7 +87,6 @@ public class LectureController extends GrowthlecturesController {
   
   /**
    * REST controller for creating a new lecture.
-   * @throws SlugNotFoundException 
    */
   @ResponseBody
   @RequestMapping(path = Ui.URL_CATEGORIES + "/{category}", method = RequestMethod.POST)
@@ -144,5 +143,30 @@ public class LectureController extends GrowthlecturesController {
     
     LectureSummaryDto newLecture = lectureService.createLecture(dto);
     return ui.lectureUrl(newLecture.getCategory().getSlug(), newLecture.getSlug()); 
+  }
+  
+  /**
+   * REST controller for saving a user rating.
+   */
+  @ResponseBody
+  @RequestMapping(path = PATH + "/rating", method = RequestMethod.POST)
+  public void saveRating(
+      @PathVariable("category") String category,
+      @PathVariable("lecture") String lecture,
+      @RequestBody int rating) throws SlugNotFoundException {
+    
+    lectureService.saveRating(lecture, category, getUserId(), rating);
+  }
+  
+  /**
+   * REST controller for deleting a user rating.
+   */
+  @ResponseBody
+  @RequestMapping(path = PATH + "/rating", method = RequestMethod.DELETE)
+  public void deleteRating(
+      @PathVariable("category") String category,
+      @PathVariable("lecture") String lecture) throws SlugNotFoundException {
+    
+    lectureService.deleteRating(lecture, category, getUserId());
   }
 }

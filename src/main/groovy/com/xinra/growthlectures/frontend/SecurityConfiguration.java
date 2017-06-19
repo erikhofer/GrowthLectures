@@ -46,6 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/").permitAll()
             .antMatchers("/assets/partials/**").denyAll()
             .antMatchers(Ui.URL_CATEGORIES + "/*/*/note").authenticated()
+            .antMatchers(Ui.URL_CATEGORIES + "/*/*/rating").authenticated()
         .and()
             .formLogin()
             .loginPage(Ui.URL_LOGIN)
