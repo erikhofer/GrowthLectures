@@ -8,7 +8,6 @@ import com.xinra.growthlectures.entity.Lecturer;
 import com.xinra.growthlectures.entity.LecturerRepository;
 import com.xinra.growthlectures.entity.MediaRepository;
 import com.xinra.growthlectures.entity.YoutubeMedia;
-import com.xinra.growthlectures.frontend.Formatter;
 import com.xinra.growthlectures.service.UserService;
 import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;

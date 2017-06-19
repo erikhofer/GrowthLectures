@@ -15,7 +15,7 @@
             </div>
             <div class="col-sm-9">
               <h3>
-                <a th:href="@{${@ui.categoryUrl(lecture.category)}}"><span th:text="${lecture.category.name}" class="label label-default"></span></a> 
+                <a th:href="@{${@ui.categoryUrl(lecture.category)}}" th:text="${lecture.category.name}" class="label label-default"></a> 
                 <a th:href="@{${@ui.lectureUrl(lecture)}}" th:text="${@formatter.shortString(lecture.name, 55)}"></a> <span th:if="${lecture.played}" class="glyphicon glyphicon-ok listened"></span>
               </h3>
               <p th:text="${@formatter.shortString(lecture.description,230)}"></p>

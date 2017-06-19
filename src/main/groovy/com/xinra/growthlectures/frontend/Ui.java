@@ -13,6 +13,7 @@ public class Ui {
   public static final String URL_CATEGORIES = "/lectures";
   public static final String URL_LECTURERS = "/lecturers";
   public static final String URL_LOGIN = "/login";
+  public static final String URL_SEARCH = "/search";
   public static final String URL_LOGOUT = "/logout";
   public static final String URL_REGISTER = "/register";
   

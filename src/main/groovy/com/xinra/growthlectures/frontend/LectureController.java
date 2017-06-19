@@ -2,12 +2,10 @@ package com.xinra.growthlectures.frontend;
 
 import com.google.common.base.Preconditions;
 import com.xinra.growthlectures.Util;
-import com.xinra.growthlectures.service.CategoryService;
 import com.xinra.growthlectures.service.EditLectureDto;
 import com.xinra.growthlectures.service.LectureDto;
 import com.xinra.growthlectures.service.LectureService;
 import com.xinra.growthlectures.service.LectureSummaryDto;
-import com.xinra.growthlectures.service.LecturerService;
 import com.xinra.growthlectures.service.SlugNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +24,6 @@ public class LectureController extends GrowthlecturesController {
   private static final String PATH = Ui.URL_CATEGORIES + "/{category}/{lecture}";
   
   private @Autowired LectureService lectureService;
-  private @Autowired CategoryService categoryService;
-  private @Autowired LecturerService lecturerService;
   private @Autowired Ui ui;
   
   /**
