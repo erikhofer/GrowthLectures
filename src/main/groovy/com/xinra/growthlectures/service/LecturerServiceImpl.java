@@ -35,6 +35,10 @@ class LecturerServiceImpl extends GrowthlecturesServiceImpl implements LecturerS
     return convertLecturer(randomLecturer);
   }
   
+  public List<ContainerDto> getPopularLecturers(int limit) {
+    return lecturerRepo.findByOrderByName(new PageRequest(0, limit)).stream().map(this::convertLecturer).collect(Collectors.toList());
+  }
+  
   public ContainerDto getLecturerBySlug(String slug) throws SlugNotFoundException {
   
     Lecturer lecture = lecturerRepo.findOneBySlug(slug);
