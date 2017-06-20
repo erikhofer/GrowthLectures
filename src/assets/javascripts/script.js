@@ -25,10 +25,11 @@ $(function() {
       $(this).find(".thumbnail img").attr("src", data["thumbnail"]["url"]);
     }
     
-    $(this).find(".community-rating > input, .user-rating > input").rating({
-      size:'xs',
-      displayOnly: true
-    });
+  });
+  
+  $(this).find(".community-rating > input, .lecture-summary .user-rating > input").rating({
+    size:'xs',
+    displayOnly: true
   });
 });
 

@@ -61,11 +61,6 @@ $(function() {
     e.preventDefault();
   });
   
-  $(".community-rating > input").rating({
-    size:'xs',
-    displayOnly: true
-  });
-  
   $(".user-rating > input").rating({
     size:'xs',
     step: 1,
