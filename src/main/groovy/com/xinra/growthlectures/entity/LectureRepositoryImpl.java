@@ -13,33 +13,97 @@ public class LectureRepositoryImpl implements AbstractLectureRepositoryCustom<Le
   @SuppressWarnings("unchecked")
   @Override
   public List<Lecture> search(String term, OrderBy orderBy, boolean decending) {
-    String queryString = "SELECT l FROM Lecture l WHERE l.name = :term";
+    String queryString = "SELECT l FROM Lecture l";
     
-    Query query = entityManager.createQuery(queryString);
-    query.setParameter("term", term);
-    return query.getResultList();
+    if (term.isEmpty()) {
+      Query query = entityManager.createQuery(queryString + orderBy(orderBy) 
+          + decending(decending));
+      return query.getResultList(); 
+      
+    } else {  
+      Query query = entityManager.createQuery(queryString + " WHERE l.name = :term" 
+          + orderBy(orderBy) + decending(decending));
+      query.setParameter("term", term);
+      return query.getResultList();
+    }
   }
   
   @SuppressWarnings("unchecked")
   @Override
   public List<Lecture> searchForCategory(String categorySlug, String term, OrderBy orderBy, boolean decending) {
-    String queryString = "Select l From Lecture l Where l.category.slug = :categorySlug AND l.name = :term";
+    String queryString = "Select l From Lecture l Where l.category.slug = :categorySlug";
     
-    Query query = entityManager.createQuery(queryString);
-    query.setParameter("term", term);
-    query.setParameter("categorySlug", categorySlug);
-    return query.getResultList(); 
+    if (term.isEmpty()) {
+      Query query = entityManager.createQuery(queryString + orderBy(orderBy) 
+          + decending(decending));
+      query.setParameter("categorySlug", categorySlug);
+      return query.getResultList(); 
+      
+    } else {    
+      Query query = entityManager.createQuery(queryString + " AND l.name = :term" 
+          + orderBy(orderBy) + decending(decending));
+      query.setParameter("term", term);
+      query.setParameter("categorySlug", categorySlug);
+      return query.getResultList(); 
+    }
   }
   
   @SuppressWarnings("unchecked")
   @Override
   public List<Lecture> searchForLecturer(String lecturerSlug, String term, OrderBy orderBy, boolean decending) {
-    String queryString = "Select l From Lecture l Where l.lecturer.slug = :lecturerSlug AND l.name = :term";
+    String queryString = "Select l From Lecture l Where l.lecturer.slug = :lecturerSlug";
     
-    Query query = entityManager.createQuery(queryString);
-    query.setParameter("term", term);
-    query.setParameter("lecturerSlug", lecturerSlug);
-    return query.getResultList(); 
+    if (term.isEmpty()) {
+      Query query = entityManager.createQuery(queryString + orderBy(orderBy) 
+          + decending(decending));
+      query.setParameter("lecturerSlug", lecturerSlug);
+      return query.getResultList(); 
+      
+    } else {      
+      Query query = entityManager.createQuery(queryString + " AND l.name = :term" 
+          + orderBy(orderBy) + decending(decending));
+      query.setParameter("term", term);
+      query.setParameter("lecturerSlug", lecturerSlug);
+      return query.getResultList(); 
+    }
+  }
+  
+  public String orderBy(OrderBy orderBy) {
+    
+    String addedString;
+    
+    switch (orderBy.toString()) {
+      case "ADDED":
+        
+        addedString = " ORDER BY l.added";
+        
+        break;
+      
+      case "RATING":
+        
+        addedString = " ORDER BY l.ratingAverage";
+        
+        break;
+
+      default:
+        addedString = "";
+        break;
+    }
+    
+    return addedString;
+  }
+  
+  public String decending(boolean decending) {
+    
+    String addedString;
+    
+    if (decending) {    
+      addedString = " DESC";
+      
+    } else {      
+      addedString = " ASC";
+    }
+    return addedString;
   }
 
 }
