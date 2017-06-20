@@ -1,6 +1,8 @@
 package com.xinra.growthlectures.entity;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,100 +12,66 @@ public class LectureRepositoryImpl implements AbstractLectureRepositoryCustom<Le
   @Autowired
   EntityManager entityManager;
 
-  @SuppressWarnings("unchecked")
+
   @Override
   public List<Lecture> search(String term, OrderBy orderBy, boolean decending) {
-    String queryString = "SELECT l FROM Lecture l";
-    
-    if (term.isEmpty()) {
-      Query query = entityManager.createQuery(queryString + orderBy(orderBy) 
-          + decending(decending));
-      return query.getResultList(); 
-      
-    } else {  
-      Query query = entityManager.createQuery(queryString + " WHERE l.name = :term" 
-          + orderBy(orderBy) + decending(decending));
-      query.setParameter("term", term);
-      return query.getResultList();
-    }
+    Map<String, Object> parameters = new HashMap<>();
+    return searchInternal(parameters, "", term, orderBy, decending);
   }
   
-  @SuppressWarnings("unchecked")
-  @Override
-  public List<Lecture> searchForCategory(String categorySlug, String term, OrderBy orderBy, boolean decending) {
-    String queryString = "Select l From Lecture l Where l.category.slug = :categorySlug";
-    
-    if (term.isEmpty()) {
-      Query query = entityManager.createQuery(queryString + orderBy(orderBy) 
-          + decending(decending));
-      query.setParameter("categorySlug", categorySlug);
-      return query.getResultList(); 
-      
-    } else {    
-      Query query = entityManager.createQuery(queryString + " AND l.name = :term" 
-          + orderBy(orderBy) + decending(decending));
-      query.setParameter("term", term);
-      query.setParameter("categorySlug", categorySlug);
-      return query.getResultList(); 
-    }
-  }
-  
-  @SuppressWarnings("unchecked")
-  @Override
-  public List<Lecture> searchForLecturer(String lecturerSlug, String term, OrderBy orderBy, boolean decending) {
-    String queryString = "Select l From Lecture l Where l.lecturer.slug = :lecturerSlug";
-    
-    if (term.isEmpty()) {
-      Query query = entityManager.createQuery(queryString + orderBy(orderBy) 
-          + decending(decending));
-      query.setParameter("lecturerSlug", lecturerSlug);
-      return query.getResultList(); 
-      
-    } else {      
-      Query query = entityManager.createQuery(queryString + " AND l.name = :term" 
-          + orderBy(orderBy) + decending(decending));
-      query.setParameter("term", term);
-      query.setParameter("lecturerSlug", lecturerSlug);
-      return query.getResultList(); 
-    }
-  }
-  
-  public String orderBy(OrderBy orderBy) {
-    
-    String addedString;
-    
-    switch (orderBy.toString()) {
-      case "ADDED":
-        
-        addedString = " ORDER BY l.added";
-        
-        break;
-      
-      case "RATING":
-        
-        addedString = " ORDER BY l.ratingAverage";
-        
-        break;
 
-      default:
-        addedString = "";
-        break;
-    }
-    
-    return addedString;
+  @Override
+  public List<Lecture> searchForCategory(String categorySlug, String term, 
+      OrderBy orderBy, boolean decending) {
+    Map<String, Object> parameters = new HashMap<>();
+    parameters.put("categorySlug", categorySlug);
+    return searchInternal(parameters, " l.category.slug = :categorySlug", term, orderBy, decending);
   }
   
-  public String decending(boolean decending) {
+
+  @Override
+  public List<Lecture> searchForLecturer(String lecturerSlug, String term, 
+      OrderBy orderBy, boolean decending) {
+    Map<String, Object> parameters = new HashMap<>();
+    parameters.put("lectuerSlug", lecturerSlug);
+    return searchInternal(parameters, " l.lecturer.slug = :lecturerSlug", term, orderBy, decending);
+  }
+
+  
+  @SuppressWarnings("unchecked")
+  private List<Lecture> searchInternal(Map<String, Object> parameters, String where, String term, 
+      OrderBy orderBy, boolean decending) {
     
-    String addedString;
+    String queryString = "SELECT l FROM Lecture l WHERE 1=1" + where;
     
-    if (decending) {    
-      addedString = " DESC";
+    if (!term.isEmpty()) { // throws NPE
       
-    } else {      
-      addedString = " ASC";
+      queryString += " AND (UPPER(l.name) LIKE UPPER(:term)"
+          + " OR UPPER(l.lecturer.name) LIKE UPPER(:term)"
+          + " OR UPPER(l.description) LIKE UPPER(:term)"
+          + " OR UPPER(l.category.name) LIKE UPPER(:term))";
+      
+      parameters.put("term", "%" + term + "%");
+    } 
+    
+    switch (orderBy) {
+      case ADDED:       
+        queryString += " ORDER BY l.added";     
+        break;   
+      case RATING:        
+        queryString += " ORDER BY l.ratingAverage";       
+        break;
+      default:
+        throw new IllegalArgumentException();
     }
-    return addedString;
+    
+    if (decending) {
+      queryString += " DESC";
+    }
+    
+    Query query = entityManager.createQuery(queryString);
+    parameters.forEach((k, v) -> query.setParameter(k, v));
+    return query.getResultList();
   }
 
 }
