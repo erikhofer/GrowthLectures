@@ -82,6 +82,12 @@ body {
   }
 }
 
+.user-rating {
+  .glyphicon-star {
+    color: #9ae17f;
+  }
+}
+
 .content-panel {
 	@media (min-width: $screen-md-min) {
 	  margin-top: 170px;
