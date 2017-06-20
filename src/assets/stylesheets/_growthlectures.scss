@@ -49,8 +49,11 @@ body {
   .thumbnail {
     margin-bottom: 0;
   }  
-  h3 {
-    margin-top: 0;
+  
+  @media (min-width: 768px) {
+    h3 {
+      margin-top: 0;
+    }
   }
 
 }
