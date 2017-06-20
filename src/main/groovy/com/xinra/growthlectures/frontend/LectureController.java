@@ -149,9 +149,13 @@ public class LectureController extends GrowthlecturesController {
   public void saveRating(
       @PathVariable("category") String category,
       @PathVariable("lecture") String lecture,
-      @RequestBody int rating) throws SlugNotFoundException {
+      @RequestBody String rating) throws SlugNotFoundException {
     
-    lectureService.saveRating(lecture, category, getUserId().get(), rating);
+    try {
+      lectureService.saveRating(lecture, category, getUserId().get(), Integer.parseInt(rating));
+    } catch (NumberFormatException nfe) {
+      throw new IllegalArgumentException("Rating must be an integer!");
+    }
   }
   
   /**

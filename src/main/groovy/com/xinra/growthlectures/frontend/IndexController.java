@@ -32,11 +32,11 @@ public class IndexController extends GrowthlecturesController {
   public String index(Model model) {
     
     // PopularLectures
-    List<LectureSummaryDto> popularLectures = lectureServiceImpl.getPopularLectures(4);
+    List<LectureSummaryDto> popularLectures = process(lectureServiceImpl.getPopularLectures(4));
     model.addAttribute("popularLectures", popularLectures);
     
     // Recent Lecturers
-    List<LectureSummaryDto> recentLectures = lectureServiceImpl.getRecentLectures(4);
+    List<LectureSummaryDto> recentLectures = process(lectureServiceImpl.getRecentLectures(4));
     model.addAttribute("recentLectures", recentLectures);
     
     

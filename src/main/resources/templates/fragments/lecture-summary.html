@@ -21,8 +21,8 @@
               <p th:text="${@formatter.shortString(lecture.description,230)}"></p>
               <div class="row">
                 <div class="col-sm-4">
-                  <p class="community-rating"><input type="number" class="community-rating" th:value="${lecture.rating}" /></p>
-                  <p class="user-rating" sec:authorize="isAuthenticated()"><input type="number" class="community-rating" th:value="${lecture.userRating}" /></p>
+                  <p class="community-rating"><input type="number" th:value="${lecture.rating}" /></p>
+                  <p class="user-rating" sec:authorize="isAuthenticated()"><input type="number" th:value="${lecture.userRating}" /></p>
                 </div>
                 <div class="col-sm-4">
                   <p><span class="glyphicon glyphicon-eye-open"></span> <span class="external-information-views"></span></p>

@@ -19,6 +19,7 @@ import com.xinra.nucleus.entity.EntityFactory;
 import com.xinra.nucleus.service.DtoFactory;
 import groovy.transform.CompileStatic;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -267,6 +268,7 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
   
   void convertToSummaryDto(Lecture lecture, LectureSummaryDto dto) {
 
+    dto.setId(lecture.getPk().getId());
     dto.setName(lecture.getName());
     dto.setSlug(lecture.getSlug());
     dto.setDescription(lecture.getDescription());
@@ -304,7 +306,9 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
     return dto;
   }
   
-  public void supplyRatings(Iterable<LectureSummaryDto> lectures, String userId) {
+  public void supplyRatings(Collection<LectureSummaryDto> lectures, String userId) {
+    // limitation of IN operator of PostgreSQL
+    checkArgument(lectures.size() <= 30000, "Cannot supply more than 30,000 ratings at once!");
     Map<String, LectureSummaryDto> map = Maps.uniqueIndex(lectures, LectureSummaryDto::getId);
     for (Object[] result : lectureUserDataRepo.getRatings(map.keySet(), userId)) {
       map.get(result[0]).setUserRating((Integer) result[1]);
