@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
-public class IndexController {
+public class IndexController extends GrowthlecturesController {
   
   @Autowired
   LectureServiceImpl lectureServiceImpl;
   
   @Autowired
+
   private CategoryService categoryService;
   
   @Autowired 
@@ -47,7 +48,8 @@ public class IndexController {
     List<ContainerDto> popularLecturers = lecturerService.getPopularLecturers(5);
     model.addAttribute("popularLecturers", popularLecturers);
     
+    addSearchModel(model, Ui.URL_SEARCH, null);
+    
     return "index";
   }
-
 }

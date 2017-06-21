@@ -13,9 +13,10 @@
       <div style="float: right;" sec:authorize="hasRole('MODERATOR')">
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create-lecture-modal"><span class="glyphicon glyphicon-plus"></span> Create new lecture</button>
       </div>
+      <div th:replace="fragments/search :: search-input"></div>
       <h1 th:text="${category.name}"></h1>
       <!-- add search fragment here -->
-      <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${lectures})"></div>
+      <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${searchResults})"></div>
     </div>
     
     <div class="modal fade" id="create-lecture-modal" tabindex="-1" role="dialog" sec:authorize="hasRole('MODERATOR')">

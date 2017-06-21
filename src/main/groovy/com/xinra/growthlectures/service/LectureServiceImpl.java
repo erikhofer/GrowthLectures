@@ -275,7 +275,7 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
     return returnDto;
   }
   
-  private void convertToSummaryDto(Lecture lecture, LectureSummaryDto dto) {
+  void convertToSummaryDto(Lecture lecture, LectureSummaryDto dto) {
 
     dto.setName(lecture.getName());
     dto.setSlug(lecture.getSlug());
@@ -308,7 +308,7 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
     dto.setMedia(mediaDto);
   }
   
-  private LectureSummaryDto convertToSummaryDto(Lecture lecture) {
+  public LectureSummaryDto convertToSummaryDto(Lecture lecture) {
     LectureSummaryDto dto = dtoFactory.createDto(LectureSummaryDto.class);
     convertToSummaryDto(lecture, dto);
     return dto;

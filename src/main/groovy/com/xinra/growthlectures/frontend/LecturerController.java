@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class LecturerController {
+public class LecturerController extends GrowthlecturesController {
   
   @Autowired
   LecturerService lecturerService;
@@ -68,6 +68,11 @@ public class LecturerController {
 
     model.addAttribute("lectures", lectureService.getRecentLecturesByLecturer(slug));
     
+    addSearchModel(model, slug, (query, orderBy, decending) -> {
+      
+      return searchService.searchForLecturer(slug, query, orderBy, decending);
+    });
+    
     return "lecturer";
   }
   
@@ -100,5 +105,4 @@ public class LecturerController {
     lecturerService.createLecturer(newLecturerDto);
     return Ui.URL_LECTURERS + "/" + slug;
   }
-
 }

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class CategoryController {
+public class CategoryController extends GrowthlecturesController {
 
   @Autowired
   DtoFactory dtoFactory;
@@ -73,6 +73,11 @@ public class CategoryController {
     model.addAttribute("category", categoryService.getCategoryBySlug(slug));
     
     model.addAttribute("lectures", lectureService.getRecentLecturesByCategory(slug));
+    
+    addSearchModel(model, slug, (query, orderBy, decending) -> {
+      
+      return searchService.searchForCategory(slug, query, orderBy, decending);
+    });
     
     // New Lecture
     model.addAttribute("allCategories", categoryService.getAllCategories());
