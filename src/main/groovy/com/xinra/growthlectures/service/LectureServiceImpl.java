@@ -315,22 +315,63 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
     }
   }
 
+  /**
+   * @implNote The lecture's community rating r is adjusted as follows 
+   *     (u = user rating; n = number of community ratings):
+   *     <p>If the lecture was rated by this user before:
+   *     r<sub>new</sub> = r<sub>old</sub> + (u<sub>new</sub> - u<sub>old</sub>) / n</p>
+   *     <p>If the lecture was not rated by this user before:
+   *     r<sub>new</sub> = (n * r<sub>old</sub> + u<sub>new</sub>) / (n + 1)</p>
+   */
   public void saveRating(String lectureSlug, String categorySlug, String userId, int rating)
       throws SlugNotFoundException {
     
     checkArgument(rating >= 1 && rating <= 5 , "Rating must be between 1 and 5.");
     
     LectureUserData userData = getUserData(getLectureId(lectureSlug, categorySlug), userId);
+    if (userData.getRating() == null) {
+      int ratingAmount = userData.getLecture().getRatingAmount();
+      double ratingOld = userData.getLecture().getRatingAverage();
+      
+      double ratingNew = (ratingAmount * ratingOld + rating) / (ratingAmount + 1);
+      
+      userData.getLecture().setRatingAverage(ratingNew);
+      userData.getLecture().setRatingAmount(ratingAmount + 1);
+    } else {
+      int ratingAmount = userData.getLecture().getRatingAmount();
+      double ratingOld = userData.getLecture().getRatingAverage();
+      int userRatingOld = userData.getRating();
+      
+      double ratingNew = ratingOld + (rating - userRatingOld) / (double) ratingAmount;
+      
+      userData.getLecture().setRatingAverage(ratingNew);
+    }
+    
     userData.setRating(rating);
     lectureUserDataRepo.save(userData);
   }
   
+  /**
+   * @implNote The lecture's community rating r is adjusted as follows 
+   *     (u = user rating; n = number of community ratings):
+   *     <p>r<sub>new</sub> = (n * r<sub>old</sub> - u<sub>old</sub>) / (n - 1)</p>
+   */
   public void deleteRating(String lectureSlug, String categorySlug, String userId)
       throws SlugNotFoundException {
     
     getUserDataIfPresent(getLectureId(lectureSlug, categorySlug), userId).ifPresent(userData -> {
-      userData.setRating(null);
-      lectureUserDataRepo.save(userData);
+      if (userData.getRating() != null) {
+        int ratingAmount = userData.getLecture().getRatingAmount();
+        double ratingOld = userData.getLecture().getRatingAverage();
+        int userRatingOld = userData.getRating();
+        
+        double ratingNew = (ratingAmount * ratingOld - userRatingOld) / (ratingAmount - 1);
+        
+        userData.getLecture().setRatingAverage(ratingNew);
+        userData.getLecture().setRatingAmount(ratingAmount - 1);
+        userData.setRating(null);
+        lectureUserDataRepo.save(userData);
+      }
     });
   }
   
