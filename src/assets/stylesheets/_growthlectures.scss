@@ -51,9 +51,11 @@ body {
     margin-bottom: 0;
   }  
 
-  @media (min-width: $screen-md-min) {
+  
   h3 {
-    margin-top: 0;
+    @media (min-width: $screen-md-min) {
+      margin-top: 0;
+    }
     line-height: 32px;
   }
 

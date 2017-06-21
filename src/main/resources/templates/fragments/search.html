@@ -4,29 +4,31 @@
   </head>
   <body>
     <div th:fragment="search-input" class="container">
-      <form th:attr="action=@{${searchPath}}" class="form-inline search">
-        <input th:if="!${searchFieldOnly}" type="hidden" name="orderby" th:value="${searchCurrentOrder.value}" />
-        <input th:if="!${searchFieldOnly}" type="hidden" name="decending" th:value="${searchDecending}" />
-        <div class="input-group input-group-lg">
-          <input type="text" class="form-control" name="q" th:value="${searchQuery}" placeholder="Search for..." />
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-          </span>
-        </div>
-        <div th:if="!${searchFieldOnly}"  class="input-group input-group-lg">
-          <span class="input-group-addon">Sort by</span>
-          <div class="input-group-btn">
-		        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span th:attr="class=${searchCurrentOrder.icon}"></span> <span th:text="${searchCurrentOrder.name}"></span> <span class="caret"></span></button>
-		        <ul class="dropdown-menu">
-					    <li th:each="order : ${searchOrders}"><a th:href="@{${searchPath}(q=${searchQuery},orderby=${order.value},decending=${searchDecending})}"  th:attr="data-value=${order.value}"  ><span th:attr="class=${order.icon}"></span> <span th:text="${order.name}"></span></a></li>
-		        </ul>
-		      </div>
-        </div>
-        <div th:if="!${searchFieldOnly}" class="btn-group">
-				  <a class="btn btn-default btn-lg" th:href="@{${searchPath}(q=${searchQuery},orderby=${searchCurrentOrder.value},decending=true)}" th:classappend="${searchDecending} ? active : ''"><span class="glyphicon glyphicon-sort-by-attributes-alt"></span></a>
-				  <a class="btn btn-default btn-lg" th:href="@{${searchPath}(q=${searchQuery},orderby=${searchCurrentOrder.value},decending=false)}" th:classappend="${searchDecending} ? '' : active"><span class="glyphicon glyphicon-sort-by-attributes"></span></a>
-				</div>
-      </form>
+      <p>
+        <form th:attr="action=@{${searchPath}}" class="form-inline search">
+          <input th:if="!${searchFieldOnly}" type="hidden" name="orderby" th:value="${searchCurrentOrder.value}" />
+          <input th:if="!${searchFieldOnly}" type="hidden" name="decending" th:value="${searchDecending}" />
+          <div class="input-group input-group-lg">
+            <input type="text" class="form-control" name="q" th:value="${searchQuery}" placeholder="Search for..." />
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+          </div>
+          <div th:if="!${searchFieldOnly}"  class="input-group input-group-lg">
+            <span class="input-group-addon">Sort by</span>
+            <div class="input-group-btn">
+  		        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span th:attr="class=${searchCurrentOrder.icon}"></span> <span th:text="${searchCurrentOrder.name}"></span> <span class="caret"></span></button>
+  		        <ul class="dropdown-menu">
+  					    <li th:each="order : ${searchOrders}"><a th:href="@{${searchPath}(q=${searchQuery},orderby=${order.value},decending=${searchDecending})}"  th:attr="data-value=${order.value}"  ><span th:attr="class=${order.icon}"></span> <span th:text="${order.name}"></span></a></li>
+  		        </ul>
+  		      </div>
+          </div>
+          <div th:if="!${searchFieldOnly}" class="btn-group">
+  				  <a class="btn btn-default btn-lg" th:href="@{${searchPath}(q=${searchQuery},orderby=${searchCurrentOrder.value},decending=true)}" th:classappend="${searchDecending} ? active : ''"><span class="glyphicon glyphicon-sort-by-attributes-alt"></span></a>
+  				  <a class="btn btn-default btn-lg" th:href="@{${searchPath}(q=${searchQuery},orderby=${searchCurrentOrder.value},decending=false)}" th:classappend="${searchDecending} ? '' : active"><span class="glyphicon glyphicon-sort-by-attributes"></span></a>
+  				</div>
+        </form>
+      </p>
     </div>
   </body>
 </html>
