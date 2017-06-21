@@ -25,7 +25,7 @@ public class LectureRepositoryImpl implements AbstractLectureRepositoryCustom<Le
       OrderBy orderBy, boolean decending) {
     Map<String, Object> parameters = new HashMap<>();
     parameters.put("categorySlug", categorySlug);
-    return searchInternal(parameters, " l.category.slug = :categorySlug", term, orderBy, decending);
+    return searchInternal(parameters, " AND l.category.slug = :categorySlug", term, orderBy, decending);
   }
   
 
@@ -33,8 +33,8 @@ public class LectureRepositoryImpl implements AbstractLectureRepositoryCustom<Le
   public List<Lecture> searchForLecturer(String lecturerSlug, String term, 
       OrderBy orderBy, boolean decending) {
     Map<String, Object> parameters = new HashMap<>();
-    parameters.put("lectuerSlug", lecturerSlug);
-    return searchInternal(parameters, " l.lecturer.slug = :lecturerSlug", term, orderBy, decending);
+    parameters.put("lecturerSlug", lecturerSlug);
+    return searchInternal(parameters, " AND l.lecturer.slug = :lecturerSlug", term, orderBy, decending);
   }
 
   
