@@ -2,14 +2,16 @@ package com.xinra.growthlectures.frontend;
 
 import com.google.common.collect.ImmutableMap;
 import com.xinra.growthlectures.entity.OrderBy;
+import com.xinra.growthlectures.service.LectureService;
 import com.xinra.growthlectures.service.LectureSummaryDto;
 import com.xinra.growthlectures.service.SearchService;
 import com.xinra.growthlectures.service.UserDto;
 import com.xinra.nucleus.service.DtoFactory;
-import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -27,6 +29,9 @@ public abstract class GrowthlecturesController {
   @Autowired
   private HttpServletRequest context;
   
+  @Autowired 
+  private LectureService lectureService;
+
   @Autowired
   protected DtoFactory dtoFactory;
   
@@ -36,17 +41,24 @@ public abstract class GrowthlecturesController {
   /**
    * @return The DTO of the current user or {@code null} if the user is not authenticated.
    */
-  public UserDto getUserDto() {
-    Principal principal = context.getUserPrincipal();
-    return principal == null ? null : (UserDto) ((Authentication) principal).getPrincipal();
+  public Optional<UserDto> getUserDto() {
+    return Optional.ofNullable(context.getUserPrincipal())
+        .map(p -> (UserDto) ((Authentication) p).getPrincipal());
   }
   
   /**
    * @return The ID of the current user or {@code null} if the user is not authenticated.
    */
-  public String getUserId() {
-    UserDto dto = getUserDto();
-    return dto == null ? null : dto.getPk().getId();
+  public Optional<String> getUserId() {
+    return getUserDto().map(u -> u.getPk().getId());
+  }
+  
+  /**
+   * Processes a list of lecture summaries. Adds user ratings if a user is authenticated.
+   */
+  public <T extends Collection<LectureSummaryDto>> T process(T lectures) {
+    getUserId().ifPresent(userId -> lectureService.supplyRatings(lectures, userId));
+    return lectures;
   }
   
   protected void addSearchModel(Model model, String path, SearchHandler searchHandler) {

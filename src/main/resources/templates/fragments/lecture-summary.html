@@ -18,26 +18,23 @@
                 <a th:href="@{${@ui.categoryUrl(lecture.category)}}" th:text="${lecture.category.name}" class="label label-default"></a> 
                 <a th:href="@{${@ui.lectureUrl(lecture)}}" th:text="${@formatter.shortString(lecture.name, 55)}"></a> <span th:if="${lecture.played}" class="glyphicon glyphicon-ok listened"></span>
               </h3>
-              <div class="row">
-                <div class="col-sm-4">
-                  <p><a th:href="@{${@ui.lecturerUrl(lecture.lecturer)}}" class="lecturer" th:text="${lecture.lecturer.name}"></a></p>
-                </div>
-                <div class="col-sm-4">
-                  <p><span class="glyphicon glyphicon-calendar"></span> <span th:text="@{${@formatter.date(lecture.added)}}"></span></p>
-                </div>
-              </div>
               <p th:text="${@formatter.shortString(lecture.description,230)}"></p>
               <div class="row">
-                <div class="col-sm-4">
-                  <input id="input-id" name="input-name" type="number" class="rating" min="1" max="5" step="1" data-size="xs" data-show-caption="false" /> 
+                <div class="col-xs-12 col-sm-5">
+                  <div class="row">
+                    <p class="col-xs-6 col-sm-12 community-rating"><input type="number" th:value="${lecture.rating}" /></p>
+                    <p class="col-xs-6 col-sm-12 user-rating" sec:authorize="isAuthenticated()"><input type="number" th:value="${lecture.userRating}" /></p>
+                  </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-xs-6 col-sm-4">
                   <p><span class="glyphicon glyphicon-eye-open"></span> <span class="external-information-views"></span></p>
                   <p><span class="glyphicon glyphicon-thumbs-up"></span> <span class="external-information-likes"></span></p>
                   <p><span class="glyphicon glyphicon-thumbs-down"></span> <span class="external-information-dislikes"></span></p>                  
                 </div>
-                <div class="col-sm-4">
-                  <span class="glyphicon glyphicon-time"></span> <span th:text="${@formatter.duration(lecture.media.end-lecture.media.start)}"></span>
+                <div class="col-xs-6 col-sm-3">
+                  <p><span class="glyphicon glyphicon-time"></span> <span th:text="${@formatter.duration(lecture.media.end-lecture.media.start)}"></span></p>
+                  <p><span class="glyphicon glyphicon-calendar"></span> <span th:text="@{${@formatter.date(lecture.added)}}"></span></p>
+                  <p>by <a th:href="@{${@ui.lecturerUrl(lecture.lecturer)}}" class="lecturer" th:text="${lecture.lecturer.name}"></a></p>
                 </div>
               </div>
             </div>

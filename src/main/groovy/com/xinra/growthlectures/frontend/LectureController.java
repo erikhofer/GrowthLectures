@@ -1,5 +1,6 @@
 package com.xinra.growthlectures.frontend;
 
+import com.google.common.base.Preconditions;
 import com.xinra.growthlectures.Util;
 import com.xinra.growthlectures.service.EditLectureDto;
 import com.xinra.growthlectures.service.LectureDto;
@@ -49,7 +50,7 @@ public class LectureController extends GrowthlecturesController {
       @PathVariable(value = "lecture") String lecture) throws SlugNotFoundException {
     
     String lectureId = lectureService.getLectureId(lecture, category);
-    return lectureService.getNote(lectureId, getUserId());
+    return lectureService.getNote(lectureId, getUserId().get());
   }
   
   /**
@@ -63,7 +64,7 @@ public class LectureController extends GrowthlecturesController {
       @RequestBody String note) throws SlugNotFoundException {
     
     String lectureId = lectureService.getLectureId(lecture, category);
-    return lectureService.saveNote(lectureId, getUserId(), note);
+    return lectureService.saveNote(lectureId, getUserId().get(), note);
   }
   
   /**
@@ -76,7 +77,7 @@ public class LectureController extends GrowthlecturesController {
       @PathVariable("lecture") String lecture) throws SlugNotFoundException {
     
     String lectureId = lectureService.getLectureId(lecture, category);
-    lectureService.deleteNote(lectureId, getUserId());
+    lectureService.deleteNote(lectureId, getUserId().get());
     return null;
   }
   
@@ -138,5 +139,34 @@ public class LectureController extends GrowthlecturesController {
     
     LectureSummaryDto newLecture = lectureService.createLecture(dto);
     return ui.lectureUrl(newLecture.getCategory().getSlug(), newLecture.getSlug()); 
+  }
+  
+  /**
+   * REST controller for saving a user rating.
+   */
+  @ResponseBody
+  @RequestMapping(path = PATH + "/rating", method = RequestMethod.POST)
+  public void saveRating(
+      @PathVariable("category") String category,
+      @PathVariable("lecture") String lecture,
+      @RequestBody String rating) throws SlugNotFoundException {
+    
+    try {
+      lectureService.saveRating(lecture, category, getUserId().get(), Integer.parseInt(rating));
+    } catch (NumberFormatException nfe) {
+      throw new IllegalArgumentException("Rating must be an integer!");
+    }
+  }
+  
+  /**
+   * REST controller for deleting a user rating.
+   */
+  @ResponseBody
+  @RequestMapping(path = PATH + "/rating", method = RequestMethod.DELETE)
+  public void deleteRating(
+      @PathVariable("category") String category,
+      @PathVariable("lecture") String lecture) throws SlugNotFoundException {
+    
+    lectureService.deleteRating(lecture, category, getUserId().get());
   }
 }

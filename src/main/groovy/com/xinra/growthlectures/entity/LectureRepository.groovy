@@ -19,7 +19,6 @@ interface AbstractLectureRepository<T extends Lecture>
   String[][] getIdAndCatgorySlug(@Param("slug") String slug);
   
   Lecture findBySlugAndCategorySlug(String slug, String categorySlug);
-
   
   Iterable<Lecture> findByCategorySlug(String categorySlug);
   Iterable<Lecture> findByLecturerSlug(String lecturerSlug);

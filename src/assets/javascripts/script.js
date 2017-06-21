@@ -24,9 +24,15 @@ $(function() {
       $(this).find(" .external-information-dislikes").text(data["dislikes"]);
       $(this).find(".thumbnail img").attr("src", data["thumbnail"]["url"]);
     }
+    
   });
   
+  $(this).find(".community-rating > input, .lecture-summary .user-rating > input").rating({
+    size:'xs',
+    displayOnly: true
+  });
 });
+
 function getYoutubeVideoData(youtubeId) {
 
   var requestUrl = "https://www.googleapis.com/youtube/v3/videos?id="+youtubeId+"&key="+API_KEY+"&part=snippet,contentDetails,statistics";

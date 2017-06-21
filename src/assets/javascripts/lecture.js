@@ -61,4 +61,22 @@ $(function() {
     e.preventDefault();
   });
   
+  $(".user-rating > input").rating({
+    size:'xs',
+    step: 1,
+    showCaption: false
+  }).on('rating.change', function(e, rating) {
+    $.ajax({
+      url: window.location.pathname + "/rating",
+      type: "POST",
+      data: rating,
+      contentType: "text/plain"
+    });
+  }).on('rating.clear', function() {
+    $.ajax({
+      url: window.location.pathname + "/rating",
+      type: "DELETE"
+    });
+  });
+  
 });

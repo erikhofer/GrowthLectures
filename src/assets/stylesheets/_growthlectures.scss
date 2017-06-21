@@ -49,8 +49,11 @@ body {
   .thumbnail {
     margin-bottom: 0;
   }  
-  h3 {
-    margin-top: 0;
+  
+  @media (min-width: $screen-md-min) {
+    h3 {
+      margin-top: 0;
+    }
   }
 
 }
@@ -76,6 +79,12 @@ body {
   }
   .external-video-information-label {
     font-weight: bold;
+  }
+}
+
+.user-rating {
+  .glyphicon-star {
+    color: #9ae17f;
   }
 }
 

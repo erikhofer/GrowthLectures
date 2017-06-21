@@ -1,5 +1,8 @@
 package com.xinra.growthlectures.service;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+import com.google.common.collect.Maps;
 import com.google.common.collect.Streams;
 import com.xinra.growthlectures.Util;
 import com.xinra.growthlectures.entity.CategoryRepository;
@@ -16,9 +19,11 @@ import com.xinra.nucleus.entity.EntityFactory;
 import com.xinra.nucleus.service.DtoFactory;
 import groovy.transform.CompileStatic;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -173,7 +178,7 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
     return convertToSummaryDto(newLecture);
   }
 
-  public LectureDto getBySlug(String lectureSlug, String categorySlug, String userId)
+  public LectureDto getBySlug(String lectureSlug, String categorySlug, Optional<String> userId)
       throws SlugNotFoundException {
     Objects.requireNonNull(lectureSlug);
     Objects.requireNonNull(categorySlug);
@@ -187,15 +192,15 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
     LectureDto lectureDto = dtoFactory.createDto(LectureDto.class);
     convertToSummaryDto(lecture, lectureDto);
     
-    if (userId != null) {
+    userId.ifPresent(u -> {
       LectureUserData userData = lectureUserDataRepo
-          .findByLectureIdAndUserId(lecture.getPk().getId(), userId);
+          .findByLectureIdAndUserId(lecture.getPk().getId(), u);
       
       if (userData != null) {
         lectureDto.setNote(userData.getNote());
         lectureDto.setUserRating(userData.getRating());
       }
-    }
+    });
     
     return lectureDto;
   }
@@ -225,17 +230,8 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
   }
   
   public String saveNote(String lectureId, String userId, String note) {
-    Objects.requireNonNull(lectureId);
-    Objects.requireNonNull(userId);
     
-    LectureUserData lectureUserData = lectureUserDataRepo
-        .findByLectureIdAndUserId(lectureId, userId);
-    
-    if (lectureUserData == null) {
-      lectureUserData = entityFactory.createEntity(LectureUserData.class);
-      lectureUserData.setUser(userRepo.findOne(userId));
-      lectureUserData.setLecture(lectureRepo.findOne(lectureId));
-    }
+    LectureUserData lectureUserData = getUserData(lectureId, userId);
     
     note = Util.normalize(note);
     if (note.length() > 4000) {
@@ -248,16 +244,11 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
   }
     
   public void deleteNote(String lectureId, String userId) {
-    Objects.requireNonNull(lectureId);
-    Objects.requireNonNull(userId);
     
-    LectureUserData lectureUserData = lectureUserDataRepo
-        .findByLectureIdAndUserId(lectureId, userId);
-    
-    if (lectureUserData != null) {
-      lectureUserData.setNote(null);
-      lectureUserDataRepo.save(lectureUserData);
-    }
+    getUserDataIfPresent(lectureId, userId).ifPresent(userData -> {
+      userData.setNote(null);
+      lectureUserDataRepo.save(userData);
+    });
   }
   
   public boolean doesSlugExists(String slug) {
@@ -277,6 +268,7 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
   
   void convertToSummaryDto(Lecture lecture, LectureSummaryDto dto) {
 
+    dto.setId(lecture.getPk().getId());
     dto.setName(lecture.getName());
     dto.setSlug(lecture.getSlug());
     dto.setDescription(lecture.getDescription());
@@ -313,6 +305,94 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
     convertToSummaryDto(lecture, dto);
     return dto;
   }
+  
+  public void supplyRatings(Collection<LectureSummaryDto> lectures, String userId) {
+    // limitation of IN operator of PostgreSQL
+    checkArgument(lectures.size() <= 30000, "Cannot supply more than 30,000 ratings at once!");
+    Map<String, LectureSummaryDto> map = Maps.uniqueIndex(lectures, LectureSummaryDto::getId);
+    for (Object[] result : lectureUserDataRepo.getRatings(map.keySet(), userId)) {
+      map.get(result[0]).setUserRating((Integer) result[1]);
+    }
+  }
 
+  /**
+   * @implNote The lecture's community rating r is adjusted as follows 
+   *     (u = user rating; n = number of community ratings):
+   *     <p>If the lecture was rated by this user before:
+   *     r<sub>new</sub> = r<sub>old</sub> + (u<sub>new</sub> - u<sub>old</sub>) / n</p>
+   *     <p>If the lecture was not rated by this user before:
+   *     r<sub>new</sub> = (n * r<sub>old</sub> + u<sub>new</sub>) / (n + 1)</p>
+   */
+  public void saveRating(String lectureSlug, String categorySlug, String userId, int rating)
+      throws SlugNotFoundException {
+    
+    checkArgument(rating >= 1 && rating <= 5 , "Rating must be between 1 and 5.");
+    
+    LectureUserData userData = getUserData(getLectureId(lectureSlug, categorySlug), userId);
+    if (userData.getRating() == null) {
+      int ratingAmount = userData.getLecture().getRatingAmount();
+      double ratingOld = userData.getLecture().getRatingAverage();
+      
+      double ratingNew = (ratingAmount * ratingOld + rating) / (ratingAmount + 1);
+      
+      userData.getLecture().setRatingAverage(ratingNew);
+      userData.getLecture().setRatingAmount(ratingAmount + 1);
+    } else {
+      int ratingAmount = userData.getLecture().getRatingAmount();
+      double ratingOld = userData.getLecture().getRatingAverage();
+      int userRatingOld = userData.getRating();
+      
+      double ratingNew = ratingOld + (rating - userRatingOld) / (double) ratingAmount;
+      
+      userData.getLecture().setRatingAverage(ratingNew);
+    }
+    
+    userData.setRating(rating);
+    lectureUserDataRepo.save(userData);
+  }
+  
+  /**
+   * @implNote The lecture's community rating r is adjusted as follows 
+   *     (u = user rating; n = number of community ratings):
+   *     <p>r<sub>new</sub> = (n * r<sub>old</sub> - u<sub>old</sub>) / (n - 1)</p>
+   */
+  public void deleteRating(String lectureSlug, String categorySlug, String userId)
+      throws SlugNotFoundException {
+    
+    getUserDataIfPresent(getLectureId(lectureSlug, categorySlug), userId).ifPresent(userData -> {
+      if (userData.getRating() != null) {
+        int ratingAmount = userData.getLecture().getRatingAmount();
+        double ratingOld = userData.getLecture().getRatingAverage();
+        int userRatingOld = userData.getRating();
+        
+        double ratingNew = (ratingAmount * ratingOld - userRatingOld) / (ratingAmount - 1);
+        
+        userData.getLecture().setRatingAverage(ratingNew);
+        userData.getLecture().setRatingAmount(ratingAmount - 1);
+        userData.setRating(null);
+        lectureUserDataRepo.save(userData);
+      }
+    });
+  }
+  
+  /**
+   * Retrieves a {@link LectureUserData} or creates one if it does't exist.
+   */
+  private LectureUserData getUserData(String lectureId, String userId) {
+    
+    return getUserDataIfPresent(lectureId, userId).orElseGet(() -> {
+      LectureUserData lectureUserData = entityFactory.createEntity(LectureUserData.class);
+      lectureUserData.setUser(userRepo.findOne(userId));
+      lectureUserData.setLecture(lectureRepo.findOne(lectureId));
+      return lectureUserData;
+    });
+  }
+  
+  private Optional<LectureUserData> getUserDataIfPresent(String lectureId, String userId) {
+    Objects.requireNonNull(lectureId);
+    Objects.requireNonNull(userId);
+    
+    return Optional.ofNullable(lectureUserDataRepo.findByLectureIdAndUserId(lectureId, userId));
+  }
   
 }

@@ -8,6 +8,5 @@ import org.codehaus.groovy.transform.trait.Traits.Implemented
 class LectureDtoImpl extends LectureSummaryDtoImpl {
 	
 	def String note;
-  def Integer userRating;
 	
 }
