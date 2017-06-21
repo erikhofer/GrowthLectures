@@ -50,7 +50,7 @@ body {
     margin-bottom: 0;
   }  
   
-  @media (min-width: 768px) {
+  @media (min-width: $screen-md-min) {
     h3 {
       margin-top: 0;
     }
