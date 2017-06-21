@@ -51,7 +51,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
       return new ResponseEntity<>(message, status);
     } else {
       Map<String, Object> model = ImmutableMap.of(
-          "message", message != null ? message : "No message available.",
+          "message", message != null ? message : "No message available",
           "status", status.value(),
           "error", status.getReasonPhrase()
         );

@@ -10,7 +10,6 @@
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create-lecturer-modal"><span class="glyphicon glyphicon-plus"></span> Create new lecturer</button>
       </div>
       <h1>Lecturers</h1>
-      <!-- add search fragment here -->
       
       <th:block th:if="${recommendedLecturer != null}">
         <h3 th:text="@{Recommended:&nbsp;}+${recommendedLecturer.name}"></h3>

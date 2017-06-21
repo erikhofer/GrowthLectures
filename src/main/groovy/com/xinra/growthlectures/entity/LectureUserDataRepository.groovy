@@ -18,4 +18,7 @@ public interface AbstractLectureUserDataRepository<T extends LectureUserData>
   
   LectureUserData findByLectureIdAndUserId(String lectureId, String userId);
   
+  @Query("SELECT d.lecture.id, d.rating FROM LectureUserData d WHERE d.user.id = :userId AND d.lecture.id IN :lectureIds")
+  Object[][] getRatings(@Param("lectureIds") Set<String> lectureIds, @Param("userId") String userId);
+  
 }

@@ -5,6 +5,7 @@
 </head>
 <body>
   <div layout:fragment="content">
+    <div th:replace="fragments/search :: search-input"></div>
     <div class="container">
       <div id="new-lecture-success" class="alert alert-success hidden">
         <button type="button" id="close-success-alert" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -15,7 +16,7 @@
       </div>
       <h1 th:text="${category.name}"></h1>
       <!-- add search fragment here -->
-      <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${lectures})"></div>
+      <div th:replace="fragments/lecture-summary :: lecture-list (lectures = ${searchResults})"></div>
     </div>
     
     <div class="modal fade" id="create-lecture-modal" tabindex="-1" role="dialog" sec:authorize="hasRole('MODERATOR')">

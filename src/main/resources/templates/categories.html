@@ -5,12 +5,11 @@
 </head>
 <body>
   <div layout:fragment="content">
-    <div class="container">
+    <div class="container">    
       <div style="float: right;" sec:authorize="hasRole('MODERATOR')">
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create-category-modal"><span class="glyphicon glyphicon-plus"></span> Create new category</button>
       </div>
       <h1>Categories</h1>
-      <!-- add search fragment here -->
       
       <th:block th:if="${recommendedCategory != null}">
         <h3>Recommended: <span th:text="${recommendedCategory.name}"></span></h3>

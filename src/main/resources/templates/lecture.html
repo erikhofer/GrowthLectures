@@ -55,6 +55,15 @@
                     <td class="external-video-information-label">Added on</td>
                     <td colspan="2"><span th:text="@{${@formatter.date(lecture.added)}}"></span></td>
                   </tr>
+                  <tr>
+                    <td class="external-video-information-label">Community rating</td>
+                    <td class="community-rating"><input type="number" th:value="${lecture.rating}" /></td>
+                  </tr>
+                  <tr>
+                    <td class="external-video-information-label">Your rating</td>
+                    <td sec:authorize="!isAuthenticated()"><a th:href="@{${@ui.URL_LOGIN}}">Log in</a> to rate this lecture!</td>
+                    <td class="user-rating" sec:authorize="isAuthenticated()"><input type="number" th:value="${lecture.userRating}" /></td>
+                  </tr>
                 </table>
               </div>
             </div>
@@ -67,9 +76,9 @@
                     <td colspan="2"><a id="external-information-channel-title" href="" target="_blank"></a></td>
                   </tr>
                   <tr>
+                    <td><span class="glyphicon glyphicon-eye-open"></span> <span id="external-information-views"></span></td>
                     <td><span class="glyphicon glyphicon-thumbs-up"></span> <span id="external-information-likes"></span></td>
                     <td><span class="glyphicon glyphicon-thumbs-down"></span> <span id="external-information-dislikes"></span></td>
-                    <td><span class="glyphicon glyphicon-eye-open"></span> <span id="external-information-views"></span></td>
                   </tr>
                   <tr>
                     <td class="external-video-information-label">Video on Youtube</td>

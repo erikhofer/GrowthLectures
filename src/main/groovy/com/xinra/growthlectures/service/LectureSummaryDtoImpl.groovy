@@ -13,6 +13,7 @@ import java.time.LocalDate
 class LectureSummaryDtoImpl extends NamedDtoImpl {
 
   //def NamedDto category;
+	def String id;
   def Boolean played;
   def String description;
   def Double rating;
