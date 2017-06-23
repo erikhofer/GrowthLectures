@@ -120,7 +120,8 @@ public abstract class GrowthlecturesController {
     currentOrderDto.setName(names.get(currentOrder));
     currentOrderDto.setIcon(icons.get(currentOrder));
     
-    List<LectureSummaryDto> results = searchHandler.search(queryParam, currentOrder, decending);
+    List<LectureSummaryDto> results = 
+        process(searchHandler.search(queryParam, currentOrder, decending));
     
     model.addAttribute("searchQuery", queryParam);    
     model.addAttribute("searchOrders", orders);
