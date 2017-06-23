@@ -307,6 +307,9 @@ public class LectureServiceImpl extends GrowthlecturesServiceImpl implements Lec
   }
   
   public void supplyRatings(Collection<LectureSummaryDto> lectures, String userId) {
+    if (lectures.isEmpty()) {
+      return;
+    }
     // limitation of IN operator of PostgreSQL
     checkArgument(lectures.size() <= 30000, "Cannot supply more than 30,000 ratings at once!");
     Map<String, LectureSummaryDto> map = Maps.uniqueIndex(lectures, LectureSummaryDto::getId);
