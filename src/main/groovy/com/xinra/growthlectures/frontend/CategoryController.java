@@ -72,8 +72,6 @@ public class CategoryController extends GrowthlecturesController {
  
     model.addAttribute("category", categoryService.getCategoryBySlug(slug));
     
-    model.addAttribute("lectures", lectureService.getRecentLecturesByCategory(slug));
-    
     addSearchModel(model, slug, (query, orderBy, decending) -> {
       
       return searchService.searchForCategory(slug, query, orderBy, decending);
